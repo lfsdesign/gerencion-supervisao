@@ -445,13 +445,34 @@ function statusBadge(proj,devPct){
 function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('on');setTimeout(function(){el.classList.remove('on');},2600);}
 function remover(lista,idx){DB[lista].splice(idx,1);save();renderAll();toast('Removido.');}
 
-window.addEventListener('load',function(){
+function iniciar(){
   load();
-  var msgs=['CARREGANDO DADOS...','INICIALIZANDO MÓDULOS...','PRONTO'];
-  var i=0;var si=setInterval(function(){if(i<msgs.length)document.getElementById('spstatus').textContent=msgs[i++];},600);
-  setTimeout(function(){document.getElementById('spfill').style.width='100%';},100);
-  setTimeout(function(){clearInterval(si);document.getElementById('splash').classList.add('out');initApp();},2000);
-});
+  try{
+    var msgs=['CARREGANDO DADOS...','INICIALIZANDO MÓDULOS...','PRONTO'];
+    var i=0;
+    var si=setInterval(function(){
+      var el=document.getElementById('spstatus');
+      if(el&&i<msgs.length)el.textContent=msgs[i++];
+    },500);
+    var bar=document.getElementById('spfill');
+    if(bar)bar.style.width='100%';
+    setTimeout(function(){
+      clearInterval(si);
+      var sp=document.getElementById('splash');
+      if(sp)sp.classList.add('out');
+      initApp();
+    },1800);
+  }catch(e){
+    var sp=document.getElementById('splash');
+    if(sp)sp.classList.add('out');
+    initApp();
+  }
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',iniciar);
+}else{
+  iniciar();
+}
 
 function initApp(){
   var p=DB.perfil;
