@@ -231,7 +231,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
 
     <!-- DASHBOARD -->
-    <div id="p-dashboard" class="page ativo">
+    <div id="dashboard" class="page ativo">
       <div class="ph"><div class="ph-titulo">DASHBOARD</div><div class="ph-sub" id="dashData">—</div></div>
       <div id="sazBanner"></div>
       <div class="stats stats-4">
@@ -248,7 +248,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
 
     <!-- LANÇAR BI -->
-    <div id="p-bi" class="page">
+    <div id="bi" class="page">
       <div class="ph"><div class="ph-titulo">LANÇAR BI</div><div class="ph-sub">Dados semanais do Power BI — Páginas 1, 6 e 7</div></div>
       <div class="banner bn-cy"><span>ℹ</span><div>Preencha com os dados da <strong>Página 1</strong> do BI. Campos marcados com * são fixos. Limite de devolução: <strong style="color:var(--red)">0,65%</strong>.</div></div>
       <div class="card">
@@ -282,31 +282,31 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
 
     <!-- COMPARATIVO -->
-    <div id="p-comparativo" class="page">
+    <div id="comparativo" class="page">
       <div class="ph"><div class="ph-titulo">COMPARATIVO MENSAL</div><div class="ph-sub">Evolução mês a mês</div></div>
       <div class="card"><div class="card-titulo">Mês Atual vs Anterior</div><div id="compBox"><div class="empty">Lance o BI pelo menos duas vezes para ver o comparativo.</div></div></div>
     </div>
 
     <!-- EQUIPE -->
-    <div id="p-equipe" class="page">
+    <div id="equipe" class="page">
       <div class="ph"><div class="ph-titulo">ANÁLISE DA EQUIPE</div><div class="ph-sub">Visão individual de cada vendedor</div></div>
       <div id="equipeBox"><div class="empty">Lance os dados do BI.</div></div>
     </div>
 
     <!-- POSITIVAÇÃO -->
-    <div id="p-positivacao" class="page">
+    <div id="positivacao" class="page">
       <div class="ph"><div class="ph-titulo">POSITIVAÇÃO</div><div class="ph-sub">Clientes positivados por vendedor</div></div>
       <div id="posBox"><div class="empty">Lance os dados de positivação.</div></div>
     </div>
 
     <!-- CHURN -->
-    <div id="p-churn" class="page">
+    <div id="churn" class="page">
       <div class="ph"><div class="ph-titulo">CHURN</div><div class="ph-sub">Taxa de perda de clientes</div></div>
       <div id="churnBox"><div class="empty">Lance os dados de churn.</div></div>
     </div>
 
     <!-- CAMPO -->
-    <div id="p-campo" class="page">
+    <div id="campo" class="page">
       <div class="ph"><div class="ph-titulo">CAMPO</div><div class="ph-sub">Registros de visitas</div></div>
       <div class="card">
         <div class="card-titulo">Novo Registro</div>
@@ -323,7 +323,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
 
     <!-- PLANO -->
-    <div id="p-plano" class="page">
+    <div id="plano" class="page">
       <div class="ph"><div class="ph-titulo">PLANO DE AÇÃO</div><div class="ph-sub">Estratégias e ações corretivas</div></div>
       <div class="card">
         <div class="card-titulo">Novo Plano</div>
@@ -342,7 +342,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
 
     <!-- CLIENTES -->
-    <div id="p-clientes" class="page">
+    <div id="clientes" class="page">
       <div class="ph"><div class="ph-titulo">CLIENTES ESTRATÉGICOS</div><div class="ph-sub">Monitoramento de clientes prioritários</div></div>
       <div class="card">
         <div class="card-titulo">Novo Cliente</div>
@@ -359,7 +359,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
 
     <!-- ANIVERSÁRIOS -->
-    <div id="p-aniversarios" class="page">
+    <div id="aniversarios" class="page">
       <div class="ph"><div class="ph-titulo">ANIVERSARIANTES</div><div class="ph-sub">Relacionamento que fideliza</div></div>
       <div id="anivHoje"></div>
       <div class="card">
@@ -378,7 +378,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
 
     <!-- RELATÓRIO -->
-    <div id="p-relatorio" class="page">
+    <div id="relatorio" class="page">
       <div class="ph">
         <div><div class="ph-titulo">RELATÓRIO EXECUTIVO</div><div class="ph-sub">Pronto para apresentar à diretoria</div></div>
         <div style="display:flex;gap:8px;margin-top:10px">
@@ -390,7 +390,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
 
     <!-- PERFIL -->
-    <div id="p-perfil" class="page">
+    <div id="perfil" class="page">
       <div class="ph"><div class="ph-titulo">PERFIL</div><div class="ph-sub">Configurações do sistema</div></div>
       <div class="card" style="max-width:500px">
         <div class="fg"><label class="flbl">Empresa</label><input id="pfEmp" class="inp" placeholder="Nome da empresa"></div>
@@ -478,7 +478,7 @@ function remover(lista,idx){
 // ======= NAV =======
 function ir(id,btn){
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('ativo'); });
-  var pg = document.getElementById('p-'+id);
+  var pg = document.getElementById(id);
   if(pg) pg.classList.add('ativo');
   document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('ativo'); });
   if(btn) btn.classList.add('ativo');
