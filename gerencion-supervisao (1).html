@@ -256,10 +256,10 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <div class="card">
         <div class="ct">Regional Norte Fluminense</div>
         <div class="g4">
-          <div class="fg"><label class="fl">% OBJ FAT *</label><input class="inp" value="69,16" readonly></div>
+          <div class="fg"><label class="fl">% OBJ FAT</label><input id="rObjFat" class="inp" placeholder="ex: 69,16"></div>
           <div class="fg"><label class="fl">% FAT Real</label><input id="rFat" class="inp" placeholder="ex: 60,53"></div>
           <div class="fg"><label class="fl">% PROJ</label><input id="rProj" class="inp" placeholder="ex: 87,52"></div>
-          <div class="fg"><label class="fl">OBJ % Margem *</label><input class="inp" value="17,32" readonly></div>
+          <div class="fg"><label class="fl">OBJ % Margem</label><input id="rObjMarg" class="inp" placeholder="ex: 17,32"></div>
           <div class="fg"><label class="fl">% Margem Real</label><input id="rMarg" class="inp" placeholder="ex: 15,24"></div>
           <div class="fg"><label class="fl">OBJ Posit</label><input id="rObjPos" class="inp" placeholder="ex: 935"></div>
           <div class="fg"><label class="fl">Real Posit</label><input id="rRealPos" class="inp" placeholder="ex: 732"></div>
@@ -493,15 +493,15 @@ function buildBIForms(){
   var fp=document.getElementById('fPosChurn');
   if(!fv||!fp)return;
   var r=DB.biAtual.regional;
-  var campos=[['rFat','fat'],['rProj','proj'],['rMarg','marg'],['rObjPos','objPos'],['rRealPos','realPos'],
+  var campos=[['rObjFat','objFat'],['rObjMarg','objMarg'],['rFat','fat'],['rProj','proj'],['rMarg','marg'],['rObjPos','objPos'],['rRealPos','realPos'],
     ['rSaldoPos','saldoPos'],['rDevR','devR'],['rDevPct','devPct'],['rSku','sku'],['rVendaMedia','vendaMedia'],['rPrecoKg','precoKg']];
   campos.forEach(function(c){var el=document.getElementById(c[0]);if(el&&r[c[1]])el.value=r[c[1]];});
   fv.innerHTML=VENDS.map(function(v,i){
     var cur=DB.biAtual.vendedores[i]||{};
     return'<div class="biv"><div class="biv-t">'+v.cod+' — '+v.nome+
-      ' <span style="font-size:10px;color:var(--t2);font-weight:400">OBJ Marg: '+v.om+'%</span></div>'+
+      '</div>'+
       '<div class="g4">'+
-      bf('v'+i+'fat','% FAT Real',cur.fat)+
+      bf('v'+i+'objFat','% OBJ FAT',cur.objFat)+bf('v'+i+'objMarg','OBJ % Margem',cur.objMarg)+bf('v'+i+'fat','% FAT Real',cur.fat)+
       bf('v'+i+'proj','% PROJ',cur.proj)+
       bf('v'+i+'marg','% Margem Real',cur.marg)+
       bf('v'+i+'objPos','OBJ Posit',cur.objPos)+
@@ -532,7 +532,7 @@ function bf(id,lbl,val){
 function salvarBI(){
   if(DB.biAtual.vendedores.length>0)DB.biAnterior=JSON.parse(JSON.stringify(DB.biAtual));
   DB.biAtual.regional={
-    fat:document.getElementById('rFat').value,proj:document.getElementById('rProj').value,
+    objFat:document.getElementById('rObjFat').value,objMarg:document.getElementById('rObjMarg').value,fat:document.getElementById('rFat').value,proj:document.getElementById('rProj').value,
     marg:document.getElementById('rMarg').value,objPos:document.getElementById('rObjPos').value,
     realPos:document.getElementById('rRealPos').value,saldoPos:document.getElementById('rSaldoPos').value,
     devR:document.getElementById('rDevR').value,devPct:document.getElementById('rDevPct').value,
@@ -541,7 +541,7 @@ function salvarBI(){
   };
   DB.biAtual.vendedores=VENDS.map(function(v,i){
     return{cod:v.cod,nome:v.nome,om:v.om,
-      fat:document.getElementById('v'+i+'fat').value,
+      objFat:document.getElementById('v'+i+'objFat').value,objMarg:document.getElementById('v'+i+'objMarg').value,fat:document.getElementById('v'+i+'fat').value,
       proj:document.getElementById('v'+i+'proj').value,
       marg:document.getElementById('v'+i+'marg').value,
       objPos:document.getElementById('v'+i+'objPos').value,
@@ -654,7 +654,7 @@ function renderEquipe(){
     if(pc.churnRate&&n(pc.churnRate)>30)ins.push({c:'dg',t:'Churn alto ('+pc.churnRate+'%). Clientes parando de comprar.'});
     return'<div class="vc">'+
       '<div class="vc-top">'+
-        '<div><div class="vc-nome">'+v.nome+'</div><div class="vc-cod">COD '+v.cod+' · OBJ Marg: '+v.om+'%</div></div>'+
+        '<div><div class="vc-nome">'+v.nome+'</div><div class="vc-cod">COD '+v.cod+'</div></div>'+
         '<div style="display:flex;gap:8px">'+badgeSt(v.proj,v.devPct)+'<button class="btn bd bsm" onclick="abrirPlanoVend(\''+v.nome+'\')">+ Plano</button></div>'+
       '</div>'+
       '<div class="vc-grid">'+
