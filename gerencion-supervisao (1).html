@@ -1117,7 +1117,7 @@ function renderCampoLista(){
     var df=c.data?new Date(c.data+'T12:00').toLocaleDateString('pt-BR'):'—';
     return'<div class="ic"><div class="ih"><div><div class="in">'+(c.cliente||'Visita')+'</div>'+
       '<div style="font-size:11px;color:var(--t2);margin-top:2px">'+c.vendedor+' · '+c.cidade+' · '+df+'</div></div>'+
-      '<button class="btn bd bsm" onclick="remover('campos','+i+')">×</button></div>'+
+      '<button class="btn bd bsm" onclick="remover(\"campos\",'+i+')">×</button></div>'+
       (c.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.7;border-top:1px solid var(--b);padding-top:10px">'+c.obs+'</div>':'')+
     '</div>';
   }).join('');
@@ -1143,7 +1143,7 @@ function renderPlanos(){
       '</div><div style="display:flex;gap:6px;align-items:center">'+
       '<span class="badge '+(p.prioridade==='Alta'?'bdg':p.prioridade==='Média'?'bwn':'bnt')+'">'+p.prioridade+'</span>'+
       '<span class="badge '+(p.status==='Concluído'?'bok':p.status==='Em andamento'?'bwn':'bnt')+'">'+p.status+'</span>'+
-      '<button class="btn bd bsm" onclick="remover('planos','+i+')">×</button></div></div>'+
+      '<button class="btn bd bsm" onclick="remover(\"planos\",'+i+')">×</button></div></div>'+
       '<div class="im">'+(p.responsavel?'<div class="mp">'+p.responsavel+'</div>':'')+
       (pf?'<div class="mp">Prazo: '+pf+'</div>':'')+'</div>'+
       (p.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6">'+p.obs+'</div>':'')+
@@ -1170,7 +1170,7 @@ function renderClientes(){
       (c.cidade?'<div style="font-size:11px;color:var(--t2);margin-top:2px">'+c.cidade+(c.vendedor?' · '+c.vendedor:'')+'</div>':'')+
       '</div><div style="display:flex;gap:6px;align-items:center">'+
       (c.status?'<span class="badge '+sc+'">'+c.status+'</span>':'')+
-      '<button class="btn bd bsm" onclick="remover('clientes','+i+')">×</button></div></div>'+
+      '<button class="btn bd bsm" onclick="remover(\"clientes\",'+i+')">×</button></div></div>'+
       (c.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6">'+c.obs+'</div>':'')+
     '</div>';
   }).join('');
@@ -1226,7 +1226,7 @@ function renderAniv(){
       '<div style="font-size:11px;color:var(--t2);margin-top:2px">'+a.tipo+' · '+df+'</div></div>'+
       '<div style="display:flex;align-items:center;gap:6px">'+
       (diff!==null?'<span class="badge '+(diff===0?'bok':'bnt')+'">'+(diff===0?'Hoje!':'em '+diff+' dia(s)')+'</span>':'')+
-      '<button class="btn bd bsm" onclick="remover('aniversarios','+i+')">×</button></div></div>'+
+      '<button class="btn bd bsm" onclick="remover(\"aniversarios\",'+i+')">×</button></div></div>'+
       (a.tel||a.email?'<div class="ia">'+
       (whats?'<a href="'+whats+'" target="_blank" class="btn bp bsm">WhatsApp</a>':'')+
       (a.email?'<a href="mailto:'+a.email+'?subject=Feliz+Aniversário&body='+encodeURIComponent(msg)+'" class="btn bs bsm">E-mail</a>':'')+
@@ -1454,6 +1454,50 @@ function resetar(){
   if(confirm('Resetar todos os dados? Esta ação não pode ser desfeita.')){
     localStorage.removeItem(KEY);location.reload();
   }
+}
+
+function renderPos(){
+  var el=document.getElementById('posBox');
+  if(!el)return;
+  if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de positivação.</div>';return;}
+  var tp=0,tn=0;
+  DB.posChurn.forEach(function(p){tp+=parseInt(p.positivados||0);tn+=parseInt(p.naoPositivados||0);});
+  var tx=tp+tn>0?((tp/(tp+tn))*100).toFixed(1):0;
+  el.innerHTML='<div class="stats s3" style="margin-bottom:14px">'+
+    '<div class="stat"><div class="st-l">Positivados</div><div class="st-v">'+tp+'</div></div>'+
+    '<div class="stat dg"><div class="st-l">Não Positivados</div><div class="st-v">'+tn+'</div></div>'+
+    '<div class="stat '+(parseFloat(tx)>=70?'':'wn')+'"><div class="st-l">Taxa</div><div class="st-v">'+tx+'%</div></div>'+
+    '</div><div class="tw"><table><thead><tr><th>Vendedor</th><th>Positivados</th><th>Não Positivados</th><th>Taxa</th><th>Situação</th></tr></thead><tbody>'+
+    DB.posChurn.map(function(p){
+      var tot=(parseInt(p.positivados||0))+(parseInt(p.naoPositivados||0));
+      var tx=tot>0?((parseInt(p.positivados||0)/tot)*100).toFixed(1):0;
+      var np=parseInt(p.naoPositivados||0);
+      return'<tr><td style="font-weight:600">'+p.nome+'</td>'+
+        '<td style="color:var(--cy)">'+fmt(p.positivados)+'</td>'+
+        '<td style="color:var(--rd)">'+fmt(p.naoPositivados)+'</td>'+
+        '<td>'+tx+'%</td>'+
+        '<td>'+(np>20?'<span class="badge bdg">URGENTE</span>':np>10?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+'</td></tr>';
+    }).join('')+'</tbody></table></div>';
+}
+
+function renderChurn(){
+  var el=document.getElementById('churnBox');
+  if(!el)return;
+  if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de churn.</div>';return;}
+  var com=DB.posChurn.filter(function(p){return p.churnRate!=='';});
+  if(com.length===0){el.innerHTML='<div class="empty">Nenhum dado de churn lançado.</div>';return;}
+  el.innerHTML='<div class="g2">'+com.map(function(p){
+    var c=n(p.churnRate);
+    return'<div class="card">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'+
+        '<div style="font-weight:700">'+p.nome+'</div>'+
+        (c>30?'<span class="badge bdg">CRÍTICO</span>':c>15?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+
+      '</div>'+
+      '<div style="font-size:44px;font-weight:700;color:'+(c>30?'var(--rd)':c>15?'var(--ye)':'var(--cy)')+';line-height:1">'+c.toFixed(1)+'%</div>'+
+      '<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-top:4px">CHURN RATE</div>'+
+      (c>15?'<div style="margin-top:10px;font-size:12px;color:var(--t2);line-height:1.6">'+(c>30?'Situação crítica. Clientes migrando para a concorrência.':'Churn acima do aceitável. Reativar clientes perdidos.')+'</div>':'')+
+    '</div>';
+  }).join('')+'</div>';
 }
 </script>
 </body>
