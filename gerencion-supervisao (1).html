@@ -2,7 +2,14 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#00E5C3">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GERENCION">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>GERENCION Supervisão</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -212,1293 +219,1318 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 
     <!-- DASHBOARD -->
     <div id="dashboard" class="pg on">
-      <div class="ph"><div class="pt">Dashboard</div><div class="ps" id="dashData"></div></div>
-      <div id="sazBanner"></div>
-      <div class="stats s4">
-        <div class="stat" id="stProj"><div class="st-l">Projeção Regional</div><div class="st-v" id="dProj">—</div><div class="st-s">Meta: 100%</div></div>
-        <div class="stat" id="stPos"><div class="st-l">Saldo Positivação</div><div class="st-v" id="dPos">—</div><div class="st-s" id="dPosSub">—</div></div>
-        <div class="stat" id="stDev"><div class="st-l">% Devolução</div><div class="st-v" id="dDev">—</div><div class="st-s">Limite: 0,65%</div></div>
-        <div class="stat" id="stSaude"><div class="st-l">Saúde da Regional</div><div class="st-v" id="dSaude">—</div><div class="st-s" id="dSaudeLbl">—</div></div>
-      </div>
-      <div class="g2">
-        <div class="card"><div class="ct">Diagnóstico Rápido</div><div id="diagBox"><div class="empty">Lance os dados do BI.</div></div></div>
-        <div class="card"><div class="ct">Alertas Preditivos</div><div id="alertBox"><div class="empty">Nenhum alerta.</div></div></div>
-      </div>
-      <div class="card"><div class="ct">Ranking da Equipe — Score Geral</div><div id="rankBox"><div class="empty">Lance os dados do BI.</div></div></div>
-    </div>
-
-    <!-- SAUDE DA REGIONAL -->
-    <div id="saude" class="pg">
-      <div class="ph"><div class="pt">Saúde da Regional</div><div class="ps">Índice geral de performance — Norte Fluminense</div></div>
-      <div id="saudeBox"><div class="empty">Lance os dados do BI para ver a saúde da regional.</div></div>
-    </div>
-
-    <!-- LANÇAR BI -->
-    <div id="bi" class="pg">
-      <div class="ph"><div class="pt">Lançar BI</div><div class="ps">Preencha semanalmente com os dados do Power BI</div></div>
-      <div class="bn bn-cy"><span>ℹ</span><div>Use os dados da <strong>Página 1</strong> do BI para a Regional e Vendedores. <strong>Página 6</strong> para Positivação. <strong>Página 7</strong> para Churn. Preencha na mesma ordem do BI.</div></div>
-      <div class="card">
-        <div class="ct">Regional Norte Fluminense — Página 1</div>
-        <div class="g4">
-          <div class="fg"><label class="fl">% OBJ FAT</label><input id="rObjFat" class="inp" placeholder="ex: 69,16"></div>
-          <div class="fg"><label class="fl">% FAT Real</label><input id="rFat" class="inp" placeholder="ex: 60,53"></div>
-          <div class="fg"><label class="fl">% PROJ</label><input id="rProj" class="inp" placeholder="ex: 87,52"></div>
-          <div class="fg"><label class="fl">OBJ % Margem</label><input id="rObjMarg" class="inp" placeholder="ex: 17,32"></div>
-          <div class="fg"><label class="fl">% Margem Real</label><input id="rMarg" class="inp" placeholder="ex: 15,24"></div>
-          <div class="fg"><label class="fl">OBJ Posit</label><input id="rObjPos" class="inp" placeholder="ex: 935"></div>
-          <div class="fg"><label class="fl">Real Posit</label><input id="rRealPos" class="inp" placeholder="ex: 732"></div>
-          <div class="fg"><label class="fl">Saldo Posit</label><input id="rSaldoPos" class="inp" placeholder="ex: -203"></div>
-          <div class="fg"><label class="fl">DEV R$</label><input id="rDevR" class="inp" placeholder="ex: -13729"></div>
-          <div class="fg"><label class="fl">% DEV</label><input id="rDevPct" class="inp" placeholder="ex: -0,49"></div>
-          <div class="fg"><label class="fl">SKU/CLI</label><input id="rSku" class="inp" placeholder="ex: 13,54"></div>
-          <div class="fg"><label class="fl">Venda Média</label><input id="rVendaMedia" class="inp" placeholder="ex: 3836"></div>
-          <div class="fg"><label class="fl">Preço/KG</label><input id="rPrecoKg" class="inp" placeholder="ex: 11,96"></div>
+        <div class="ph"><div class="pt">Dashboard</div><div class="ps" id="dashData"></div></div>
+        <div id="sazBanner"></div>
+        <div class="stats s4">
+          <div class="stat" id="stProj"><div class="st-l">Projeção Regional</div><div class="st-v" id="dProj">—</div><div class="st-s">Meta: 100%</div></div>
+          <div class="stat" id="stPos"><div class="st-l">Saldo Positivação</div><div class="st-v" id="dPos">—</div><div class="st-s" id="dPosSub">—</div></div>
+          <div class="stat" id="stDev"><div class="st-l">% Devolução</div><div class="st-v" id="dDev">—</div><div class="st-s">Limite: 0,65%</div></div>
+          <div class="stat" id="stSaude"><div class="st-l">Saúde da Regional</div><div class="st-v" id="dSaude">—</div><div class="st-s" id="dSaudeLbl">—</div></div>
         </div>
-      </div>
-      <div class="card">
-        <div class="ct">Por Vendedor — Página 1 (mesma ordem do BI)</div>
-        <div id="fVendedores"></div>
-        <button class="btn bp no-print" style="margin-top:14px" onclick="salvarBI()">💾 Salvar BI Regional e Vendedores</button>
-      </div>
-      <div class="card">
-        <div class="ct">Positivação e Churn — Páginas 6 e 7</div>
-        <div id="fPosChurn"></div>
-        <button class="btn bs no-print" style="margin-top:12px" onclick="salvarPosChurn()">💾 Salvar Positivação e Churn</button>
-      </div>
-    </div>
-
-    <!-- COMPARATIVO -->
-    <div id="comparativo" class="pg">
-      <div class="ph"><div class="pt">Comparativo Mensal</div><div class="ps">Evolução completa mês a mês — todos os indicadores</div></div>
-      <div id="compBox"><div class="empty">Lance o BI pelo menos duas vezes para ver o comparativo.</div></div>
-    </div>
-
-    <!-- EQUIPE -->
-    <div id="equipe" class="pg">
-      <div class="ph"><div class="pt">Análise da Equipe</div><div class="ps">Diagnóstico individual com alertas preditivos</div></div>
-      <div id="equipeBox"><div class="empty">Lance os dados do BI.</div></div>
-    </div>
-
-    <!-- SCORES -->
-    <div id="scores" class="pg">
-      <div class="ph"><div class="pt">Score dos Vendedores</div><div class="ps">Índice de performance 0 a 100 — visão instantânea da equipe</div></div>
-      <div class="bn bn-cy"><span>★</span><div>O Score combina 5 indicadores: Projeção (30pts), Margem (20pts), Positivação (20pts), Devolução (20pts) e Churn (10pts). Acima de 70 é saudável. Entre 50 e 70 é atenção. Abaixo de 50 é crítico.</div></div>
-      <div id="scoresBox"><div class="empty">Lance os dados do BI para ver os scores.</div></div>
-    </div>
-
-    <!-- POSITIVAÇÃO -->
-    <div id="positivacao" class="pg">
-      <div class="ph"><div class="pt">Positivação</div><div class="ps">Clientes positivados e não positivados por vendedor</div></div>
-      <div id="posBox"><div class="empty">Lance os dados de positivação.</div></div>
-    </div>
-
-    <!-- CHURN -->
-    <div id="churn" class="pg">
-      <div class="ph"><div class="pt">Churn</div><div class="ps">Taxa de perda de clientes — quem está perdendo e por quê</div></div>
-      <div id="churnBox"><div class="empty">Lance os dados de churn.</div></div>
-    </div>
-
-    <!-- CAMPO -->
-    <div id="campo" class="pg">
-      <div class="ph"><div class="pt">Acompanhamento de Campo</div><div class="ps">Registros de visitas, oportunidades e próximos passos</div></div>
-      <div class="card">
-        <div class="ct">Novo Registro</div>
         <div class="g2">
-          <div class="fg"><label class="fl">Vendedor</label><input id="caVend" class="inp" placeholder="Nome do vendedor"></div>
-          <div class="fg"><label class="fl">Data</label><input type="date" id="caData" class="inp"></div>
-          <div class="fg"><label class="fl">Cidade</label><input id="caCidade" class="inp" placeholder="Cidade visitada"></div>
-          <div class="fg"><label class="fl">Cliente</label><input id="caCliente" class="inp" placeholder="Estabelecimento"></div>
+          <div class="card"><div class="ct">Diagnóstico Rápido</div><div id="diagBox"><div class="empty">Lance os dados do BI.</div></div></div>
+          <div class="card"><div class="ct">Alertas Preditivos</div><div id="alertBox"><div class="empty">Nenhum alerta.</div></div></div>
         </div>
-        <div class="fg"><label class="fl">Observações, oportunidades e próximos passos</label><textarea id="caObs" class="inp" placeholder="Descreva o que foi visto, o que foi combinado e o que fazer na próxima visita..."></textarea></div>
-        <button class="btn bp" onclick="salvarCampo()">Salvar Registro</button>
+        <div class="card"><div class="ct">Ranking da Equipe — Score Geral</div><div id="rankBox"><div class="empty">Lance os dados do BI.</div></div></div>
       </div>
-      <div id="listaCampo"></div>
-    </div>
-
-    <!-- PLANO -->
-    <div id="plano" class="pg">
-      <div class="ph"><div class="pt">Plano de Ação</div><div class="ps">Estratégias, ações corretivas e acompanhamento</div></div>
-      <div class="card">
-        <div class="ct">Novo Plano</div>
-        <div class="g2">
-          <div class="fg"><label class="fl">Problema identificado</label><input id="plProb" class="inp" placeholder="Descreva o problema"></div>
-          <div class="fg"><label class="fl">Estratégia / Solução</label><input id="plSol" class="inp" placeholder="Como vai resolver"></div>
-          <div class="fg"><label class="fl">Responsável</label><input id="plResp" class="inp" placeholder="Vendedor ou equipe"></div>
-          <div class="fg"><label class="fl">Prazo</label><input type="date" id="plPrazo" class="inp"></div>
-          <div class="fg"><label class="fl">Prioridade</label><select id="plPrio" class="inp"><option>Alta</option><option>Média</option><option>Baixa</option></select></div>
-          <div class="fg"><label class="fl">Status</label><select id="plStatus" class="inp"><option>Em andamento</option><option>Concluído</option><option>Pendente</option></select></div>
+  
+      <!-- SAUDE DA REGIONAL -->
+      <div id="saude" class="pg">
+        <div class="ph"><div class="pt">Saúde da Regional</div><div class="ps">Índice geral de performance — Norte Fluminense</div></div>
+        <div id="saudeBox"><div class="empty">Lance os dados do BI para ver a saúde da regional.</div></div>
+      </div>
+  
+      <!-- LANÇAR BI -->
+      <div id="bi" class="pg">
+        <div class="ph"><div class="pt">Lançar BI</div><div class="ps">Preencha semanalmente com os dados do Power BI</div></div>
+        <div class="bn bn-cy"><span>ℹ</span><div>Use os dados da <strong>Página 1</strong> do BI para a Regional e Vendedores. <strong>Página 6</strong> para Positivação. <strong>Página 7</strong> para Churn. Preencha na mesma ordem do BI.</div></div>
+        <div class="card">
+          <div class="ct">Regional Norte Fluminense — Página 1</div>
+          <div class="g4">
+            <div class="fg"><label class="fl">% OBJ FAT</label><input id="rObjFat" class="inp" placeholder="ex: 69,16"></div>
+            <div class="fg"><label class="fl">% FAT Real</label><input id="rFat" class="inp" placeholder="ex: 60,53"></div>
+            <div class="fg"><label class="fl">% PROJ</label><input id="rProj" class="inp" placeholder="ex: 87,52"></div>
+            <div class="fg"><label class="fl">OBJ % Margem</label><input id="rObjMarg" class="inp" placeholder="ex: 17,32"></div>
+            <div class="fg"><label class="fl">% Margem Real</label><input id="rMarg" class="inp" placeholder="ex: 15,24"></div>
+            <div class="fg"><label class="fl">OBJ Posit</label><input id="rObjPos" class="inp" placeholder="ex: 935"></div>
+            <div class="fg"><label class="fl">Real Posit</label><input id="rRealPos" class="inp" placeholder="ex: 732"></div>
+            <div class="fg"><label class="fl">Saldo Posit</label><input id="rSaldoPos" class="inp" placeholder="ex: -203"></div>
+            <div class="fg"><label class="fl">DEV R$</label><input id="rDevR" class="inp" placeholder="ex: -13729"></div>
+            <div class="fg"><label class="fl">% DEV</label><input id="rDevPct" class="inp" placeholder="ex: -0,49"></div>
+            <div class="fg"><label class="fl">SKU/CLI</label><input id="rSku" class="inp" placeholder="ex: 13,54"></div>
+            <div class="fg"><label class="fl">Venda Média</label><input id="rVendaMedia" class="inp" placeholder="ex: 3836"></div>
+            <div class="fg"><label class="fl">Preço/KG</label><input id="rPrecoKg" class="inp" placeholder="ex: 11,96"></div>
+          </div>
         </div>
-        <div class="fg"><label class="fl">Detalhamento completo</label><textarea id="plObs" class="inp" placeholder="Descreva em detalhes o plano, as ações e o resultado esperado..."></textarea></div>
-        <button class="btn bp" onclick="salvarPlano()">Salvar Plano</button>
-      </div>
-      <div id="listaPlanos"></div>
-    </div>
-
-    <!-- CLIENTES -->
-    <div id="clientes" class="pg">
-      <div class="ph"><div class="pt">Clientes Estratégicos</div><div class="ps">Monitoramento de clientes prioritários da regional</div></div>
-      <div class="card">
-        <div class="ct">Novo Cliente</div>
-        <div class="g2">
-          <div class="fg"><label class="fl">Nome</label><input id="cliNome" class="inp" placeholder="Nome do estabelecimento"></div>
-          <div class="fg"><label class="fl">Cidade</label><input id="cliCidade" class="inp" placeholder="Cidade"></div>
-          <div class="fg"><label class="fl">Vendedor responsável</label><input id="cliVend" class="inp" placeholder="Nome do vendedor"></div>
-          <div class="fg"><label class="fl">Status</label><select id="cliStatus" class="inp"><option value="">Selecione...</option><option>Estratégico</option><option>Expansão</option><option>Em risco</option><option>Oportunidade</option><option>Ativo</option></select></div>
+        <div class="card">
+          <div class="ct">Por Vendedor — Página 1 (mesma ordem do BI)</div>
+          <div id="fVendedores"></div>
+          <button class="btn bp no-print" style="margin-top:14px" onclick="salvarBI()">💾 Salvar BI Regional e Vendedores</button>
         </div>
-        <div class="fg"><label class="fl">Observações</label><textarea id="cliObs" class="inp" placeholder="Anotações, histórico e próximas ações para este cliente..."></textarea></div>
-        <button class="btn bp" onclick="salvarCliente()">Salvar Cliente</button>
-      </div>
-      <div id="listaClientes"></div>
-    </div>
-
-    <!-- ANIVERSÁRIOS -->
-    <div id="aniversarios" class="pg">
-      <div class="ph"><div class="pt">Aniversariantes</div><div class="ps">Relacionamento que fideliza e diferencia</div></div>
-      <div id="anivHoje"></div>
-      <div class="card">
-        <div class="ct">Cadastrar</div>
-        <div class="g2">
-          <div class="fg"><label class="fl">Nome</label><input id="aNome" class="inp" placeholder="Nome completo"></div>
-          <div class="fg"><label class="fl">Data de Aniversário</label><input type="date" id="aData" class="inp"></div>
-          <div class="fg"><label class="fl">Telefone (WhatsApp)</label><input id="aTel" class="inp" placeholder="(xx) xxxxx-xxxx"></div>
-          <div class="fg"><label class="fl">E-mail</label><input id="aEmail" class="inp" placeholder="email@email.com"></div>
-          <div class="fg"><label class="fl">Tipo</label><select id="aTipo" class="inp"><option>Vendedor</option><option>Cliente</option><option>Outro</option></select></div>
-          <div class="fg"><label class="fl">Mensagem personalizada (opcional)</label><input id="aMsg" class="inp" placeholder="Deixe em branco para mensagem padrão"></div>
-        </div>
-        <button class="btn bp" onclick="salvarAniv()">Salvar</button>
-      </div>
-      <div id="listaAniv"></div>
-    </div>
-
-    <!-- RELATÓRIO -->
-    <div id="relatorio" class="pg">
-      <div class="ph">
-        <div><div class="pt">Relatório Executivo</div><div class="ps">Diagnóstico completo, profundo e profissional da regional</div></div>
-        <div style="display:flex;gap:8px;margin-top:10px" class="no-print">
-          <button class="btn bp" onclick="gerarRelatorio()">Gerar Relatório</button>
-          <button class="btn bs" onclick="window.print()">🖨 Imprimir</button>
-          <button class="btn bs" onclick="copiarRelatorio()">📋 Copiar</button>
+        <div class="card">
+          <div class="ct">Positivação e Churn — Páginas 6 e 7</div>
+          <div id="fPosChurn"></div>
+          <button class="btn bs no-print" style="margin-top:12px" onclick="salvarPosChurn()">💾 Salvar Positivação e Churn</button>
         </div>
       </div>
-      <div id="relArea"><div class="empty">Clique em "Gerar Relatório" para criar o relatório executivo completo.</div></div>
-    </div>
-
-    <!-- PERFIL -->
-    <div id="perfil" class="pg">
-      <div class="ph"><div class="pt">Perfil</div><div class="ps">Configurações do sistema</div></div>
-      <div class="card" style="max-width:500px">
-        <div class="fg"><label class="fl">Empresa</label><input id="pfEmp" class="inp" placeholder="Nome da empresa"></div>
-        <div class="fg"><label class="fl">Regional</label><input id="pfReg" class="inp" placeholder="Ex: Norte Fluminense"></div>
-        <div class="fg"><label class="fl">Supervisor</label><input id="pfSup" class="inp" placeholder="Seu nome completo"></div>
-        <div class="fg"><label class="fl">Cargo</label><input id="pfCargo" class="inp" placeholder="Ex: Supervisor Comercial Jr"></div>
-        <div class="fg"><label class="fl">Assinatura das mensagens</label><input id="pfAss" class="inp" placeholder="Ex: Leandro Felipe · Supervisor Comercial Arcofoods"></div>
-        <div class="fg"><label class="fl">Contexto da Regional (para relatórios)</label><textarea id="pfCtx" class="inp" placeholder="Ex: Região dos Lagos — alta sazonalidade de outubro a março..."></textarea></div>
-        <div style="display:flex;gap:8px">
-          <button class="btn bp" onclick="salvarPerfil()">Salvar Perfil</button>
-          <button class="btn bd" onclick="resetar()">Resetar Dados</button>
+  
+      <!-- COMPARATIVO -->
+      <div id="comparativo" class="pg">
+        <div class="ph"><div class="pt">Comparativo Mensal</div><div class="ps">Evolução completa mês a mês — todos os indicadores</div></div>
+        <div id="compBox"><div class="empty">Lance o BI pelo menos duas vezes para ver o comparativo.</div></div>
+      </div>
+  
+      <!-- EQUIPE -->
+      <div id="equipe" class="pg">
+        <div class="ph"><div class="pt">Análise da Equipe</div><div class="ps">Diagnóstico individual com alertas preditivos</div></div>
+        <div id="equipeBox"><div class="empty">Lance os dados do BI.</div></div>
+      </div>
+  
+      <!-- SCORES -->
+      <div id="scores" class="pg">
+        <div class="ph"><div class="pt">Score dos Vendedores</div><div class="ps">Índice de performance 0 a 100 — visão instantânea da equipe</div></div>
+        <div class="bn bn-cy"><span>★</span><div>O Score combina 5 indicadores: Projeção (30pts), Margem (20pts), Positivação (20pts), Devolução (20pts) e Churn (10pts). Acima de 70 é saudável. Entre 50 e 70 é atenção. Abaixo de 50 é crítico.</div></div>
+        <div id="scoresBox"><div class="empty">Lance os dados do BI para ver os scores.</div></div>
+      </div>
+  
+      <!-- POSITIVAÇÃO -->
+      <div id="positivacao" class="pg">
+        <div class="ph"><div class="pt">Positivação</div><div class="ps">Clientes positivados e não positivados por vendedor</div></div>
+        <div id="posBox"><div class="empty">Lance os dados de positivação.</div></div>
+      </div>
+  
+      <!-- CHURN -->
+      <div id="churn" class="pg">
+        <div class="ph"><div class="pt">Churn</div><div class="ps">Taxa de perda de clientes — quem está perdendo e por quê</div></div>
+        <div id="churnBox"><div class="empty">Lance os dados de churn.</div></div>
+      </div>
+  
+      <!-- CAMPO -->
+      <div id="campo" class="pg">
+        <div class="ph"><div class="pt">Acompanhamento de Campo</div><div class="ps">Registros de visitas, oportunidades e próximos passos</div></div>
+        <div class="card">
+          <div class="ct">Novo Registro</div>
+          <div class="g2">
+            <div class="fg"><label class="fl">Vendedor</label><input id="caVend" class="inp" placeholder="Nome do vendedor"></div>
+            <div class="fg"><label class="fl">Data</label><input type="date" id="caData" class="inp"></div>
+            <div class="fg"><label class="fl">Cidade</label><input id="caCidade" class="inp" placeholder="Cidade visitada"></div>
+            <div class="fg"><label class="fl">Cliente</label><input id="caCliente" class="inp" placeholder="Estabelecimento"></div>
+          </div>
+          <div class="fg"><label class="fl">Observações, oportunidades e próximos passos</label><textarea id="caObs" class="inp" placeholder="Descreva o que foi visto, o que foi combinado e o que fazer na próxima visita..."></textarea></div>
+          <button class="btn bp" onclick="salvarCampo()">Salvar Registro</button>
+        </div>
+        <div id="listaCampo"></div>
+      </div>
+  
+      <!-- PLANO -->
+      <div id="plano" class="pg">
+        <div class="ph"><div class="pt">Plano de Ação</div><div class="ps">Estratégias, ações corretivas e acompanhamento</div></div>
+        <div class="card">
+          <div class="ct">Novo Plano</div>
+          <div class="g2">
+            <div class="fg"><label class="fl">Problema identificado</label><input id="plProb" class="inp" placeholder="Descreva o problema"></div>
+            <div class="fg"><label class="fl">Estratégia / Solução</label><input id="plSol" class="inp" placeholder="Como vai resolver"></div>
+            <div class="fg"><label class="fl">Responsável</label><input id="plResp" class="inp" placeholder="Vendedor ou equipe"></div>
+            <div class="fg"><label class="fl">Prazo</label><input type="date" id="plPrazo" class="inp"></div>
+            <div class="fg"><label class="fl">Prioridade</label><select id="plPrio" class="inp"><option>Alta</option><option>Média</option><option>Baixa</option></select></div>
+            <div class="fg"><label class="fl">Status</label><select id="plStatus" class="inp"><option>Em andamento</option><option>Concluído</option><option>Pendente</option></select></div>
+          </div>
+          <div class="fg"><label class="fl">Detalhamento completo</label><textarea id="plObs" class="inp" placeholder="Descreva em detalhes o plano, as ações e o resultado esperado..."></textarea></div>
+          <button class="btn bp" onclick="salvarPlano()">Salvar Plano</button>
+        </div>
+        <div id="listaPlanos"></div>
+      </div>
+  
+      <!-- CLIENTES -->
+      <div id="clientes" class="pg">
+        <div class="ph"><div class="pt">Clientes Estratégicos</div><div class="ps">Monitoramento de clientes prioritários da regional</div></div>
+        <div class="card">
+          <div class="ct">Novo Cliente</div>
+          <div class="g2">
+            <div class="fg"><label class="fl">Nome</label><input id="cliNome" class="inp" placeholder="Nome do estabelecimento"></div>
+            <div class="fg"><label class="fl">Cidade</label><input id="cliCidade" class="inp" placeholder="Cidade"></div>
+            <div class="fg"><label class="fl">Vendedor responsável</label><input id="cliVend" class="inp" placeholder="Nome do vendedor"></div>
+            <div class="fg"><label class="fl">Status</label><select id="cliStatus" class="inp"><option value="">Selecione...</option><option>Estratégico</option><option>Expansão</option><option>Em risco</option><option>Oportunidade</option><option>Ativo</option></select></div>
+          </div>
+          <div class="fg"><label class="fl">Observações</label><textarea id="cliObs" class="inp" placeholder="Anotações, histórico e próximas ações para este cliente..."></textarea></div>
+          <button class="btn bp" onclick="salvarCliente()">Salvar Cliente</button>
+        </div>
+        <div id="listaClientes"></div>
+      </div>
+  
+      <!-- ANIVERSÁRIOS -->
+      <div id="aniversarios" class="pg">
+        <div class="ph"><div class="pt">Aniversariantes</div><div class="ps">Relacionamento que fideliza e diferencia</div></div>
+        <div id="anivHoje"></div>
+        <div class="card">
+          <div class="ct">Cadastrar</div>
+          <div class="g2">
+            <div class="fg"><label class="fl">Nome</label><input id="aNome" class="inp" placeholder="Nome completo"></div>
+            <div class="fg"><label class="fl">Data de Aniversário</label><input type="date" id="aData" class="inp"></div>
+            <div class="fg"><label class="fl">Telefone (WhatsApp)</label><input id="aTel" class="inp" placeholder="(xx) xxxxx-xxxx"></div>
+            <div class="fg"><label class="fl">E-mail</label><input id="aEmail" class="inp" placeholder="email@email.com"></div>
+            <div class="fg"><label class="fl">Tipo</label><select id="aTipo" class="inp"><option>Vendedor</option><option>Cliente</option><option>Outro</option></select></div>
+            <div class="fg"><label class="fl">Mensagem personalizada (opcional)</label><input id="aMsg" class="inp" placeholder="Deixe em branco para mensagem padrão"></div>
+          </div>
+          <button class="btn bp" onclick="salvarAniv()">Salvar</button>
+        </div>
+        <div id="listaAniv"></div>
+      </div>
+  
+      <!-- RELATÓRIO -->
+      <div id="relatorio" class="pg">
+        <div class="ph">
+          <div><div class="pt">Relatório Executivo</div><div class="ps">Diagnóstico completo, profundo e profissional da regional</div></div>
+          <div style="display:flex;gap:8px;margin-top:10px" class="no-print">
+            <button class="btn bp" onclick="gerarRelatorio()">Gerar Relatório</button>
+            <button class="btn bs" onclick="window.print()">🖨 Imprimir</button>
+            <button class="btn bs" onclick="copiarRelatorio()">📋 Copiar</button>
+          </div>
+        </div>
+        <div id="relArea"><div class="empty">Clique em "Gerar Relatório" para criar o relatório executivo completo.</div></div>
+      </div>
+  
+      <!-- PERFIL -->
+      <div id="perfil" class="pg">
+        <div class="ph"><div class="pt">Perfil</div><div class="ps">Configurações do sistema</div></div>
+        <div class="card" style="max-width:500px">
+          <div class="fg"><label class="fl">Empresa</label><input id="pfEmp" class="inp" placeholder="Nome da empresa"></div>
+          <div class="fg"><label class="fl">Regional</label><input id="pfReg" class="inp" placeholder="Ex: Norte Fluminense"></div>
+          <div class="fg"><label class="fl">Supervisor</label><input id="pfSup" class="inp" placeholder="Seu nome completo"></div>
+          <div class="fg"><label class="fl">Cargo</label><input id="pfCargo" class="inp" placeholder="Ex: Supervisor Comercial Jr"></div>
+          <div class="fg"><label class="fl">Assinatura das mensagens</label><input id="pfAss" class="inp" placeholder="Ex: Leandro Felipe · Supervisor Comercial Arcofoods"></div>
+          <div class="fg"><label class="fl">Contexto da Regional (para relatórios)</label><textarea id="pfCtx" class="inp" placeholder="Ex: Região dos Lagos — alta sazonalidade de outubro a março..."></textarea></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn bp" onclick="salvarPerfil()">Salvar Perfil</button>
+            <button class="btn bd" onclick="resetar()">Resetar Dados</button>
+          </div>
         </div>
       </div>
+  
+      <!-- TUTORIAL -->
+      <div id="tutorial" class="pg">
+        <div class="ph"><div class="pt">Tutorial</div><div class="ps">Aprenda a usar o GERENCION do zero ao avançado</div></div>
+        <div class="bn bn-cy"><span>📘</span><div>Leia o tutorial uma vez do início ao fim. Depois use como consulta rápida sempre que tiver dúvida.</div></div>
+  
+        <div class="tut-step">
+          <div class="tut-num">1</div>
+          <div class="tut-titulo">Primeiro acesso — Configure seu Perfil</div>
+          <div class="tut-desc">Antes de usar qualquer função, vá em <strong>⚙ Perfil</strong> no menu lateral e preencha: Empresa, Regional, Supervisor, Cargo e Assinatura. Isso vai aparecer automaticamente em todos os relatórios e mensagens. Clique em <strong>Salvar Perfil</strong>.</div>
+          <div class="tut-dica">💡 A assinatura aparece nas mensagens de aniversário enviadas pelo WhatsApp e E-mail. Coloque seu nome e cargo completos.</div>
+        </div>
+  
+        <div class="tut-step">
+          <div class="tut-num">2</div>
+          <div class="tut-titulo">Lançar o BI — O coração do sistema</div>
+          <div class="tut-desc">Toda semana, abra o Power BI da Arcofoods ao lado e vá em <strong>⊕ Lançar BI</strong>. Preencha:<br><br>
+          <strong>Etapa 1 — Regional:</strong> Pegue os dados da Página 1 do BI (linha Norte Fluminense) e preencha todos os campos na mesma ordem.<br><br>
+          <strong>Etapa 2 — Vendedores:</strong> Ainda na Página 1, preencha os dados de cada vendedor. A ordem dos campos é idêntica ao BI.<br><br>
+          <strong>Etapa 3 — Positivação e Churn:</strong> Vá para a Página 6 do BI (clientes positivados e não positivados) e a Página 7 (churn rate). Preencha por vendedor.<br><br>
+          Ao final, clique em <strong>💾 Salvar BI</strong> e depois <strong>💾 Salvar Positivação e Churn</strong>.</div>
+          <div class="tut-dica">💡 Se um campo não aparecer no BI para aquele vendedor, deixe em branco. O sistema interpreta campo vazio como zero.</div>
+        </div>
+  
+        <div class="tut-step">
+          <div class="tut-num">3</div>
+          <div class="tut-titulo">Dashboard — Sua visão geral em segundos</div>
+          <div class="tut-desc">Após lançar o BI, o Dashboard mostra automaticamente:<br><br>
+          <strong>Projeção Regional:</strong> Se está verde (acima de 85%), amarelo (70-85%) ou vermelho (abaixo de 70%).<br><br>
+          <strong>Saldo Positivação:</strong> Quantos clientes estão faltando ser positivados em relação à meta.<br><br>
+          <strong>% Devolução:</strong> Se passou de 0,65% já é alerta vermelho.<br><br>
+          <strong>Saúde da Regional:</strong> O score geral da regional de 0 a 100.<br><br>
+          <strong>Alertas Preditivos:</strong> O sistema identifica padrões e avisa antes do problema virar crise.</div>
+          <div class="tut-dica">💡 Verifique o Dashboard toda manhã. É sua bússola diária.</div>
+        </div>
+  
+        <div class="tut-step">
+          <div class="tut-num">4</div>
+          <div class="tut-titulo">Score dos Vendedores — Quem precisa de atenção agora</div>
+          <div class="tut-desc">O Score é uma nota de 0 a 100 que combina 5 indicadores de cada vendedor:<br><br>
+          <strong>Projeção (30 pontos):</strong> O mais importante. Se está batendo a meta.<br>
+          <strong>Margem (20 pontos):</strong> Se está vendendo com qualidade, não só em quantidade.<br>
+          <strong>Positivação (20 pontos):</strong> Se está ativando os clientes da carteira.<br>
+          <strong>Devolução (20 pontos):</strong> Se está tendo devoluções acima do limite.<br>
+          <strong>Churn (10 pontos):</strong> Se está perdendo clientes.<br><br>
+          <strong>Acima de 70:</strong> Verde — vendedor saudável.<br>
+          <strong>Entre 50 e 70:</strong> Amarelo — precisa de atenção.<br>
+          <strong>Abaixo de 50:</strong> Vermelho — intervenção urgente.</div>
+          <div class="tut-dica">💡 Use o Score para decidir quem você visita primeiro em campo. Comece sempre pelo vermelho.</div>
+        </div>
+  
+        <div class="tut-step">
+          <div class="tut-num">5</div>
+          <div class="tut-titulo">Análise da Equipe — Diagnóstico individual profundo</div>
+          <div class="tut-desc">Aqui você vê cada vendedor com todos os indicadores e um diagnóstico automático. O sistema identifica:<br><br>
+          — Projeção abaixo da meta e o quanto falta<br>
+          — Margem abaixo do objetivo<br>
+          — Devolução acima do limite<br>
+          — Churn alto — clientes sendo perdidos<br>
+          — Positivação baixa — clientes inativos<br><br>
+          Para cada problema identificado, o botão <strong>+ Plano</strong> abre o Plano de Ação já com o nome do vendedor preenchido.</div>
+          <div class="tut-dica">💡 Use esta tela antes de ir a campo. Ela te diz exatamente o que conversar com cada vendedor.</div>
+        </div>
+  
+        <div class="tut-step">
+          <div class="tut-num">6</div>
+          <div class="tut-titulo">Comparativo Mensal — A evolução que impressiona</div>
+          <div class="tut-desc">O Comparativo mostra todos os indicadores do mês atual vs o mês anterior, com setas coloridas:<br><br>
+          <strong>↑ Verde:</strong> Melhorou<br>
+          <strong>↓ Vermelho:</strong> Piorou<br>
+          <strong>→ Cinza:</strong> Estável<br><br>
+          Este relatório só funciona após o segundo lançamento do BI. Quando você lança um novo BI, o sistema salva o anterior automaticamente.</div>
+          <div class="tut-dica">💡 Leve este comparativo para todas as reuniões. Mostra evolução com dados concretos.</div>
+        </div>
+  
+        <div class="tut-step">
+          <div class="tut-num">7</div>
+          <div class="tut-titulo">Plano de Ação — O que você está fazendo para resolver</div>
+          <div class="tut-desc">Sempre que identificar um problema, crie um Plano de Ação. Preencha:<br><br>
+          <strong>Problema:</strong> O que está errado<br>
+          <strong>Estratégia:</strong> Como vai resolver<br>
+          <strong>Responsável:</strong> Quem vai executar<br>
+          <strong>Prazo:</strong> Quando vai estar resolvido<br>
+          <strong>Prioridade:</strong> Alta, Média ou Baixa<br>
+          <strong>Status:</strong> Em andamento, Concluído ou Pendente<br><br>
+          Os planos aparecem automaticamente no Relatório Executivo.</div>
+          <div class="tut-dica">💡 Plano de Ação é seu diferencial. Qualquer supervisor vê o problema. Poucos têm o plano para resolver.</div>
+        </div>
+  
+        <div class="tut-step">
+          <div class="tut-num">8</div>
+          <div class="tut-titulo">Relatório Executivo — Sua apresentação para a diretoria</div>
+          <div class="tut-desc">Clique em <strong>📄 Relatório Executivo</strong> e depois em <strong>Gerar Relatório</strong>. O sistema cria automaticamente um relatório completo com:<br><br>
+          — Visão geral da regional em texto executivo<br>
+          — Análise individual de cada vendedor<br>
+          — Positivação e churn com diagnóstico<br>
+          — Planos de ação em andamento<br>
+          — Próximas ações prioritárias<br><br>
+          <strong>Para imprimir:</strong> Clique em 🖨 Imprimir<br>
+          <strong>Para e-mail/WhatsApp:</strong> Clique em 📋 Copiar e cole onde quiser</div>
+          <div class="tut-dica">💡 Gere o relatório antes de toda reunião. É sua apresentação profissional pronta.</div>
+        </div>
+  
+        <div class="tut-step">
+          <div class="tut-num">9</div>
+          <div class="tut-titulo">Aniversariantes — Relacionamento que fideliza</div>
+          <div class="tut-desc">Cadastre todos os vendedores e clientes estratégicos. O sistema:<br><br>
+          — Avisa quando alguém faz aniversário hoje<br>
+          — Mostra quantos dias faltam para cada aniversário<br>
+          — Gera a mensagem automaticamente com sua assinatura<br>
+          — Abre o WhatsApp direto com a mensagem pronta<br><br>
+          Uma mensagem de aniversário do supervisor cria um vínculo que nenhum número de BI cria.</div>
+          <div class="tut-dica">💡 Cadastre primeiro os vendedores da sua equipe. Depois os clientes estratégicos.</div>
+        </div>
+  
+        <div class="tut-step">
+          <div class="tut-num">10</div>
+          <div class="tut-titulo">Rotina semanal recomendada</div>
+          <div class="tut-desc">
+          <strong>Segunda-feira:</strong> Abra o Dashboard. Verifique os alertas. Planeje a semana.<br><br>
+          <strong>Após atualização do BI:</strong> Lance os dados em Lançar BI. O Dashboard atualiza automaticamente.<br><br>
+          <strong>Antes de ir a campo:</strong> Consulte Análise da Equipe. Saiba o que conversar com cada vendedor.<br><br>
+          <strong>Após cada visita:</strong> Registre em Campo. Nunca deixe para depois.<br><br>
+          <strong>Sexta-feira:</strong> Gere o Relatório Executivo. Revise os Planos de Ação.<br><br>
+          <strong>Antes de reuniões:</strong> Gere o Relatório e leve impresso ou no tablet.</div>
+          <div class="tut-dica">💡 Consistência é tudo. O sistema só é poderoso se for alimentado regularmente.</div>
+        </div>
+      </div>
+  
     </div>
-
-    <!-- TUTORIAL -->
-    <div id="tutorial" class="pg">
-      <div class="ph"><div class="pt">Tutorial</div><div class="ps">Aprenda a usar o GERENCION do zero ao avançado</div></div>
-      <div class="bn bn-cy"><span>📘</span><div>Leia o tutorial uma vez do início ao fim. Depois use como consulta rápida sempre que tiver dúvida.</div></div>
-
-      <div class="tut-step">
-        <div class="tut-num">1</div>
-        <div class="tut-titulo">Primeiro acesso — Configure seu Perfil</div>
-        <div class="tut-desc">Antes de usar qualquer função, vá em <strong>⚙ Perfil</strong> no menu lateral e preencha: Empresa, Regional, Supervisor, Cargo e Assinatura. Isso vai aparecer automaticamente em todos os relatórios e mensagens. Clique em <strong>Salvar Perfil</strong>.</div>
-        <div class="tut-dica">💡 A assinatura aparece nas mensagens de aniversário enviadas pelo WhatsApp e E-mail. Coloque seu nome e cargo completos.</div>
-      </div>
-
-      <div class="tut-step">
-        <div class="tut-num">2</div>
-        <div class="tut-titulo">Lançar o BI — O coração do sistema</div>
-        <div class="tut-desc">Toda semana, abra o Power BI da Arcofoods ao lado e vá em <strong>⊕ Lançar BI</strong>. Preencha:<br><br>
-        <strong>Etapa 1 — Regional:</strong> Pegue os dados da Página 1 do BI (linha Norte Fluminense) e preencha todos os campos na mesma ordem.<br><br>
-        <strong>Etapa 2 — Vendedores:</strong> Ainda na Página 1, preencha os dados de cada vendedor. A ordem dos campos é idêntica ao BI.<br><br>
-        <strong>Etapa 3 — Positivação e Churn:</strong> Vá para a Página 6 do BI (clientes positivados e não positivados) e a Página 7 (churn rate). Preencha por vendedor.<br><br>
-        Ao final, clique em <strong>💾 Salvar BI</strong> e depois <strong>💾 Salvar Positivação e Churn</strong>.</div>
-        <div class="tut-dica">💡 Se um campo não aparecer no BI para aquele vendedor, deixe em branco. O sistema interpreta campo vazio como zero.</div>
-      </div>
-
-      <div class="tut-step">
-        <div class="tut-num">3</div>
-        <div class="tut-titulo">Dashboard — Sua visão geral em segundos</div>
-        <div class="tut-desc">Após lançar o BI, o Dashboard mostra automaticamente:<br><br>
-        <strong>Projeção Regional:</strong> Se está verde (acima de 85%), amarelo (70-85%) ou vermelho (abaixo de 70%).<br><br>
-        <strong>Saldo Positivação:</strong> Quantos clientes estão faltando ser positivados em relação à meta.<br><br>
-        <strong>% Devolução:</strong> Se passou de 0,65% já é alerta vermelho.<br><br>
-        <strong>Saúde da Regional:</strong> O score geral da regional de 0 a 100.<br><br>
-        <strong>Alertas Preditivos:</strong> O sistema identifica padrões e avisa antes do problema virar crise.</div>
-        <div class="tut-dica">💡 Verifique o Dashboard toda manhã. É sua bússola diária.</div>
-      </div>
-
-      <div class="tut-step">
-        <div class="tut-num">4</div>
-        <div class="tut-titulo">Score dos Vendedores — Quem precisa de atenção agora</div>
-        <div class="tut-desc">O Score é uma nota de 0 a 100 que combina 5 indicadores de cada vendedor:<br><br>
-        <strong>Projeção (30 pontos):</strong> O mais importante. Se está batendo a meta.<br>
-        <strong>Margem (20 pontos):</strong> Se está vendendo com qualidade, não só em quantidade.<br>
-        <strong>Positivação (20 pontos):</strong> Se está ativando os clientes da carteira.<br>
-        <strong>Devolução (20 pontos):</strong> Se está tendo devoluções acima do limite.<br>
-        <strong>Churn (10 pontos):</strong> Se está perdendo clientes.<br><br>
-        <strong>Acima de 70:</strong> Verde — vendedor saudável.<br>
-        <strong>Entre 50 e 70:</strong> Amarelo — precisa de atenção.<br>
-        <strong>Abaixo de 50:</strong> Vermelho — intervenção urgente.</div>
-        <div class="tut-dica">💡 Use o Score para decidir quem você visita primeiro em campo. Comece sempre pelo vermelho.</div>
-      </div>
-
-      <div class="tut-step">
-        <div class="tut-num">5</div>
-        <div class="tut-titulo">Análise da Equipe — Diagnóstico individual profundo</div>
-        <div class="tut-desc">Aqui você vê cada vendedor com todos os indicadores e um diagnóstico automático. O sistema identifica:<br><br>
-        — Projeção abaixo da meta e o quanto falta<br>
-        — Margem abaixo do objetivo<br>
-        — Devolução acima do limite<br>
-        — Churn alto — clientes sendo perdidos<br>
-        — Positivação baixa — clientes inativos<br><br>
-        Para cada problema identificado, o botão <strong>+ Plano</strong> abre o Plano de Ação já com o nome do vendedor preenchido.</div>
-        <div class="tut-dica">💡 Use esta tela antes de ir a campo. Ela te diz exatamente o que conversar com cada vendedor.</div>
-      </div>
-
-      <div class="tut-step">
-        <div class="tut-num">6</div>
-        <div class="tut-titulo">Comparativo Mensal — A evolução que impressiona</div>
-        <div class="tut-desc">O Comparativo mostra todos os indicadores do mês atual vs o mês anterior, com setas coloridas:<br><br>
-        <strong>↑ Verde:</strong> Melhorou<br>
-        <strong>↓ Vermelho:</strong> Piorou<br>
-        <strong>→ Cinza:</strong> Estável<br><br>
-        Este relatório só funciona após o segundo lançamento do BI. Quando você lança um novo BI, o sistema salva o anterior automaticamente.</div>
-        <div class="tut-dica">💡 Leve este comparativo para todas as reuniões. Mostra evolução com dados concretos.</div>
-      </div>
-
-      <div class="tut-step">
-        <div class="tut-num">7</div>
-        <div class="tut-titulo">Plano de Ação — O que você está fazendo para resolver</div>
-        <div class="tut-desc">Sempre que identificar um problema, crie um Plano de Ação. Preencha:<br><br>
-        <strong>Problema:</strong> O que está errado<br>
-        <strong>Estratégia:</strong> Como vai resolver<br>
-        <strong>Responsável:</strong> Quem vai executar<br>
-        <strong>Prazo:</strong> Quando vai estar resolvido<br>
-        <strong>Prioridade:</strong> Alta, Média ou Baixa<br>
-        <strong>Status:</strong> Em andamento, Concluído ou Pendente<br><br>
-        Os planos aparecem automaticamente no Relatório Executivo.</div>
-        <div class="tut-dica">💡 Plano de Ação é seu diferencial. Qualquer supervisor vê o problema. Poucos têm o plano para resolver.</div>
-      </div>
-
-      <div class="tut-step">
-        <div class="tut-num">8</div>
-        <div class="tut-titulo">Relatório Executivo — Sua apresentação para a diretoria</div>
-        <div class="tut-desc">Clique em <strong>📄 Relatório Executivo</strong> e depois em <strong>Gerar Relatório</strong>. O sistema cria automaticamente um relatório completo com:<br><br>
-        — Visão geral da regional em texto executivo<br>
-        — Análise individual de cada vendedor<br>
-        — Positivação e churn com diagnóstico<br>
-        — Planos de ação em andamento<br>
-        — Próximas ações prioritárias<br><br>
-        <strong>Para imprimir:</strong> Clique em 🖨 Imprimir<br>
-        <strong>Para e-mail/WhatsApp:</strong> Clique em 📋 Copiar e cole onde quiser</div>
-        <div class="tut-dica">💡 Gere o relatório antes de toda reunião. É sua apresentação profissional pronta.</div>
-      </div>
-
-      <div class="tut-step">
-        <div class="tut-num">9</div>
-        <div class="tut-titulo">Aniversariantes — Relacionamento que fideliza</div>
-        <div class="tut-desc">Cadastre todos os vendedores e clientes estratégicos. O sistema:<br><br>
-        — Avisa quando alguém faz aniversário hoje<br>
-        — Mostra quantos dias faltam para cada aniversário<br>
-        — Gera a mensagem automaticamente com sua assinatura<br>
-        — Abre o WhatsApp direto com a mensagem pronta<br><br>
-        Uma mensagem de aniversário do supervisor cria um vínculo que nenhum número de BI cria.</div>
-        <div class="tut-dica">💡 Cadastre primeiro os vendedores da sua equipe. Depois os clientes estratégicos.</div>
-      </div>
-
-      <div class="tut-step">
-        <div class="tut-num">10</div>
-        <div class="tut-titulo">Rotina semanal recomendada</div>
-        <div class="tut-desc">
-        <strong>Segunda-feira:</strong> Abra o Dashboard. Verifique os alertas. Planeje a semana.<br><br>
-        <strong>Após atualização do BI:</strong> Lance os dados em Lançar BI. O Dashboard atualiza automaticamente.<br><br>
-        <strong>Antes de ir a campo:</strong> Consulte Análise da Equipe. Saiba o que conversar com cada vendedor.<br><br>
-        <strong>Após cada visita:</strong> Registre em Campo. Nunca deixe para depois.<br><br>
-        <strong>Sexta-feira:</strong> Gere o Relatório Executivo. Revise os Planos de Ação.<br><br>
-        <strong>Antes de reuniões:</strong> Gere o Relatório e leve impresso ou no tablet.</div>
-        <div class="tut-dica">💡 Consistência é tudo. O sistema só é poderoso se for alimentado regularmente.</div>
-      </div>
-    </div>
-
   </div>
-</div>
-
-<script>
-var VENDS=[
-  {cod:'017',nome:'Edimar Barbosa'},
-  {cod:'081',nome:'Adson Bruno'},
-  {cod:'118',nome:'Eduardo Rezende'},
-  {cod:'122',nome:'Matheus Paiotti'},
-  {cod:'167',nome:'Eduardo Britto'},
-  {cod:'249',nome:'Vinicius Barao'},
-  {cod:'295',nome:'Cristian Vianna'},
-  {cod:'429',nome:'Victor Hugo'},
-  {cod:'459',nome:'Carlos Bordignon'},
-  {cod:'465',nome:'Ingryd Vieira'}
-];
-var KEY='GRC_V2';
-var DEV_LIM=0.65;
-var DB={
-  perfil:{empresa:'Arcofoods',regional:'Norte Fluminense',supervisor:'Leandro Felipe',
-    cargo:'Supervisor Comercial Jr',
-    assinatura:'Leandro Felipe · Supervisor Comercial · Arcofoods',
-    contexto:'Região dos Lagos (RJ) — alta sazonalidade de outubro a março. Na baixa temporada (abril a setembro) os clientes reduzem volume significativamente enquanto as metas permanecem. O principal desafio é manter a base ativa, reduzir churn e preparar a equipe para a explosão da alta temporada.'},
-  biAtual:{regional:{},vendedores:[]},
-  biAnterior:{regional:{},vendedores:[]},
-  posChurn:[],campos:[],planos:[],clientes:[],aniversarios:[]
-};
-
-function salvar(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
-function carregar(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);}}catch(e){}}
-function n(v){return parseFloat((v||'0').toString().replace(',','.'))||0;}
-function fmt(v){return(v!==undefined&&v!==null&&v!=='')?v:'—';}
-function fP(v){if(v===undefined||v===null||v==='')return'—';var x=n(v);return x.toFixed(2)+'%';}
-function fPn(v){if(v===undefined||v===null||v==='')return 0;return n(v);}
-
-function calcScore(v,pc){
-  var score=0;
-  var proj=n(v.proj);
-  var objMarg=n(v.objMarg)||17.5;
-  var marg=n(v.marg);
-  var objPos=n(v.objPos);
-  var realPos=n(v.realPos);
-  var devPct=Math.abs(n(v.devPct));
-  var churn=pc?n(pc.churnRate):0;
-  var nPos=pc?n(pc.naoPositivados):0;
-  var totPos=pc?(n(pc.positivados)+n(pc.naoPositivados)):0;
-  var txPos=totPos>0?(n(pc.positivados)/totPos)*100:0;
-
-  // Projeção: 30pts
-  if(proj>=100)score+=30;
-  else if(proj>=90)score+=25;
-  else if(proj>=80)score+=18;
-  else if(proj>=70)score+=10;
-  else score+=0;
-
-  // Margem: 20pts
-  if(marg>=objMarg)score+=20;
-  else if(marg>=objMarg*0.9)score+=14;
-  else if(marg>=objMarg*0.8)score+=8;
-  else score+=0;
-
-  // Positivação: 20pts
-  if(txPos>=90)score+=20;
-  else if(txPos>=75)score+=14;
-  else if(txPos>=60)score+=8;
-  else score+=0;
-
-  // Devolução: 20pts
-  if(devPct===0)score+=20;
-  else if(devPct<=DEV_LIM)score+=20;
-  else if(devPct<=DEV_LIM*2)score+=10;
-  else score+=0;
-
-  // Churn: 10pts
-  if(churn===0)score+=10;
-  else if(churn<=15)score+=10;
-  else if(churn<=25)score+=5;
-  else score+=0;
-
-  return Math.min(100,Math.round(score));
-}
-
-function scoreCor(s){
-  if(s>=70)return'var(--cy)';
-  if(s>=50)return'var(--ye)';
-  return'var(--rd)';
-}
-function scoreLbl(s){
-  if(s>=70)return'SAUDÁVEL';
-  if(s>=50)return'ATENÇÃO';
-  return'CRÍTICO';
-}
-function scoreBadge(s){
-  if(s>=70)return'<span class="badge bok">SAUDÁVEL</span>';
-  if(s>=50)return'<span class="badge bwn">ATENÇÃO</span>';
-  return'<span class="badge bdg">CRÍTICO</span>';
-}
-
-function st(proj,devPct){
-  var p=n(proj),d=Math.abs(n(devPct));
-  if(p<70||d>DEV_LIM*3)return'dg';
-  if(p<85||d>DEV_LIM)return'wn';
-  return'ok';
-}
-
-function toast(msg){
-  var el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('on');
-  setTimeout(function(){el.classList.remove('on');},2600);
-}
-function remover(lista,idx){DB[lista].splice(idx,1);salvar();renderTudo();toast('Removido.');}
-
-function ir(id,btn){
-  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
-  var pg=document.getElementById(id);if(pg)pg.classList.add('on');
-  document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');});
-  if(btn)btn.classList.add('on');
-  fecharMenu();
-  window.scrollTo(0,0);
-}
-function abrirMenu(){
-  document.getElementById('sidebar').classList.add('aberto');
-  document.getElementById('overlay').classList.add('on');
-}
-function fecharMenu(){
-  document.getElementById('sidebar').classList.remove('aberto');
-  document.getElementById('overlay').classList.remove('on');
-}
-
-window.onload=function(){carregar();init();};
-
-function init(){
-  var p=DB.perfil;
-  document.getElementById('pvEmp').textContent=p.empresa||'Arcofoods';
-  document.getElementById('pvReg').textContent=p.regional||'Norte Fluminense';
-  document.getElementById('pvSup').textContent=p.supervisor||'Leandro Felipe';
-  document.getElementById('pfEmp').value=p.empresa||'';
-  document.getElementById('pfReg').value=p.regional||'';
-  document.getElementById('pfSup').value=p.supervisor||'';
-  document.getElementById('pfCargo').value=p.cargo||'';
-  document.getElementById('pfAss').value=p.assinatura||'';
-  document.getElementById('pfCtx').value=p.contexto||'';
-  var now=new Date();
-  document.getElementById('dashData').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  buildForms();
-  renderTudo();
-}
-
-function buildForms(){
-  var fv=document.getElementById('fVendedores');
-  var fp=document.getElementById('fPosChurn');
-  if(!fv||!fp)return;
-  var r=DB.biAtual.regional;
-  var mapa=[['rObjFat','objFat'],['rFat','fat'],['rProj','proj'],['rObjMarg','objMarg'],['rMarg','marg'],
-    ['rObjPos','objPos'],['rRealPos','realPos'],['rSaldoPos','saldoPos'],
-    ['rDevR','devR'],['rDevPct','devPct'],['rSku','sku'],['rVendaMedia','vendaMedia'],['rPrecoKg','precoKg']];
-  mapa.forEach(function(c){var el=document.getElementById(c[0]);if(el&&r[c[1]])el.value=r[c[1]];});
-
-  fv.innerHTML=VENDS.map(function(v,i){
-    var cur=DB.biAtual.vendedores[i]||{};
-    return'<div class="biv"><div class="biv-t">'+v.cod+' — '+v.nome+'</div>'+
-      '<div class="g4">'+
-      bf('v'+i+'objFat','% OBJ FAT',cur.objFat)+
-      bf('v'+i+'fat','% FAT Real',cur.fat)+
-      bf('v'+i+'proj','% PROJ',cur.proj)+
-      bf('v'+i+'objMarg','OBJ % Margem',cur.objMarg)+
-      bf('v'+i+'marg','% Margem Real',cur.marg)+
-      bf('v'+i+'objPos','OBJ Posit',cur.objPos)+
-      bf('v'+i+'realPos','Real Posit',cur.realPos)+
-      bf('v'+i+'saldoPos','Saldo Posit',cur.saldoPos)+
-      bf('v'+i+'devR','DEV R$',cur.devR)+
-      bf('v'+i+'devPct','% DEV',cur.devPct)+
-      bf('v'+i+'sku','SKU/CLI',cur.sku)+
-      bf('v'+i+'vendaMedia','Venda Média',cur.vendaMedia)+
-      bf('v'+i+'precoKg','Preço/KG',cur.precoKg)+
-      '</div></div>';
-  }).join('');
-
-  fp.innerHTML=VENDS.map(function(v,i){
-    var pc=DB.posChurn[i]||{};
-    return'<div class="biv"><div class="biv-t" style="color:var(--t)">'+v.cod+' — '+v.nome+'</div>'+
-      '<div class="g3">'+
-      '<div class="fg"><label class="fl">Positivados</label><input class="inp" id="pc'+i+'pos" placeholder="0" value="'+(pc.positivados||'')+'"></div>'+
-      '<div class="fg"><label class="fl">Não Positivados</label><input class="inp" id="pc'+i+'npos" placeholder="0" value="'+(pc.naoPositivados||'')+'"></div>'+
-      '<div class="fg"><label class="fl">Churn Rate %</label><input class="inp" id="pc'+i+'churn" placeholder="0" value="'+(pc.churnRate||'')+'"></div>'+
-      '</div></div>';
-  }).join('');
-}
-
-function bf(id,lbl,val){
-  return'<div class="fg"><label class="fl">'+lbl+'</label><input class="inp" id="'+id+'" placeholder="0" value="'+(val||'')+'"></div>';
-}
-
-function salvarBI(){
-  if(DB.biAtual.vendedores.length>0)DB.biAnterior=JSON.parse(JSON.stringify(DB.biAtual));
-  DB.biAtual.regional={
-    objFat:document.getElementById('rObjFat').value,
-    fat:document.getElementById('rFat').value,
-    proj:document.getElementById('rProj').value,
-    objMarg:document.getElementById('rObjMarg').value,
-    marg:document.getElementById('rMarg').value,
-    objPos:document.getElementById('rObjPos').value,
-    realPos:document.getElementById('rRealPos').value,
-    saldoPos:document.getElementById('rSaldoPos').value,
-    devR:document.getElementById('rDevR').value,
-    devPct:document.getElementById('rDevPct').value,
-    sku:document.getElementById('rSku').value,
-    vendaMedia:document.getElementById('rVendaMedia').value,
-    precoKg:document.getElementById('rPrecoKg').value,
-    data:new Date().toISOString()
+  
+  <script>
+  var VENDS=[
+    {cod:'017',nome:'Edimar Barbosa'},
+    {cod:'081',nome:'Adson Bruno'},
+    {cod:'118',nome:'Eduardo Rezende'},
+    {cod:'122',nome:'Matheus Paiotti'},
+    {cod:'167',nome:'Eduardo Britto'},
+    {cod:'249',nome:'Vinicius Barao'},
+    {cod:'295',nome:'Cristian Vianna'},
+    {cod:'429',nome:'Victor Hugo'},
+    {cod:'459',nome:'Carlos Bordignon'},
+    {cod:'465',nome:'Ingryd Vieira'}
+  ];
+  var KEY='GRC_V2';
+  var DEV_LIM=0.65;
+  var DB={
+    perfil:{empresa:'Arcofoods',regional:'Norte Fluminense',supervisor:'Leandro Felipe',
+      cargo:'Supervisor Comercial Jr',
+      assinatura:'Leandro Felipe · Supervisor Comercial · Arcofoods',
+      contexto:'Região dos Lagos (RJ) — alta sazonalidade de outubro a março. Na baixa temporada (abril a setembro) os clientes reduzem volume significativamente enquanto as metas permanecem. O principal desafio é manter a base ativa, reduzir churn e preparar a equipe para a explosão da alta temporada.'},
+    biAtual:{regional:{},vendedores:[]},
+    biAnterior:{regional:{},vendedores:[]},
+    posChurn:[],campos:[],planos:[],clientes:[],aniversarios:[]
   };
-  DB.biAtual.vendedores=VENDS.map(function(v,i){
-    return{cod:v.cod,nome:v.nome,
-      objFat:document.getElementById('v'+i+'objFat').value,
-      fat:document.getElementById('v'+i+'fat').value,
-      proj:document.getElementById('v'+i+'proj').value,
-      objMarg:document.getElementById('v'+i+'objMarg').value,
-      marg:document.getElementById('v'+i+'marg').value,
-      objPos:document.getElementById('v'+i+'objPos').value,
-      realPos:document.getElementById('v'+i+'realPos').value,
-      saldoPos:document.getElementById('v'+i+'saldoPos').value,
-      devR:document.getElementById('v'+i+'devR').value,
-      devPct:document.getElementById('v'+i+'devPct').value,
-      sku:document.getElementById('v'+i+'sku').value,
-      vendaMedia:document.getElementById('v'+i+'vendaMedia').value,
-      precoKg:document.getElementById('v'+i+'precoKg').value
-    };
-  });
-  salvar();renderTudo();toast('BI salvo com sucesso!');
-  ir('dashboard',document.querySelector('.nb'));
-}
-
-function salvarPosChurn(){
-  DB.posChurn=VENDS.map(function(v,i){
-    return{cod:v.cod,nome:v.nome,
-      positivados:document.getElementById('pc'+i+'pos').value,
-      naoPositivados:document.getElementById('pc'+i+'npos').value,
-      churnRate:document.getElementById('pc'+i+'churn').value
-    };
-  });
-  salvar();renderTudo();toast('Positivação e Churn salvos!');
-}
-
-function renderTudo(){
-  renderDash();renderSaude();renderEquipe();renderScores();
-  renderComp();renderPos();renderChurn();
-  renderCampoLista();renderPlanos();renderClientes();renderAniv();
-}
-
-function renderDash(){
-  var r=DB.biAtual.regional,vs=DB.biAtual.vendedores;
-  var mes=new Date().getMonth(),baixa=(mes>=4&&mes<=8);
-  document.getElementById('sazBanner').innerHTML=baixa
-    ?'<div class="bn bn-ye"><span>⚠</span><div><strong>Baixa Temporada — Região dos Lagos.</strong> Período de menor volume. Foco em manter base ativa, reduzir churn e preparar equipe para a alta temporada.</div></div>'
-    :'<div class="bn bn-cy"><span>★</span><div><strong>Alta Temporada — Região dos Lagos.</strong> Momento de máxima performance. Pressione positivação, mix rentável e novos clientes.</div></div>';
-
-  if(r&&r.proj){
-    var p=n(r.proj);
-    document.getElementById('stProj').className='stat'+(p>=85?'':p>=70?' wn':' dg');
-    document.getElementById('dProj').textContent=fP(r.proj);
-    var saldo=r.saldoPos?n(r.saldoPos):(n(r.realPos)-n(r.objPos));
-    document.getElementById('stPos').className='stat'+(saldo>=0?'':saldo>-100?' wn':' dg');
-    document.getElementById('dPos').textContent=(saldo>=0?'+':'')+Math.round(saldo);
-    document.getElementById('dPosSub').textContent='Real: '+fmt(r.realPos)+' / Obj: '+fmt(r.objPos);
-    var d=Math.abs(n(r.devPct));
-    document.getElementById('stDev').className='stat'+(d>DEV_LIM?' dg':'');
-    document.getElementById('dDev').textContent=fP(r.devPct);
+  
+  function salvar(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
+  function carregar(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);}}catch(e){}}
+  function n(v){return parseFloat((v||'0').toString().replace(',','.'))||0;}
+  function fmt(v){return(v!==undefined&&v!==null&&v!=='')?v:'—';}
+  function fP(v){if(v===undefined||v===null||v==='')return'—';var x=n(v);return x.toFixed(2)+'%';}
+  function fPn(v){if(v===undefined||v===null||v==='')return 0;return n(v);}
+  
+  function calcScore(v,pc){
+    var score=0;
+    var proj=n(v.proj);
+    var objMarg=n(v.objMarg)||17.5;
+    var marg=n(v.marg);
+    var objPos=n(v.objPos);
+    var realPos=n(v.realPos);
+    var devPct=Math.abs(n(v.devPct));
+    var churn=pc?n(pc.churnRate):0;
+    var nPos=pc?n(pc.naoPositivados):0;
+    var totPos=pc?(n(pc.positivados)+n(pc.naoPositivados)):0;
+    var txPos=totPos>0?(n(pc.positivados)/totPos)*100:0;
+  
+    // Projeção: 30pts
+    if(proj>=100)score+=30;
+    else if(proj>=90)score+=25;
+    else if(proj>=80)score+=18;
+    else if(proj>=70)score+=10;
+    else score+=0;
+  
+    // Margem: 20pts
+    if(marg>=objMarg)score+=20;
+    else if(marg>=objMarg*0.9)score+=14;
+    else if(marg>=objMarg*0.8)score+=8;
+    else score+=0;
+  
+    // Positivação: 20pts
+    if(txPos>=90)score+=20;
+    else if(txPos>=75)score+=14;
+    else if(txPos>=60)score+=8;
+    else score+=0;
+  
+    // Devolução: 20pts
+    if(devPct===0)score+=20;
+    else if(devPct<=DEV_LIM)score+=20;
+    else if(devPct<=DEV_LIM*2)score+=10;
+    else score+=0;
+  
+    // Churn: 10pts
+    if(churn===0)score+=10;
+    else if(churn<=15)score+=10;
+    else if(churn<=25)score+=5;
+    else score+=0;
+  
+    return Math.min(100,Math.round(score));
   }
-
-  // Score regional
-  if(vs&&vs.length>0){
-    var scores=vs.map(function(v,i){return calcScore(v,DB.posChurn[i]||{});});
-    var scoreMedio=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
-    document.getElementById('stSaude').className='stat'+(scoreMedio>=70?'':scoreMedio>=50?' wn':' dg');
-    document.getElementById('dSaude').textContent=scoreMedio;
-    document.getElementById('dSaudeLbl').textContent=scoreLbl(scoreMedio)+' (0-100)';
+  
+  function scoreCor(s){
+    if(s>=70)return'var(--cy)';
+    if(s>=50)return'var(--ye)';
+    return'var(--rd)';
   }
-
-  var diag=document.getElementById('diagBox');
-  var alrt=document.getElementById('alertBox');
-  var rank=document.getElementById('rankBox');
-
-  if(!vs||vs.length===0){
-    diag.innerHTML='<div class="empty">Lance os dados do BI.</div>';
-    alrt.innerHTML='<div class="empty">Nenhum alerta.</div>';
-    rank.innerHTML='<div class="empty">Lance os dados do BI.</div>';
-    return;
+  function scoreLbl(s){
+    if(s>=70)return'SAUDÁVEL';
+    if(s>=50)return'ATENÇÃO';
+    return'CRÍTICO';
   }
-
-  var scores2=vs.map(function(v,i){return{v:v,pc:DB.posChurn[i]||{},sc:calcScore(v,DB.posChurn[i]||{})};});
-  var crit=scores2.filter(function(x){return x.sc<50;});
-  var atenc=scores2.filter(function(x){return x.sc>=50&&x.sc<70;});
-  var ok=scores2.length-crit.length-atenc.length;
-
-  diag.innerHTML=
-    '<div class="dr"><div class="dot" style="background:var(--cy)"></div><span><strong>'+ok+'</strong> vendedor(es) SAUDÁVEL</span></div>'+
-    '<div class="dr"><div class="dot" style="background:var(--ye)"></div><span><strong>'+atenc.length+'</strong> em ATENÇÃO</span></div>'+
-    '<div class="dr"><div class="dot" style="background:var(--rd)"></div><span><strong>'+crit.length+'</strong> CRÍTICO — intervenção urgente</span></div>'+
-    (r.saldoPos?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Saldo positivação: <strong style="color:'+(n(r.saldoPos)<0?'var(--rd)':'var(--cy)')+'">'+r.saldoPos+'</strong> clientes</span></div>':'')+
-    (r.devR?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Devolução total: <strong style="color:var(--rd)">'+r.devR+'</strong> ('+fP(r.devPct)+')</span></div>':'')+
-    (r.vendaMedia?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Venda Média Regional: <strong>R$ '+r.vendaMedia+'</strong></span></div>':'');
-
-  // Alertas preditivos
-  var alertas=[];
-  scores2.forEach(function(x){
-    var v=x.v,pc=x.pc;
-    if(x.sc<50)alertas.push({t:'dg',m:v.nome+' — Score crítico ('+x.sc+'pts). Intervenção urgente.'});
-    if(Math.abs(n(v.devPct))>DEV_LIM)alertas.push({t:'dg',m:v.nome+' — DEV '+fP(v.devPct)+' acima do limite ('+DEV_LIM+'%)'});
-    if(n(pc.churnRate)>30&&n(v.proj)<80)alertas.push({t:'dg',m:v.nome+' — Churn alto + projeção baixa: risco de queda no próximo mês'});
-    if(n(pc.naoPositivados)>20)alertas.push({t:'wn',m:v.nome+' — '+pc.naoPositivados+' clientes não positivados este mês'});
-    if(n(v.marg)<n(v.objMarg||17.5)*0.9)alertas.push({t:'wn',m:v.nome+' — Margem abaixo do objetivo: '+fP(v.marg)});
-  });
-  alrt.innerHTML=alertas.length===0?'<div class="empty">Nenhum alerta. Regional saudável!</div>':
-    alertas.slice(0,7).map(function(a){
-      return'<div class="dr"><span class="badge '+(a.t==='dg'?'bdg':'bwn')+'" style="margin-right:6px;flex-shrink:0">'+(a.t==='dg'?'URGENTE':'ATENÇÃO')+'</span><span style="font-size:12px">'+a.m+'</span></div>';
+  function scoreBadge(s){
+    if(s>=70)return'<span class="badge bok">SAUDÁVEL</span>';
+    if(s>=50)return'<span class="badge bwn">ATENÇÃO</span>';
+    return'<span class="badge bdg">CRÍTICO</span>';
+  }
+  
+  function st(proj,devPct){
+    var p=n(proj),d=Math.abs(n(devPct));
+    if(p<70||d>DEV_LIM*3)return'dg';
+    if(p<85||d>DEV_LIM)return'wn';
+    return'ok';
+  }
+  function badgeSt(proj,devPct){
+    var s=st(proj,devPct);
+    if(s==='ok')return'<span class="badge bok">SAUDÁVEL</span>';
+    if(s==='wn')return'<span class="badge bwn">ATENÇÃO</span>';
+    return'<span class="badge bdg">CRÍTICO</span>';
+  }
+  
+  function toast(msg){
+    var el=document.getElementById('toast');
+    el.textContent=msg;el.classList.add('on');
+    setTimeout(function(){el.classList.remove('on');},2600);
+  }
+  function remover(lista,idx){DB[lista].splice(idx,1);salvar();renderTudo();toast('Removido.');}
+  
+  function ir(id,btn){
+    document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
+    var pg=document.getElementById(id);if(pg)pg.classList.add('on');
+    document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');});
+    if(btn)btn.classList.add('on');
+    fecharMenu();
+    window.scrollTo(0,0);
+  }
+  function abrirMenu(){
+    document.getElementById('sidebar').classList.add('aberto');
+    document.getElementById('overlay').classList.add('on');
+  }
+  function fecharMenu(){
+    document.getElementById('sidebar').classList.remove('aberto');
+    document.getElementById('overlay').classList.remove('on');
+  }
+  
+  window.onload=function(){carregar();init();};
+  
+  function init(){
+    var p=DB.perfil;
+    document.getElementById('pvEmp').textContent=p.empresa||'Arcofoods';
+    document.getElementById('pvReg').textContent=p.regional||'Norte Fluminense';
+    document.getElementById('pvSup').textContent=p.supervisor||'Leandro Felipe';
+    document.getElementById('pfEmp').value=p.empresa||'';
+    document.getElementById('pfReg').value=p.regional||'';
+    document.getElementById('pfSup').value=p.supervisor||'';
+    document.getElementById('pfCargo').value=p.cargo||'';
+    document.getElementById('pfAss').value=p.assinatura||'';
+    document.getElementById('pfCtx').value=p.contexto||'';
+    var now=new Date();
+    document.getElementById('dashData').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    buildForms();
+    renderTudo();
+  }
+  
+  function buildForms(){
+    var fv=document.getElementById('fVendedores');
+    var fp=document.getElementById('fPosChurn');
+    if(!fv||!fp)return;
+    var r=DB.biAtual.regional;
+    var mapa=[['rObjFat','objFat'],['rFat','fat'],['rProj','proj'],['rObjMarg','objMarg'],['rMarg','marg'],
+      ['rObjPos','objPos'],['rRealPos','realPos'],['rSaldoPos','saldoPos'],
+      ['rDevR','devR'],['rDevPct','devPct'],['rSku','sku'],['rVendaMedia','vendaMedia'],['rPrecoKg','precoKg']];
+    mapa.forEach(function(c){var el=document.getElementById(c[0]);if(el&&r[c[1]])el.value=r[c[1]];});
+  
+    fv.innerHTML=VENDS.map(function(v,i){
+      var cur=DB.biAtual.vendedores[i]||{};
+      return'<div class="biv"><div class="biv-t">'+v.cod+' — '+v.nome+'</div>'+
+        '<div class="g4">'+
+        bf('v'+i+'objFat','% OBJ FAT',cur.objFat)+
+        bf('v'+i+'fat','% FAT Real',cur.fat)+
+        bf('v'+i+'proj','% PROJ',cur.proj)+
+        bf('v'+i+'objMarg','OBJ % Margem',cur.objMarg)+
+        bf('v'+i+'marg','% Margem Real',cur.marg)+
+        bf('v'+i+'objPos','OBJ Posit',cur.objPos)+
+        bf('v'+i+'realPos','Real Posit',cur.realPos)+
+        bf('v'+i+'saldoPos','Saldo Posit',cur.saldoPos)+
+        bf('v'+i+'devR','DEV R$',cur.devR)+
+        bf('v'+i+'devPct','% DEV',cur.devPct)+
+        bf('v'+i+'sku','SKU/CLI',cur.sku)+
+        bf('v'+i+'vendaMedia','Venda Média',cur.vendaMedia)+
+        bf('v'+i+'precoKg','Preço/KG',cur.precoKg)+
+        '</div></div>';
     }).join('');
-
-  // Ranking por score
-  var sorted=scores2.slice().sort(function(a,b){return b.sc-a.sc;});
-  rank.innerHTML='<div class="tw"><table><thead><tr>'+
-    '<th>#</th><th>Vendedor</th><th>Score</th><th>Status</th><th>%PROJ</th><th>%Marg</th><th>Posit</th><th>%DEV</th><th>Churn</th>'+
-    '</tr></thead><tbody>'+
-    sorted.map(function(x,i){
+  
+    fp.innerHTML=VENDS.map(function(v,i){
+      var pc=DB.posChurn[i]||{};
+      return'<div class="biv"><div class="biv-t" style="color:var(--t)">'+v.cod+' — '+v.nome+'</div>'+
+        '<div class="g3">'+
+        '<div class="fg"><label class="fl">Positivados</label><input class="inp" id="pc'+i+'pos" placeholder="0" value="'+(pc.positivados||'')+'"></div>'+
+        '<div class="fg"><label class="fl">Não Positivados</label><input class="inp" id="pc'+i+'npos" placeholder="0" value="'+(pc.naoPositivados||'')+'"></div>'+
+        '<div class="fg"><label class="fl">Churn Rate %</label><input class="inp" id="pc'+i+'churn" placeholder="0" value="'+(pc.churnRate||'')+'"></div>'+
+        '</div></div>';
+    }).join('');
+  }
+  
+  function bf(id,lbl,val){
+    return'<div class="fg"><label class="fl">'+lbl+'</label><input class="inp" id="'+id+'" placeholder="0" value="'+(val||'')+'"></div>';
+  }
+  
+  function salvarBI(){
+    if(DB.biAtual.vendedores.length>0)DB.biAnterior=JSON.parse(JSON.stringify(DB.biAtual));
+    DB.biAtual.regional={
+      objFat:document.getElementById('rObjFat').value,
+      fat:document.getElementById('rFat').value,
+      proj:document.getElementById('rProj').value,
+      objMarg:document.getElementById('rObjMarg').value,
+      marg:document.getElementById('rMarg').value,
+      objPos:document.getElementById('rObjPos').value,
+      realPos:document.getElementById('rRealPos').value,
+      saldoPos:document.getElementById('rSaldoPos').value,
+      devR:document.getElementById('rDevR').value,
+      devPct:document.getElementById('rDevPct').value,
+      sku:document.getElementById('rSku').value,
+      vendaMedia:document.getElementById('rVendaMedia').value,
+      precoKg:document.getElementById('rPrecoKg').value,
+      data:new Date().toISOString()
+    };
+    DB.biAtual.vendedores=VENDS.map(function(v,i){
+      return{cod:v.cod,nome:v.nome,
+        objFat:document.getElementById('v'+i+'objFat').value,
+        fat:document.getElementById('v'+i+'fat').value,
+        proj:document.getElementById('v'+i+'proj').value,
+        objMarg:document.getElementById('v'+i+'objMarg').value,
+        marg:document.getElementById('v'+i+'marg').value,
+        objPos:document.getElementById('v'+i+'objPos').value,
+        realPos:document.getElementById('v'+i+'realPos').value,
+        saldoPos:document.getElementById('v'+i+'saldoPos').value,
+        devR:document.getElementById('v'+i+'devR').value,
+        devPct:document.getElementById('v'+i+'devPct').value,
+        sku:document.getElementById('v'+i+'sku').value,
+        vendaMedia:document.getElementById('v'+i+'vendaMedia').value,
+        precoKg:document.getElementById('v'+i+'precoKg').value
+      };
+    });
+    salvar();renderTudo();toast('BI salvo com sucesso!');
+    ir('dashboard',document.querySelector('.nb'));
+  }
+  
+  function salvarPosChurn(){
+    DB.posChurn=VENDS.map(function(v,i){
+      return{cod:v.cod,nome:v.nome,
+        positivados:document.getElementById('pc'+i+'pos').value,
+        naoPositivados:document.getElementById('pc'+i+'npos').value,
+        churnRate:document.getElementById('pc'+i+'churn').value
+      };
+    });
+    salvar();renderTudo();toast('Positivação e Churn salvos!');
+  }
+  
+  function renderTudo(){
+    renderDash();renderSaude();renderEquipe();renderScores();
+    renderComp();renderPos();renderChurn();
+    renderCampoLista();renderPlanos();renderClientes();renderAniv();
+  }
+  
+  function renderDash(){
+    var r=DB.biAtual.regional,vs=DB.biAtual.vendedores;
+    var mes=new Date().getMonth(),baixa=(mes>=4&&mes<=8);
+    document.getElementById('sazBanner').innerHTML=baixa
+      ?'<div class="bn bn-ye"><span>⚠</span><div><strong>Baixa Temporada — Região dos Lagos.</strong> Período de menor volume. Foco em manter base ativa, reduzir churn e preparar equipe para a alta temporada.</div></div>'
+      :'<div class="bn bn-cy"><span>★</span><div><strong>Alta Temporada — Região dos Lagos.</strong> Momento de máxima performance. Pressione positivação, mix rentável e novos clientes.</div></div>';
+  
+    if(r&&r.proj){
+      var p=n(r.proj);
+      document.getElementById('stProj').className='stat'+(p>=85?'':p>=70?' wn':' dg');
+      document.getElementById('dProj').textContent=fP(r.proj);
+      var saldo=r.saldoPos?n(r.saldoPos):(n(r.realPos)-n(r.objPos));
+      document.getElementById('stPos').className='stat'+(saldo>=0?'':saldo>-100?' wn':' dg');
+      document.getElementById('dPos').textContent=(saldo>=0?'+':'')+Math.round(saldo);
+      document.getElementById('dPosSub').textContent='Real: '+fmt(r.realPos)+' / Obj: '+fmt(r.objPos);
+      var d=Math.abs(n(r.devPct));
+      document.getElementById('stDev').className='stat'+(d>DEV_LIM?' dg':'');
+      document.getElementById('dDev').textContent=fP(r.devPct);
+    }
+  
+    // Score regional
+    if(vs&&vs.length>0){
+      var scores=vs.map(function(v,i){return calcScore(v,DB.posChurn[i]||{});});
+      var scoreMedio=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
+      document.getElementById('stSaude').className='stat'+(scoreMedio>=70?'':scoreMedio>=50?' wn':' dg');
+      document.getElementById('dSaude').textContent=scoreMedio;
+      document.getElementById('dSaudeLbl').textContent=scoreLbl(scoreMedio)+' (0-100)';
+    }
+  
+    var diag=document.getElementById('diagBox');
+    var alrt=document.getElementById('alertBox');
+    var rank=document.getElementById('rankBox');
+  
+    if(!vs||vs.length===0){
+      diag.innerHTML='<div class="empty">Lance os dados do BI.</div>';
+      alrt.innerHTML='<div class="empty">Nenhum alerta.</div>';
+      rank.innerHTML='<div class="empty">Lance os dados do BI.</div>';
+      return;
+    }
+  
+    var scores2=vs.map(function(v,i){return{v:v,pc:DB.posChurn[i]||{},sc:calcScore(v,DB.posChurn[i]||{})};});
+    var crit=scores2.filter(function(x){return x.sc<50;});
+    var atenc=scores2.filter(function(x){return x.sc>=50&&x.sc<70;});
+    var ok=scores2.length-crit.length-atenc.length;
+  
+    diag.innerHTML=
+      '<div class="dr"><div class="dot" style="background:var(--cy)"></div><span><strong>'+ok+'</strong> vendedor(es) SAUDÁVEL</span></div>'+
+      '<div class="dr"><div class="dot" style="background:var(--ye)"></div><span><strong>'+atenc.length+'</strong> em ATENÇÃO</span></div>'+
+      '<div class="dr"><div class="dot" style="background:var(--rd)"></div><span><strong>'+crit.length+'</strong> CRÍTICO — intervenção urgente</span></div>'+
+      (r.saldoPos?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Saldo positivação: <strong style="color:'+(n(r.saldoPos)<0?'var(--rd)':'var(--cy)')+'">'+r.saldoPos+'</strong> clientes</span></div>':'')+
+      (r.devR?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Devolução total: <strong style="color:var(--rd)">'+r.devR+'</strong> ('+fP(r.devPct)+')</span></div>':'')+
+      (r.vendaMedia?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Venda Média Regional: <strong>R$ '+r.vendaMedia+'</strong></span></div>':'');
+  
+    // Alertas preditivos
+    var alertas=[];
+    scores2.forEach(function(x){
+      var v=x.v,pc=x.pc;
+      if(x.sc<50)alertas.push({t:'dg',m:v.nome+' — Score crítico ('+x.sc+'pts). Intervenção urgente.'});
+      if(Math.abs(n(v.devPct))>DEV_LIM)alertas.push({t:'dg',m:v.nome+' — DEV '+fP(v.devPct)+' acima do limite ('+DEV_LIM+'%)'});
+      if(n(pc.churnRate)>30&&n(v.proj)<80)alertas.push({t:'dg',m:v.nome+' — Churn alto + projeção baixa: risco de queda no próximo mês'});
+      if(n(pc.naoPositivados)>20)alertas.push({t:'wn',m:v.nome+' — '+pc.naoPositivados+' clientes não positivados este mês'});
+      if(n(v.marg)<n(v.objMarg||17.5)*0.9)alertas.push({t:'wn',m:v.nome+' — Margem abaixo do objetivo: '+fP(v.marg)});
+    });
+    alrt.innerHTML=alertas.length===0?'<div class="empty">Nenhum alerta. Regional saudável!</div>':
+      alertas.slice(0,7).map(function(a){
+        return'<div class="dr"><span class="badge '+(a.t==='dg'?'bdg':'bwn')+'" style="margin-right:6px;flex-shrink:0">'+(a.t==='dg'?'URGENTE':'ATENÇÃO')+'</span><span style="font-size:12px">'+a.m+'</span></div>';
+      }).join('');
+  
+    // Ranking por score
+    var sorted=scores2.slice().sort(function(a,b){return b.sc-a.sc;});
+    rank.innerHTML='<div class="tw"><table><thead><tr>'+
+      '<th>#</th><th>Vendedor</th><th>Score</th><th>Status</th><th>%PROJ</th><th>%Marg</th><th>Posit</th><th>%DEV</th><th>Churn</th>'+
+      '</tr></thead><tbody>'+
+      sorted.map(function(x,i){
+        var v=x.v,pc=x.pc,sc=x.sc;
+        return'<tr>'+
+          '<td style="color:var(--t2)">'+(i+1)+'</td>'+
+          '<td style="font-weight:600">'+v.nome+'</td>'+
+          '<td><strong style="color:'+scoreCor(sc)+';font-size:15px">'+sc+'</strong></td>'+
+          '<td>'+scoreBadge(sc)+'</td>'+
+          '<td style="color:'+(n(v.proj)>=85?'var(--cy)':n(v.proj)>=70?'var(--ye)':'var(--rd)')+'">'+fP(v.proj)+'</td>'+
+          '<td style="color:'+(n(v.marg)>=n(v.objMarg||17.5)?'var(--cy)':'var(--ye)')+'">'+fP(v.marg)+'</td>'+
+          '<td>'+fmt(v.realPos)+'/'+fmt(v.objPos)+'</td>'+
+          '<td style="color:'+(Math.abs(n(v.devPct))>DEV_LIM?'var(--rd)':'var(--t2)')+'">'+fP(v.devPct)+'</td>'+
+          '<td style="color:'+(n(pc.churnRate)>25?'var(--rd)':n(pc.churnRate)>15?'var(--ye)':'var(--t2)')+'">'+fmt(pc.churnRate)+'%</td>'+
+          '</tr>';
+      }).join('')+'</tbody></table></div>';
+  }
+  
+  function renderSaude(){
+    var el=document.getElementById('saudeBox');
+    var vs=DB.biAtual.vendedores;
+    if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
+    var scores=vs.map(function(v,i){return calcScore(v,DB.posChurn[i]||{});});
+    var scoreM=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
+    var cor=scoreCor(scoreM);
+    var lbl=scoreLbl(scoreM);
+    var desc=scoreM>=70?'A regional está performando bem. Continue monitorando e mantendo os padrões.':
+      scoreM>=50?'A regional precisa de atenção. Identifique os vendedores em queda e acione os planos de ação.':
+      'Situação crítica. Intervenção imediata necessária em toda a equipe.';
+  
+    var html='<div class="saude-box" style="background:linear-gradient(135deg,rgba('+
+      (scoreM>=70?'0,229,195':scoreM>=50?'255,184,0':'255,69,96')+',0.08),var(--s1));border:2px solid '+cor+'">'+
+      '<div class="saude-titulo" style="color:'+cor+'">ÍNDICE DE SAÚDE — NORTE FLUMINENSE</div>'+
+      '<div class="saude-valor" style="color:'+cor+'">'+scoreM+'</div>'+
+      '<div style="font-size:13px;color:var(--t2);margin-top:4px">de 100 pontos · '+lbl+'</div>'+
+      '<div class="saude-desc" style="color:var(--t2)">'+desc+'</div>'+
+      '</div>'+
+      '<div class="g2" style="margin-bottom:14px">'+
+      '<div class="card"><div class="ct">Score por Indicador</div>'+
+      renderScoreIndicadores(vs)+'</div>'+
+      '<div class="card"><div class="ct">Distribuição da Equipe</div>'+
+      renderDistribuicao(scores)+'</div>'+
+      '</div>'+
+      '<div class="card"><div class="ct">Score Individual</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">'+
+      vs.map(function(v,i){
+        var sc=scores[i];
+        return'<div style="text-align:center;background:var(--s2);border-radius:10px;padding:12px 8px;border:1px solid var(--b)">'+
+          '<div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:8px">'+v.nome.split(' ')[0]+'</div>'+
+          '<div style="font-size:28px;font-weight:700;color:'+scoreCor(sc)+'">'+sc+'</div>'+
+          '<div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:'+scoreCor(sc)+';margin-top:4px">'+scoreLbl(sc)+'</div>'+
+          '</div>';
+      }).join('')+'</div></div>';
+    el.innerHTML=html;
+  }
+  
+  function renderScoreIndicadores(vs){
+    var projMedia=vs.reduce(function(s,v){return s+n(v.proj);},0)/vs.length;
+    var margMedia=vs.reduce(function(s,v){return s+n(v.marg);},0)/vs.length;
+    var devMedia=vs.reduce(function(s,v){return s+Math.abs(n(v.devPct));},0)/vs.length;
+    var churnMedia=DB.posChurn.length?DB.posChurn.reduce(function(s,p){return s+n(p.churnRate);},0)/DB.posChurn.length:0;
+    var posMedia=0;
+    if(DB.posChurn.length){
+      var totP=0,totN=0;
+      DB.posChurn.forEach(function(p){totP+=n(p.positivados);totN+=n(p.naoPositivados);});
+      posMedia=totP+totN>0?(totP/(totP+totN))*100:0;
+    }
+    function bar(val,max,cor){
+      var pct=Math.min(100,Math.round((val/max)*100));
+      return'<div style="background:var(--s2);border-radius:4px;height:6px;margin-top:4px;overflow:hidden">'+
+        '<div style="height:100%;width:'+pct+'%;background:'+cor+';border-radius:4px;transition:width .5s"></div></div>';
+    }
+    return[
+      {l:'Projeção Média',v:projMedia.toFixed(1)+'%',max:100,cor:projMedia>=85?'var(--cy)':projMedia>=70?'var(--ye)':'var(--rd)'},
+      {l:'Margem Média',v:margMedia.toFixed(2)+'%',max:20,cor:margMedia>=17?'var(--cy)':'var(--ye)'},
+      {l:'Taxa de Positivação',v:posMedia.toFixed(1)+'%',max:100,cor:posMedia>=75?'var(--cy)':posMedia>=60?'var(--ye)':'var(--rd)'},
+      {l:'Devolução Média',v:devMedia.toFixed(2)+'%',max:3,cor:devMedia<=DEV_LIM?'var(--cy)':'var(--rd)'},
+      {l:'Churn Médio',v:churnMedia.toFixed(1)+'%',max:50,cor:churnMedia<=15?'var(--cy)':churnMedia<=30?'var(--ye)':'var(--rd)'}
+    ].map(function(x){
+      return'<div class="dr"><div style="flex:1"><div style="font-size:12px">'+x.l+'</div>'+bar(parseFloat(x.v),x.max,x.cor)+'</div>'+
+        '<div style="font-size:13px;font-weight:700;color:'+x.cor+';margin-left:12px;white-space:nowrap">'+x.v+'</div></div>';
+    }).join('');
+  }
+  
+  function renderDistribuicao(scores){
+    var ok=scores.filter(function(s){return s>=70;}).length;
+    var at=scores.filter(function(s){return s>=50&&s<70;}).length;
+    var cr=scores.filter(function(s){return s<50;}).length;
+    return'<div class="dr"><div class="dot" style="background:var(--cy)"></div><span style="flex:1">SAUDÁVEL (score ≥70)</span><strong style="color:var(--cy)">'+ok+' vendedor(es)</strong></div>'+
+      '<div class="dr"><div class="dot" style="background:var(--ye)"></div><span style="flex:1">ATENÇÃO (50-69)</span><strong style="color:var(--ye)">'+at+' vendedor(es)</strong></div>'+
+      '<div class="dr"><div class="dot" style="background:var(--rd)"></div><span style="flex:1">CRÍTICO (abaixo de 50)</span><strong style="color:var(--rd)">'+cr+' vendedor(es)</strong></div>'+
+      '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--b);font-size:12px;color:var(--t2)">'+
+      (cr>0?'⚠ Ação imediata: agende visita de campo com os vendedores em situação crítica.':
+      at>0?'Monitore de perto os vendedores em atenção. Suporte e plano de ação.':
+      '✅ Equipe saudável. Mantenha o acompanhamento semanal.')+
+      '</div>';
+  }
+  
+  function renderScores(){
+    var el=document.getElementById('scoresBox');
+    var vs=DB.biAtual.vendedores;
+    if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
+    var dados=vs.map(function(v,i){
+      var pc=DB.posChurn[i]||{};
+      return{v:v,pc:pc,sc:calcScore(v,pc)};
+    }).sort(function(a,b){return b.sc-a.sc;});
+    el.innerHTML=dados.map(function(x){
       var v=x.v,pc=x.pc,sc=x.sc;
-      return'<tr>'+
-        '<td style="color:var(--t2)">'+(i+1)+'</td>'+
-        '<td style="font-weight:600">'+v.nome+'</td>'+
-        '<td><strong style="color:'+scoreCor(sc)+';font-size:15px">'+sc+'</strong></td>'+
-        '<td>'+scoreBadge(sc)+'</td>'+
-        '<td style="color:'+(n(v.proj)>=85?'var(--cy)':n(v.proj)>=70?'var(--ye)':'var(--rd)')+'">'+fP(v.proj)+'</td>'+
-        '<td style="color:'+(n(v.marg)>=n(v.objMarg||17.5)?'var(--cy)':'var(--ye)')+'">'+fP(v.marg)+'</td>'+
-        '<td>'+fmt(v.realPos)+'/'+fmt(v.objPos)+'</td>'+
-        '<td style="color:'+(Math.abs(n(v.devPct))>DEV_LIM?'var(--rd)':'var(--t2)')+'">'+fP(v.devPct)+'</td>'+
-        '<td style="color:'+(n(pc.churnRate)>25?'var(--rd)':n(pc.churnRate)>15?'var(--ye)':'var(--t2)')+'">'+fmt(pc.churnRate)+'%</td>'+
-        '</tr>';
-    }).join('')+'</tbody></table></div>';
-}
-
-function renderSaude(){
-  var el=document.getElementById('saudeBox');
-  var vs=DB.biAtual.vendedores;
-  if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
-  var scores=vs.map(function(v,i){return calcScore(v,DB.posChurn[i]||{});});
-  var scoreM=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
-  var cor=scoreCor(scoreM);
-  var lbl=scoreLbl(scoreM);
-  var desc=scoreM>=70?'A regional está performando bem. Continue monitorando e mantendo os padrões.':
-    scoreM>=50?'A regional precisa de atenção. Identifique os vendedores em queda e acione os planos de ação.':
-    'Situação crítica. Intervenção imediata necessária em toda a equipe.';
-
-  var html='<div class="saude-box" style="background:linear-gradient(135deg,rgba('+
-    (scoreM>=70?'0,229,195':scoreM>=50?'255,184,0':'255,69,96')+',0.08),var(--s1));border:2px solid '+cor+'">'+
-    '<div class="saude-titulo" style="color:'+cor+'">ÍNDICE DE SAÚDE — NORTE FLUMINENSE</div>'+
-    '<div class="saude-valor" style="color:'+cor+'">'+scoreM+'</div>'+
-    '<div style="font-size:13px;color:var(--t2);margin-top:4px">de 100 pontos · '+lbl+'</div>'+
-    '<div class="saude-desc" style="color:var(--t2)">'+desc+'</div>'+
-    '</div>'+
-    '<div class="g2" style="margin-bottom:14px">'+
-    '<div class="card"><div class="ct">Score por Indicador</div>'+
-    renderScoreIndicadores(vs)+'</div>'+
-    '<div class="card"><div class="ct">Distribuição da Equipe</div>'+
-    renderDistribuicao(scores)+'</div>'+
-    '</div>'+
-    '<div class="card"><div class="ct">Score Individual</div>'+
-    '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">'+
-    vs.map(function(v,i){
-      var sc=scores[i];
-      return'<div style="text-align:center;background:var(--s2);border-radius:10px;padding:12px 8px;border:1px solid var(--b)">'+
-        '<div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:8px">'+v.nome.split(' ')[0]+'</div>'+
-        '<div style="font-size:28px;font-weight:700;color:'+scoreCor(sc)+'">'+sc+'</div>'+
-        '<div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:'+scoreCor(sc)+';margin-top:4px">'+scoreLbl(sc)+'</div>'+
-        '</div>';
-    }).join('')+'</div></div>';
-  el.innerHTML=html;
-}
-
-function renderScoreIndicadores(vs){
-  var projMedia=vs.reduce(function(s,v){return s+n(v.proj);},0)/vs.length;
-  var margMedia=vs.reduce(function(s,v){return s+n(v.marg);},0)/vs.length;
-  var devMedia=vs.reduce(function(s,v){return s+Math.abs(n(v.devPct));},0)/vs.length;
-  var churnMedia=DB.posChurn.length?DB.posChurn.reduce(function(s,p){return s+n(p.churnRate);},0)/DB.posChurn.length:0;
-  var posMedia=0;
-  if(DB.posChurn.length){
-    var totP=0,totN=0;
-    DB.posChurn.forEach(function(p){totP+=n(p.positivados);totN+=n(p.naoPositivados);});
-    posMedia=totP+totN>0?(totP/(totP+totN))*100:0;
-  }
-  function bar(val,max,cor){
-    var pct=Math.min(100,Math.round((val/max)*100));
-    return'<div style="background:var(--s2);border-radius:4px;height:6px;margin-top:4px;overflow:hidden">'+
-      '<div style="height:100%;width:'+pct+'%;background:'+cor+';border-radius:4px;transition:width .5s"></div></div>';
-  }
-  return[
-    {l:'Projeção Média',v:projMedia.toFixed(1)+'%',max:100,cor:projMedia>=85?'var(--cy)':projMedia>=70?'var(--ye)':'var(--rd)'},
-    {l:'Margem Média',v:margMedia.toFixed(2)+'%',max:20,cor:margMedia>=17?'var(--cy)':'var(--ye)'},
-    {l:'Taxa de Positivação',v:posMedia.toFixed(1)+'%',max:100,cor:posMedia>=75?'var(--cy)':posMedia>=60?'var(--ye)':'var(--rd)'},
-    {l:'Devolução Média',v:devMedia.toFixed(2)+'%',max:3,cor:devMedia<=DEV_LIM?'var(--cy)':'var(--rd)'},
-    {l:'Churn Médio',v:churnMedia.toFixed(1)+'%',max:50,cor:churnMedia<=15?'var(--cy)':churnMedia<=30?'var(--ye)':'var(--rd)'}
-  ].map(function(x){
-    return'<div class="dr"><div style="flex:1"><div style="font-size:12px">'+x.l+'</div>'+bar(parseFloat(x.v),x.max,x.cor)+'</div>'+
-      '<div style="font-size:13px;font-weight:700;color:'+x.cor+';margin-left:12px;white-space:nowrap">'+x.v+'</div></div>';
-  }).join('');
-}
-
-function renderDistribuicao(scores){
-  var ok=scores.filter(function(s){return s>=70;}).length;
-  var at=scores.filter(function(s){return s>=50&&s<70;}).length;
-  var cr=scores.filter(function(s){return s<50;}).length;
-  return'<div class="dr"><div class="dot" style="background:var(--cy)"></div><span style="flex:1">SAUDÁVEL (score ≥70)</span><strong style="color:var(--cy)">'+ok+' vendedor(es)</strong></div>'+
-    '<div class="dr"><div class="dot" style="background:var(--ye)"></div><span style="flex:1">ATENÇÃO (50-69)</span><strong style="color:var(--ye)">'+at+' vendedor(es)</strong></div>'+
-    '<div class="dr"><div class="dot" style="background:var(--rd)"></div><span style="flex:1">CRÍTICO (abaixo de 50)</span><strong style="color:var(--rd)">'+cr+' vendedor(es)</strong></div>'+
-    '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--b);font-size:12px;color:var(--t2)">'+
-    (cr>0?'⚠ Ação imediata: agende visita de campo com os vendedores em situação crítica.':
-    at>0?'Monitore de perto os vendedores em atenção. Suporte e plano de ação.':
-    '✅ Equipe saudável. Mantenha o acompanhamento semanal.')+
-    '</div>';
-}
-
-function renderScores(){
-  var el=document.getElementById('scoresBox');
-  var vs=DB.biAtual.vendedores;
-  if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
-  var dados=vs.map(function(v,i){
-    var pc=DB.posChurn[i]||{};
-    return{v:v,pc:pc,sc:calcScore(v,pc)};
-  }).sort(function(a,b){return b.sc-a.sc;});
-  el.innerHTML=dados.map(function(x){
-    var v=x.v,pc=x.pc,sc=x.sc;
-    var cor=scoreCor(sc);
-    var objMarg=n(v.objMarg)||17.5;
-    var totPos=(n(pc.positivados)+n(pc.naoPositivados));
-    var txPos=totPos>0?((n(pc.positivados)/totPos)*100).toFixed(1):0;
-    return'<div class="vc">'+
-      '<div class="vc-top">'+
-        '<div style="display:flex;align-items:center;gap:14px">'+
-          '<div style="width:60px;height:60px;border-radius:50%;border:3px solid '+cor+';display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0">'+
-            '<div style="font-size:20px;font-weight:700;color:'+cor+';line-height:1">'+sc+'</div>'+
-            '<div style="font-size:8px;color:'+cor+';letter-spacing:1px">pts</div>'+
+      var cor=scoreCor(sc);
+      var objMarg=n(v.objMarg)||17.5;
+      var totPos=(n(pc.positivados)+n(pc.naoPositivados));
+      var txPos=totPos>0?((n(pc.positivados)/totPos)*100).toFixed(1):0;
+      return'<div class="vc">'+
+        '<div class="vc-top">'+
+          '<div style="display:flex;align-items:center;gap:14px">'+
+            '<div style="width:60px;height:60px;border-radius:50%;border:3px solid '+cor+';display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0">'+
+              '<div style="font-size:20px;font-weight:700;color:'+cor+';line-height:1">'+sc+'</div>'+
+              '<div style="font-size:8px;color:'+cor+';letter-spacing:1px">pts</div>'+
+            '</div>'+
+            '<div>'+
+              '<div class="vc-nome">'+v.nome+'</div>'+
+              '<div class="vc-cod">COD '+v.cod+'</div>'+
+            '</div>'+
           '</div>'+
-          '<div>'+
-            '<div class="vc-nome">'+v.nome+'</div>'+
-            '<div class="vc-cod">COD '+v.cod+'</div>'+
-          '</div>'+
+          scoreBadge(sc)+
         '</div>'+
-        scoreBadge(sc)+
-      '</div>'+
-      '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px">'+
-        scoreItem('Projeção','30pts',v.proj,'%',n(v.proj)>=85?30:n(v.proj)>=80?18:n(v.proj)>=70?10:0)+
-        scoreItem('Margem','20pts',v.marg,'%',n(v.marg)>=objMarg?20:n(v.marg)>=objMarg*.9?14:n(v.marg)>=objMarg*.8?8:0)+
-        scoreItem('Positivação','20pts',txPos,'%',txPos>=90?20:txPos>=75?14:txPos>=60?8:0)+
-        scoreItem('Devolução','20pts',v.devPct,'%',Math.abs(n(v.devPct))<=DEV_LIM?20:Math.abs(n(v.devPct))<=DEV_LIM*2?10:0)+
-        scoreItem('Churn','10pts',pc.churnRate,'%',n(pc.churnRate)<=15?10:n(pc.churnRate)<=25?5:0)+
-      '</div>'+
-    '</div>';
-  }).join('');
-}
-
-function scoreItem(lbl,max,val,suf,pts){
-  var v=fmt(val)+(val!==undefined&&val!==''?suf:'');
-  var ok=pts>0;
-  return'<div class="vm">'+
-    '<div class="vm-l">'+lbl+'</div>'+
-    '<div style="font-size:13px;font-weight:700;color:'+(ok?'var(--cy)':'var(--rd)')+'">'+v+'</div>'+
-    '<div style="font-size:10px;color:'+(ok?'var(--cy)':'var(--rd)')+';margin-top:2px">'+pts+'/'+max+'</div>'+
-  '</div>';
-}
-
-function renderEquipe(){
-  var el=document.getElementById('equipeBox');
-  var vs=DB.biAtual.vendedores;
-  if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
-  el.innerHTML=vs.map(function(v,i){
-    var pc=DB.posChurn[i]||{};
-    var sc=calcScore(v,pc);
-    var objMarg=n(v.objMarg)||17.5;
-    var dabs=Math.abs(n(v.devPct));
-    var totPos=n(pc.positivados)+n(pc.naoPositivados);
-    var txPos=totPos>0?((n(pc.positivados)/totPos)*100).toFixed(1):0;
-    var ins=[];
-    if(n(v.proj)<70)ins.push({c:'dg',t:'Projeção crítica ('+fP(v.proj)+'). Visita de campo urgente. Identificar clientes inativos e devoluções.'});
-    else if(n(v.proj)<85)ins.push({c:'wn',t:'Projeção em atenção ('+fP(v.proj)+'). Acompanhar de perto e acionar clientes não positivados.'});
-    if(dabs>DEV_LIM)ins.push({c:'dg',t:'Devolução acima do limite ('+fP(v.devPct)+'). Limite: '+DEV_LIM+'%. Investigar causas com o cliente.'});
-    if(n(v.marg)<objMarg*0.9)ins.push({c:'wn',t:'Margem abaixo do objetivo ('+fP(v.marg)+' vs obj: '+objMarg+'%). Focar no Mix Rentável Arcofoods.'});
-    if(n(pc.churnRate)>25)ins.push({c:'dg',t:'Churn alto ('+pc.churnRate+'%). Clientes parando de comprar. Ação de recuperação imediata.'});
-    else if(n(pc.churnRate)>15)ins.push({c:'wn',t:'Churn em atenção ('+pc.churnRate+'%). Monitorar clientes em risco de saída.'});
-    if(n(pc.naoPositivados)>20)ins.push({c:'wn',t:pc.naoPositivados+' clientes não positivados este mês. Reativar carteira inativa.'});
-    if(n(pc.churnRate)>20&&n(v.proj)<80)ins.push({c:'dg',t:'ALERTA PREDITIVO: combinação de churn alto e projeção baixa indica risco de queda no próximo mês.'});
-    return'<div class="vc">'+
-      '<div class="vc-top">'+
-        '<div><div class="vc-nome">'+v.nome+'</div><div class="vc-cod">COD '+v.cod+' · Score: '+sc+'/100</div></div>'+
-        '<div style="display:flex;gap:8px">'+scoreBadge(sc)+'<button class="btn bd bsm no-print" onclick="abrirPlanoVend(\''+v.nome+'\')">+ Plano</button></div>'+
-      '</div>'+
-      '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px">'+
-        vmBox('PROJ%',fP(v.proj),n(v.proj)>=85?'ok':n(v.proj)>=70?'wn':'dg')+
-        vmBox('FAT%',fP(v.fat),'')+
-        vmBox('MARG%',fP(v.marg),n(v.marg)>=objMarg?'ok':'wn')+
-        vmBox('POSIT',fmt(v.realPos)+'/'+fmt(v.objPos),n(v.saldoPos)>=0?'ok':'dg')+
-        vmBox('SALDO',fmt(v.saldoPos),n(v.saldoPos)>=0?'ok':'dg')+
-        vmBox('%DEV',fP(v.devPct),dabs>DEV_LIM?'dg':'ok')+
-      '</div>'+
-      '<div class="im">'+
-        (v.sku?'<div class="mp">SKU/CLI: '+v.sku+'</div>':'')+
-        (v.vendaMedia?'<div class="mp">Venda Média: R$'+v.vendaMedia+'</div>':'')+
-        (v.precoKg?'<div class="mp">Preço/KG: R$'+v.precoKg+'</div>':'')+
-        (pc.positivados?'<div class="mp">Positivados: '+pc.positivados+'</div>':'')+
-        (pc.naoPositivados?'<div class="mp">Não Posit: '+pc.naoPositivados+'</div>':'')+
-        (pc.churnRate?'<div class="mp">Churn: '+pc.churnRate+'%</div>':'')+
-        (txPos?'<div class="mp">Taxa Posit: '+txPos+'%</div>':'')+
-      '</div>'+
-      (ins.length?'<div style="margin-top:10px;border-top:1px solid var(--b);padding-top:10px">'+
-        ins.map(function(x){return'<div class="dr"><span class="badge '+(x.c==='dg'?'bdg':'bwn')+'" style="margin-right:6px;flex-shrink:0">'+(x.c==='dg'?'ALERTA':'ATENÇÃO')+'</span><span style="font-size:12px;color:var(--t2)">'+x.t+'</span></div>';}).join('')+'</div>':
-        '<div style="margin-top:10px;border-top:1px solid var(--b);padding-top:10px"><div class="dr"><span class="badge bok" style="margin-right:6px">OK</span><span style="font-size:12px;color:var(--t2)">Vendedor dentro dos parâmetros esperados. Manter acompanhamento regular.</span></div></div>')+
-    '</div>';
-  }).join('');
-}
-
-function vmBox(lbl,val,cls){
-  return'<div class="vm"><div class="vm-l">'+lbl+'</div><div class="vm-v '+cls+'">'+val+'</div></div>';
-}
-
-function abrirPlanoVend(nome){
-  document.getElementById('plResp').value=nome;
-  var btns=document.querySelectorAll('.nb');
-  for(var i=0;i<btns.length;i++){if(btns[i].textContent.indexOf('Plano')>-1){ir('plano',btns[i]);break;}}
-  toast('Responsável: '+nome);
-}
-
-function renderComp(){
-  var el=document.getElementById('compBox');
-  var va=DB.biAtual.vendedores,vb=DB.biAnterior.vendedores;
-  if(!va||va.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
-  if(!vb||vb.length===0){el.innerHTML='<div class="bn bn-ye"><span>i</span><div>Lance o BI pelo menos duas vezes para ver o comparativo.</div></div>';return;}
-  function evo(curr,prev){
-    var d=n(curr)-n(prev);
-    if(Math.abs(d)<0.1)return'<span style="color:var(--t3)">igual</span>';
-    return d>0?'<span style="color:var(--cy)">subiu '+d.toFixed(1)+'pp</span>':'<span style="color:var(--rd)">caiu '+Math.abs(d).toFixed(1)+'pp</span>';
+        '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px">'+
+          scoreItem('Projeção','30pts',v.proj,'%',n(v.proj)>=85?30:n(v.proj)>=80?18:n(v.proj)>=70?10:0)+
+          scoreItem('Margem','20pts',v.marg,'%',n(v.marg)>=objMarg?20:n(v.marg)>=objMarg*.9?14:n(v.marg)>=objMarg*.8?8:0)+
+          scoreItem('Positivação','20pts',txPos,'%',txPos>=90?20:txPos>=75?14:txPos>=60?8:0)+
+          scoreItem('Devolução','20pts',v.devPct,'%',Math.abs(n(v.devPct))<=DEV_LIM?20:Math.abs(n(v.devPct))<=DEV_LIM*2?10:0)+
+          scoreItem('Churn','10pts',pc.churnRate,'%',n(pc.churnRate)<=15?10:n(pc.churnRate)<=25?5:0)+
+        '</div>'+
+      '</div>';
+    }).join('');
   }
-  function evoScore(curr,prev){
-    var d=curr-prev;
-    if(Math.abs(d)<1)return'<span style="color:var(--t3)">igual</span>';
-    return d>0?'<span style="color:var(--cy)">+'+d+'pts</span>':'<span style="color:var(--rd)">'+d+'pts</span>';
+  
+  function scoreItem(lbl,max,val,suf,pts){
+    var v=fmt(val)+(val!==undefined&&val!==''?suf:'');
+    var ok=pts>0;
+    return'<div class="vm">'+
+      '<div class="vm-l">'+lbl+'</div>'+
+      '<div style="font-size:13px;font-weight:700;color:'+(ok?'var(--cy)':'var(--rd)')+'">'+v+'</div>'+
+      '<div style="font-size:10px;color:'+(ok?'var(--cy)':'var(--rd)')+';margin-top:2px">'+pts+'/'+max+'</div>'+
+    '</div>';
   }
-  var html='<div class="bn bn-cy"><span>i</span><div>Setas indicam evolucao: subiu (verde) / caiu (vermelho) / igual (cinza)</div></div>';
-  html+='<div class="tw"><table><thead><tr>'+
-    '<th>Vendedor</th><th>Score Ant</th><th>Score Atual</th><th>Evolucao Score</th>'+
-    '<th>Proj Ant</th><th>Proj Atual</th><th>Delta Proj</th>'+
-    '<th>Marg Ant</th><th>Marg Atual</th>'+
-    '<th>DEV Ant</th><th>DEV Atual</th>'+
-    '<th>Saldo Posit</th>'+
-    '</tr></thead><tbody>'+
-    va.map(function(v,i){
-      var ant=vb[i]||{};
-      var scAtual=calcScore(v,DB.posChurn[i]||{});
-      var scAnt=calcScore(ant,{});
-      return'<tr>'+
-        '<td style="font-weight:600">'+v.nome+'</td>'+
-        '<td><strong style="color:'+scoreCor(scAnt)+'">'+scAnt+'</strong></td>'+
-        '<td><strong style="color:'+scoreCor(scAtual)+'">'+scAtual+'</strong></td>'+
-        '<td>'+evoScore(scAtual,scAnt)+'</td>'+
-        '<td>'+fP(ant.proj)+'</td>'+
-        '<td style="font-weight:600">'+fP(v.proj)+'</td>'+
-        '<td>'+evo(v.proj,ant.proj)+'</td>'+
-        '<td>'+fP(ant.marg)+'</td>'+
-        '<td style="font-weight:600">'+fP(v.marg)+'</td>'+
-        '<td>'+fP(ant.devPct)+'</td>'+
-        '<td style="font-weight:600">'+fP(v.devPct)+'</td>'+
-        '<td style="color:'+(n(v.saldoPos)<0?'var(--rd)':'var(--cy)')+'">'+fmt(v.saldoPos)+'</td>'+
-        '</tr>';
-    }).join('')+'</tbody></table></div>';
-  el.innerHTML=html;
-}
-function salvarCampo(){
-  var vend=document.getElementById('caVend').value.trim();
-  if(!vend){toast('Informe o vendedor.');return;}
-  DB.campos.push({vendedor:vend,data:document.getElementById('caData').value,
-    cidade:document.getElementById('caCidade').value,cliente:document.getElementById('caCliente').value,
-    obs:document.getElementById('caObs').value});
-  salvar();
-  ['caVend','caData','caCidade','caCliente','caObs'].forEach(function(id){document.getElementById(id).value='';});
-  renderCampoLista();toast('Registro salvo!');
-}
-function renderCampoLista(){
-  var el=document.getElementById('listaCampo');
-  if(!DB.campos.length){el.innerHTML='<div class="empty">Nenhum registro ainda.</div>';return;}
-  el.innerHTML=DB.campos.slice().reverse().map(function(c,ri){
-    var i=DB.campos.length-1-ri;
-    var df=c.data?new Date(c.data+'T12:00').toLocaleDateString('pt-BR'):'—';
-    return'<div class="ic"><div class="ih"><div><div class="in">'+(c.cliente||'Visita')+'</div>'+
-      '<div style="font-size:11px;color:var(--t2);margin-top:2px">'+c.vendedor+' · '+c.cidade+' · '+df+'</div></div>'+
-      '<button class="btn bd bsm" onclick="remover(\"campos\",'+i+')">×</button></div>'+
-      (c.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.7;border-top:1px solid var(--b);padding-top:10px">'+c.obs+'</div>':'')+
-    '</div>';
-  }).join('');
-}
-function salvarPlano(){
-  var prob=document.getElementById('plProb').value.trim();
-  if(!prob){toast('Informe o problema.');return;}
-  DB.planos.push({problema:prob,solucao:document.getElementById('plSol').value,
-    responsavel:document.getElementById('plResp').value,prazo:document.getElementById('plPrazo').value,
-    prioridade:document.getElementById('plPrio').value,status:document.getElementById('plStatus').value,
-    obs:document.getElementById('plObs').value});
-  salvar();
-  ['plProb','plSol','plResp','plPrazo','plObs'].forEach(function(id){document.getElementById(id).value='';});
-  renderPlanos();toast('Plano salvo!');
-}
-function renderPlanos(){
-  var el=document.getElementById('listaPlanos');
-  if(!DB.planos.length){el.innerHTML='<div class="empty">Nenhum plano cadastrado.</div>';return;}
-  el.innerHTML=DB.planos.map(function(p,i){
-    var pf=p.prazo?new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR'):null;
-    return'<div class="ic"><div class="ih"><div><div class="in">'+p.problema+'</div>'+
-      (p.solucao?'<div style="font-size:12px;color:var(--cy);margin-top:3px">→ '+p.solucao+'</div>':'')+
-      '</div><div style="display:flex;gap:6px;align-items:center">'+
-      '<span class="badge '+(p.prioridade==='Alta'?'bdg':p.prioridade==='Média'?'bwn':'bnt')+'">'+p.prioridade+'</span>'+
-      '<span class="badge '+(p.status==='Concluído'?'bok':p.status==='Em andamento'?'bwn':'bnt')+'">'+p.status+'</span>'+
-      '<button class="btn bd bsm" onclick="remover(\"planos\",'+i+')">×</button></div></div>'+
-      '<div class="im">'+(p.responsavel?'<div class="mp">'+p.responsavel+'</div>':'')+
-      (pf?'<div class="mp">Prazo: '+pf+'</div>':'')+'</div>'+
-      (p.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6">'+p.obs+'</div>':'')+
-    '</div>';
-  }).join('');
-}
-function salvarCliente(){
-  var nome=document.getElementById('cliNome').value.trim();
-  if(!nome){toast('Informe o nome do cliente.');return;}
-  DB.clientes.push({nome:nome,cidade:document.getElementById('cliCidade').value,
-    vendedor:document.getElementById('cliVend').value,status:document.getElementById('cliStatus').value,
-    obs:document.getElementById('cliObs').value});
-  salvar();
-  ['cliNome','cliCidade','cliVend','cliObs'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('cliStatus').selectedIndex=0;
-  renderClientes();toast('Cliente salvo!');
-}
-function renderClientes(){
-  var el=document.getElementById('listaClientes');
-  if(!DB.clientes.length){el.innerHTML='<div class="empty">Nenhum cliente cadastrado.</div>';return;}
-  el.innerHTML=DB.clientes.map(function(c,i){
-    var sc=c.status==='Em risco'?'bdg':c.status==='Estratégico'||c.status==='Expansão'?'bok':c.status==='Oportunidade'?'bwn':'bnt';
-    return'<div class="ic"><div class="ih"><div><div class="in">'+c.nome+'</div>'+
-      (c.cidade?'<div style="font-size:11px;color:var(--t2);margin-top:2px">'+c.cidade+(c.vendedor?' · '+c.vendedor:'')+'</div>':'')+
-      '</div><div style="display:flex;gap:6px;align-items:center">'+
-      (c.status?'<span class="badge '+sc+'">'+c.status+'</span>':'')+
-      '<button class="btn bd bsm" onclick="remover(\"clientes\",'+i+')">×</button></div></div>'+
-      (c.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6">'+c.obs+'</div>':'')+
-    '</div>';
-  }).join('');
-}
-var MSGS=[
-  'Feliz aniversário, {nome}! Que seu novo ciclo seja repleto de saúde, prosperidade e conquistas. Grande abraço! {ass}',
-  'Parabéns pelo seu dia, {nome}! Desejo muita saúde, paz e felicidade. Que este novo ciclo seja extraordinário! {ass}',
-  'Feliz aniversário, {nome}! Que Deus abençoe sua vida com saúde e muitas realizações. Grande abraço! {ass}'
-];
-function buildMsg(a,idx){
-  var ass=DB.perfil.assinatura||'Leandro Felipe · Supervisor Comercial Arcofoods';
-  var base=a.msg&&a.msg.trim()?a.msg:MSGS[idx%MSGS.length];
-  return base.replace('{nome}',a.nome).replace('{ass}',ass);
-}
-function salvarAniv(){
-  var nome=document.getElementById('aNome').value.trim();
-  if(!nome){toast('Informe o nome.');return;}
-  DB.aniversarios.push({nome:nome,data:document.getElementById('aData').value,
-    tel:document.getElementById('aTel').value,email:document.getElementById('aEmail').value,
-    tipo:document.getElementById('aTipo').value,msg:document.getElementById('aMsg').value});
-  salvar();
-  ['aNome','aData','aTel','aEmail','aMsg'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('aTipo').selectedIndex=0;
-  renderAniv();toast('Aniversariante salvo!');
-}
-function renderAniv(){
-  var hoje=new Date(),hd=hoje.getFullYear(),hm=hoje.getMonth(),hdia=hoje.getDate();
-  var hojeA=DB.aniversarios.filter(function(a){
-    if(!a.data)return false;
-    var d=new Date(a.data+'T12:00');return d.getMonth()===hm&&d.getDate()===hdia;
-  });
-  document.getElementById('anivHoje').innerHTML=hojeA.length>0
-    ?'<div class="bn bn-cy" style="margin-bottom:14px"><span>🎂</span><div><strong>Aniversário Hoje!</strong> '+hojeA.map(function(a){return a.nome+' ('+a.tipo+')';}).join(', ')+'</div></div>':'';
-  var el=document.getElementById('listaAniv');
-  if(!DB.aniversarios.length){el.innerHTML='<div class="empty">Nenhum aniversariante cadastrado.</div>';return;}
-  var sorted=DB.aniversarios.map(function(a,i){return{a:a,i:i};}).sort(function(x,y){
-    if(!x.a.data)return 1;if(!y.a.data)return -1;
-    var dx=new Date(x.a.data+'T12:00'),dy=new Date(y.a.data+'T12:00');
-    var nx=new Date(hd,dx.getMonth(),dx.getDate()),ny=new Date(hd,dy.getMonth(),dy.getDate());
-    if(nx<new Date(hd,hm,hdia))nx.setFullYear(hd+1);
-    if(ny<new Date(hd,hm,hdia))ny.setFullYear(hd+1);
-    return nx-ny;
-  });
-  el.innerHTML=sorted.map(function(obj,idx){
-    var a=obj.a,i=obj.i,msg=buildMsg(a,idx);
-    var tel=a.tel?a.tel.replace(/\D/g,''):'';
-    var whats=tel?'https://wa.me/55'+tel+'?text='+encodeURIComponent(msg):null;
-    var df=a.data?new Date(a.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}):'—';
-    var dO=a.data?new Date(a.data+'T12:00'):null;
-    var diff=dO?Math.round((new Date(hd,dO.getMonth(),dO.getDate())-new Date(hd,hm,hdia))/86400000):null;
-    if(diff!==null&&diff<0)diff+=365;
-    return'<div class="ic"><div class="ih"><div><div class="in">'+a.nome+'</div>'+
-      '<div style="font-size:11px;color:var(--t2);margin-top:2px">'+a.tipo+' · '+df+'</div></div>'+
-      '<div style="display:flex;align-items:center;gap:6px">'+
-      (diff!==null?'<span class="badge '+(diff===0?'bok':'bnt')+'">'+(diff===0?'Hoje!':'em '+diff+' dia(s)')+'</span>':'')+
-      '<button class="btn bd bsm" onclick="remover(\"aniversarios\",'+i+')">×</button></div></div>'+
-      (a.tel||a.email?'<div class="ia">'+
-      (whats?'<a href="'+whats+'" target="_blank" class="btn bp bsm">WhatsApp</a>':'')+
-      (a.email?'<a href="mailto:'+a.email+'?subject=Feliz+Aniversário&body='+encodeURIComponent(msg)+'" class="btn bs bsm">E-mail</a>':'')+
-      '</div>':'')+
-    '</div>';
-  }).join('');
-}
-function gerarRelatorio(){
-  var p=DB.perfil,r=DB.biAtual.regional,vs=DB.biAtual.vendedores;
-  if(!vs||vs.length===0){toast('Lance os dados do BI primeiro.');return;}
-  var hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-  var mes=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-  var baixa=(new Date().getMonth()>=4&&new Date().getMonth()<=8);
-  var crit=vs.filter(function(v){return st(v.proj,v.devPct)==='dg';});
-  var atenc=vs.filter(function(v){return st(v.proj,v.devPct)==='wn';});
-  var ok=vs.length-crit.length-atenc.length;
-  var sorted=vs.slice().sort(function(a,b){return n(b.proj)-n(a.proj);});
-  var top3=sorted.slice(0,3);
-  var bot3=sorted.slice(-3).reverse();
-
-  // Positivação total
-  var totalPos=0,totalNPos=0;
-  DB.posChurn.forEach(function(p){totalPos+=parseInt(p.positivados||0);totalNPos+=parseInt(p.naoPositivados||0);});
-  var txPos=totalPos+totalNPos>0?((totalPos/(totalPos+totalNPos))*100).toFixed(1):0;
-
-  // Churn críticos
-  var churnAltos=DB.posChurn.filter(function(p){return n(p.churnRate)>20;});
-
-  // Planos ativos
-  var planosAtivos=DB.planos.filter(function(p){return p.status!=='Concluído';});
-
-  // Score geral
-  var projMedia=vs.reduce(function(s,v){return s+n(v.proj);},0)/vs.length;
-  var situacao=projMedia>=85?'SAUDÁVEL':projMedia>=70?'ATENÇÃO':'CRÍTICA';
-  var situacaoCor=projMedia>=85?'var(--cy)':projMedia>=70?'var(--ye)':'var(--rd)';
-
-  var html='<div style="max-width:760px;font-size:13px;line-height:1.7">';
-
-  // CAPA
-  html+='<div class="rb" style="border-left:4px solid var(--cy);padding-left:20px">';
-  html+='<div style="font-size:22px;font-weight:700;color:var(--cy);margin-bottom:6px">RELATÓRIO EXECUTIVO DE SUPERVISÃO</div>';
-  html+='<div style="color:var(--t2)">'+hoje+' · '+p.empresa+' · Regional '+( p.regional||'Norte Fluminense')+'</div>';
-  html+='<div style="color:var(--t2)">Supervisor: <strong style="color:var(--t)">'+p.supervisor+'</strong></div>';
-  html+='<div style="margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border-radius:8px">';
-  html+='<strong style="color:var(--t)">Situação da Regional: </strong>';
-  html+='<span style="color:'+situacaoCor+';font-weight:700">'+situacao+'</span>';
-  html+=' · Projeção média da equipe: <strong style="color:'+situacaoCor+'">'+projMedia.toFixed(1)+'%</strong>';
-  html+=(baixa?' · <span style="color:var(--ye)">⚠ Baixa Temporada — Região dos Lagos</span>':'');
-  html+='</div></div>';
-
-  // CONTEXTO
-  html+='<div class="rb"><div class="rs">Contexto Regional</div>';
-  html+='<div style="color:var(--t2);line-height:1.8">'+(p.contexto||'Região dos Lagos — sazonalidade impacta resultados na baixa temporada.')+'</div>';
-  if(baixa){
-    html+='<div style="margin-top:10px;padding:10px 14px;background:var(--ye2);border-radius:8px;color:var(--ye)">';
-    html+='<strong>Momento de Baixa Temporada:</strong> Os clientes da Região dos Lagos reduzem volume significativamente neste período. As metas da empresa não são ajustadas. O foco deve ser manter a base de clientes ativa, trabalhar o Mix Rentável e preparar a equipe para a explosão da alta temporada em outubro.';
-    html+='</div>';
+  
+  function renderEquipe(){
+    var el=document.getElementById('equipeBox');
+    var vs=DB.biAtual.vendedores;
+    if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
+    el.innerHTML=vs.map(function(v,i){
+      var pc=DB.posChurn[i]||{};
+      var sc=calcScore(v,pc);
+      var objMarg=n(v.objMarg)||17.5;
+      var dabs=Math.abs(n(v.devPct));
+      var totPos=n(pc.positivados)+n(pc.naoPositivados);
+      var txPos=totPos>0?((n(pc.positivados)/totPos)*100).toFixed(1):0;
+      var ins=[];
+      if(n(v.proj)<70)ins.push({c:'dg',t:'Projeção crítica ('+fP(v.proj)+'). Visita de campo urgente. Identificar clientes inativos e devoluções.'});
+      else if(n(v.proj)<85)ins.push({c:'wn',t:'Projeção em atenção ('+fP(v.proj)+'). Acompanhar de perto e acionar clientes não positivados.'});
+      if(dabs>DEV_LIM)ins.push({c:'dg',t:'Devolução acima do limite ('+fP(v.devPct)+'). Limite: '+DEV_LIM+'%. Investigar causas com o cliente.'});
+      if(n(v.marg)<objMarg*0.9)ins.push({c:'wn',t:'Margem abaixo do objetivo ('+fP(v.marg)+' vs obj: '+objMarg+'%). Focar no Mix Rentável Arcofoods.'});
+      if(n(pc.churnRate)>25)ins.push({c:'dg',t:'Churn alto ('+pc.churnRate+'%). Clientes parando de comprar. Ação de recuperação imediata.'});
+      else if(n(pc.churnRate)>15)ins.push({c:'wn',t:'Churn em atenção ('+pc.churnRate+'%). Monitorar clientes em risco de saída.'});
+      if(n(pc.naoPositivados)>20)ins.push({c:'wn',t:pc.naoPositivados+' clientes não positivados este mês. Reativar carteira inativa.'});
+      if(n(pc.churnRate)>20&&n(v.proj)<80)ins.push({c:'dg',t:'ALERTA PREDITIVO: combinação de churn alto e projeção baixa indica risco de queda no próximo mês.'});
+      return'<div class="vc">'+
+        '<div class="vc-top">'+
+          '<div><div class="vc-nome">'+v.nome+'</div><div class="vc-cod">COD '+v.cod+' · Score: '+sc+'/100</div></div>'+
+          '<div style="display:flex;gap:8px">'+scoreBadge(sc)+'<button class="btn bd bsm no-print" onclick="abrirPlanoVend(\''+v.nome+'\')">+ Plano</button></div>'+
+        '</div>'+
+        '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px">'+
+          vmBox('PROJ%',fP(v.proj),n(v.proj)>=85?'ok':n(v.proj)>=70?'wn':'dg')+
+          vmBox('FAT%',fP(v.fat),'')+
+          vmBox('MARG%',fP(v.marg),n(v.marg)>=objMarg?'ok':'wn')+
+          vmBox('POSIT',fmt(v.realPos)+'/'+fmt(v.objPos),n(v.saldoPos)>=0?'ok':'dg')+
+          vmBox('SALDO',fmt(v.saldoPos),n(v.saldoPos)>=0?'ok':'dg')+
+          vmBox('%DEV',fP(v.devPct),dabs>DEV_LIM?'dg':'ok')+
+        '</div>'+
+        '<div class="im">'+
+          (v.sku?'<div class="mp">SKU/CLI: '+v.sku+'</div>':'')+
+          (v.vendaMedia?'<div class="mp">Venda Média: R$'+v.vendaMedia+'</div>':'')+
+          (v.precoKg?'<div class="mp">Preço/KG: R$'+v.precoKg+'</div>':'')+
+          (pc.positivados?'<div class="mp">Positivados: '+pc.positivados+'</div>':'')+
+          (pc.naoPositivados?'<div class="mp">Não Posit: '+pc.naoPositivados+'</div>':'')+
+          (pc.churnRate?'<div class="mp">Churn: '+pc.churnRate+'%</div>':'')+
+          (txPos?'<div class="mp">Taxa Posit: '+txPos+'%</div>':'')+
+        '</div>'+
+        (ins.length?'<div style="margin-top:10px;border-top:1px solid var(--b);padding-top:10px">'+
+          ins.map(function(x){return'<div class="dr"><span class="badge '+(x.c==='dg'?'bdg':'bwn')+'" style="margin-right:6px;flex-shrink:0">'+(x.c==='dg'?'ALERTA':'ATENÇÃO')+'</span><span style="font-size:12px;color:var(--t2)">'+x.t+'</span></div>';}).join('')+'</div>':
+          '<div style="margin-top:10px;border-top:1px solid var(--b);padding-top:10px"><div class="dr"><span class="badge bok" style="margin-right:6px">OK</span><span style="font-size:12px;color:var(--t2)">Vendedor dentro dos parâmetros esperados. Manter acompanhamento regular.</span></div></div>')+
+      '</div>';
+    }).join('');
   }
-  html+='</div>';
-
-  // TERMÔMETRO REGIONAL
-  html+='<div class="rb"><div class="rs">Termômetro da Regional</div>';
-  html+=termRow('Projeção do Mês',fP(r.proj),'Meta: 100%',n(r.proj)>=85?'ok':n(r.proj)>=70?'wn':'dg',
-    n(r.proj)>=85?'Regional dentro da meta.':n(r.proj)>=70?'Atenção — abaixo da meta. Necessita aceleração.':'Situação crítica. Ação imediata necessária.');
-  html+=termRow('Faturamento Real',fP(r.fat),'',n(r.fat)>=69?'ok':'wn','');
-  html+=termRow('Margem Real',fP(r.marg),'Obj: '+fmt(r.objMarg||'17,32')+'%',n(r.marg)>=(n(r.objMarg||17.32))?'ok':'wn',
-    n(r.marg)<n(r.objMarg||17.32)?'Margem abaixo do objetivo. Orientar equipe sobre Mix Rentável.':'Margem dentro do objetivo.');
-  html+=termRow('Positivação',fmt(r.realPos)+' / '+fmt(r.objPos),'Saldo: '+fmt(r.saldoPos),parseInt(r.saldoPos||0)>=0?'ok':'dg',
-    parseInt(r.saldoPos||0)<0?Math.abs(parseInt(r.saldoPos||0))+' clientes a mais precisam comprar para bater o objetivo.':'Positivação dentro do objetivo.');
-  html+=termRow('Taxa de Positivação',txPos+'%','da base ativa',parseFloat(txPos)>=70?'ok':'dg',
-    parseFloat(txPos)<70?'Mais de 30% da base não comprou no mês. Foco em reativação urgente.':'Boa taxa de positivação.');
-  html+=termRow('Devolução',fP(r.devPct),'Limite: 0,65%',Math.abs(n(r.devPct))>DEV_LIM?'dg':'ok',
-    Math.abs(n(r.devPct))>DEV_LIM?'Devolução acima do limite. Investigar causas por vendedor.':'Devolução dentro do limite aceitável.');
-  html+=termRow('Venda Média Regional','R$ '+fmt(r.vendaMedia),'por cliente','ok','');
-  html+='</div>';
-
-  // DIAGNÓSTICO DA EQUIPE
-  html+='<div class="rb"><div class="rs">Diagnóstico Individual da Equipe</div>';
-  html+='<div style="color:var(--t2);margin-bottom:14px">Análise de cada vendedor com indicadores e ações recomendadas:</div>';
-  vs.forEach(function(v,i){
-    var pc=DB.posChurn[i]||{};
-    var s=st(v.proj,v.devPct);
-    var cor=s==='ok'?'var(--cy)':s==='wn'?'var(--ye)':'var(--rd)';
-    var acoes=[];
-    if(n(v.proj)<70) acoes.push('Acompanhamento de campo URGENTE. Verificar carteira de clientes e identificar bloqueios.');
-    else if(n(v.proj)<85) acoes.push('Monitorar de perto. Visita de campo para acelerar positivação.');
-    if(Math.abs(n(v.devPct))>DEV_LIM) acoes.push('Devolução acima do limite ('+fP(v.devPct)+'). Conversar com o vendedor para identificar causa raiz.');
-    if(v.marg&&n(v.marg)<n(v.objMarg||17.5)) acoes.push('Margem abaixo do objetivo. Orientar sobre Mix Rentável e produtos com maior margem.');
-    if(pc.churnRate&&n(pc.churnRate)>20) acoes.push('Churn alto ('+pc.churnRate+'%). '+Math.round(n(pc.churnRate)/100*(parseInt(pc.positivados||0)+parseInt(pc.naoPositivados||0)))+' clientes perdidos. Plano de reativação necessário.');
-    if(parseInt(pc.naoPositivados||0)>15) acoes.push(pc.naoPositivados+' clientes não compraram no mês. Prioridade: visitar e reativar esses clientes.');
-    if(acoes.length===0) acoes.push('Manter o ritmo. Reconhecer o bom desempenho e usar como referência para a equipe.');
-    html+='<div style="border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;border-left:3px solid '+cor+'">';
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    html+='<strong style="color:var(--t);font-size:14px">'+v.nome+'</strong>';
-    html+=badgeSt(v.proj,v.devPct);
-    html+='</div>';
-    html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">';
-    html+=miniStat('PROJ',fP(v.proj),s);
-    html+=miniStat('MARGEM',fP(v.marg),n(v.marg)>=(n(v.objMarg||17.5))?'ok':'wn');
-    html+=miniStat('DEV',fP(v.devPct),Math.abs(n(v.devPct))>DEV_LIM?'dg':'ok');
-    html+=miniStat('POSIT',fmt(v.realPos)+'/'+fmt(v.objPos),parseInt(v.saldoPos||0)>=0?'ok':'dg');
-    html+='</div>';
-    if(pc.positivados||pc.churnRate){
-      html+='<div style="font-size:11px;color:var(--t2);margin-bottom:8px">';
-      if(pc.positivados) html+='Positivados: <strong style="color:var(--cy)">'+pc.positivados+'</strong> · ';
-      if(pc.naoPositivados) html+='Não positivados: <strong style="color:var(--rd)">'+pc.naoPositivados+'</strong> · ';
-      if(pc.churnRate) html+='Churn: <strong style="color:'+(n(pc.churnRate)>20?'var(--rd)':'var(--ye)')+'">'+pc.churnRate+'%</strong>';
-      html+='</div>';
+  
+  function vmBox(lbl,val,cls){
+    return'<div class="vm"><div class="vm-l">'+lbl+'</div><div class="vm-v '+cls+'">'+val+'</div></div>';
+  }
+  
+  function abrirPlanoVend(nome){
+    document.getElementById('plResp').value=nome;
+    var btns=document.querySelectorAll('.nb');
+    for(var i=0;i<btns.length;i++){if(btns[i].textContent.indexOf('Plano')>-1){ir('plano',btns[i]);break;}}
+    toast('Responsável: '+nome);
+  }
+  
+  function renderComp(){
+    var el=document.getElementById('compBox');
+    var va=DB.biAtual.vendedores,vb=DB.biAnterior.vendedores;
+    if(!va||va.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
+    if(!vb||vb.length===0){el.innerHTML='<div class="bn bn-ye"><span>i</span><div>Lance o BI pelo menos duas vezes para ver o comparativo.</div></div>';return;}
+    function evo(curr,prev){
+      var d=n(curr)-n(prev);
+      if(Math.abs(d)<0.1)return'<span style="color:var(--t3)">igual</span>';
+      return d>0?'<span style="color:var(--cy)">subiu '+d.toFixed(1)+'pp</span>':'<span style="color:var(--rd)">caiu '+Math.abs(d).toFixed(1)+'pp</span>';
     }
-    html+='<div style="font-size:11px;font-weight:600;color:var(--cy);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">Ações Recomendadas:</div>';
-    html+='<ul style="padding-left:16px;color:var(--t2);font-size:12px">';
-    acoes.forEach(function(a){html+='<li style="margin-bottom:3px">'+a+'</li>';});
-    html+='</ul></div>';
-  });
-  html+='</div>';
-
-  // POSITIVAÇÃO E CHURN
-  if(DB.posChurn&&DB.posChurn.length>0){
-    html+='<div class="rb"><div class="rs">Análise de Positivação e Churn</div>';
-    html+='<div style="color:var(--t2);margin-bottom:12px">De <strong style="color:var(--t)">'+(totalPos+totalNPos)+'</strong> clientes na base: ';
-    html+='<strong style="color:var(--cy)">'+totalPos+' compraram</strong> e ';
-    html+='<strong style="color:var(--rd)">'+totalNPos+' não compraram</strong> no mês. ';
-    html+='Taxa de positivação: <strong style="color:'+(parseFloat(txPos)>=70?'var(--cy)':'var(--rd)')+'">'+txPos+'%</strong>.</div>';
-    if(churnAltos.length>0){
-      html+='<div style="padding:10px 14px;background:var(--rd2);border-radius:8px;margin-bottom:10px;font-size:12px;color:var(--t2)">';
-      html+='<strong style="color:var(--rd)">Atenção — Churn elevado:</strong> ';
-      html+=churnAltos.map(function(p){return p.nome+' ('+p.churnRate+'%)';}).join(', ');
-      html+='. Clientes estão parando de comprar. Investigar motivo e acionar plano de retenção.</div>';
+    function evoScore(curr,prev){
+      var d=curr-prev;
+      if(Math.abs(d)<1)return'<span style="color:var(--t3)">igual</span>';
+      return d>0?'<span style="color:var(--cy)">+'+d+'pts</span>':'<span style="color:var(--rd)">'+d+'pts</span>';
     }
-    html+='</div>';
+    var html='<div class="bn bn-cy"><span>i</span><div>Setas indicam evolucao: subiu (verde) / caiu (vermelho) / igual (cinza)</div></div>';
+    html+='<div class="tw"><table><thead><tr>'+
+      '<th>Vendedor</th><th>Score Ant</th><th>Score Atual</th><th>Evolucao Score</th>'+
+      '<th>Proj Ant</th><th>Proj Atual</th><th>Delta Proj</th>'+
+      '<th>Marg Ant</th><th>Marg Atual</th>'+
+      '<th>DEV Ant</th><th>DEV Atual</th>'+
+      '<th>Saldo Posit</th>'+
+      '</tr></thead><tbody>'+
+      va.map(function(v,i){
+        var ant=vb[i]||{};
+        var scAtual=calcScore(v,DB.posChurn[i]||{});
+        var scAnt=calcScore(ant,{});
+        return'<tr>'+
+          '<td style="font-weight:600">'+v.nome+'</td>'+
+          '<td><strong style="color:'+scoreCor(scAnt)+'">'+scAnt+'</strong></td>'+
+          '<td><strong style="color:'+scoreCor(scAtual)+'">'+scAtual+'</strong></td>'+
+          '<td>'+evoScore(scAtual,scAnt)+'</td>'+
+          '<td>'+fP(ant.proj)+'</td>'+
+          '<td style="font-weight:600">'+fP(v.proj)+'</td>'+
+          '<td>'+evo(v.proj,ant.proj)+'</td>'+
+          '<td>'+fP(ant.marg)+'</td>'+
+          '<td style="font-weight:600">'+fP(v.marg)+'</td>'+
+          '<td>'+fP(ant.devPct)+'</td>'+
+          '<td style="font-weight:600">'+fP(v.devPct)+'</td>'+
+          '<td style="color:'+(n(v.saldoPos)<0?'var(--rd)':'var(--cy)')+'">'+fmt(v.saldoPos)+'</td>'+
+          '</tr>';
+      }).join('')+'</tbody></table></div>';
+    el.innerHTML=html;
   }
-
-  // PLANOS DE AÇÃO
-  if(planosAtivos.length>0){
-    html+='<div class="rb"><div class="rs">Planos de Ação em Andamento</div>';
-    planosAtivos.forEach(function(p){
+  function salvarCampo(){
+    var vend=document.getElementById('caVend').value.trim();
+    if(!vend){toast('Informe o vendedor.');return;}
+    DB.campos.push({vendedor:vend,data:document.getElementById('caData').value,
+      cidade:document.getElementById('caCidade').value,cliente:document.getElementById('caCliente').value,
+      obs:document.getElementById('caObs').value});
+    salvar();
+    ['caVend','caData','caCidade','caCliente','caObs'].forEach(function(id){document.getElementById(id).value='';});
+    renderCampoLista();toast('Registro salvo!');
+  }
+  function renderCampoLista(){
+    var el=document.getElementById('listaCampo');
+    if(!DB.campos.length){el.innerHTML='<div class="empty">Nenhum registro ainda.</div>';return;}
+    el.innerHTML=DB.campos.slice().reverse().map(function(c,ri){
+      var i=DB.campos.length-1-ri;
+      var df=c.data?new Date(c.data+'T12:00').toLocaleDateString('pt-BR'):'—';
+      return'<div class="ic"><div class="ih"><div><div class="in">'+(c.cliente||'Visita')+'</div>'+
+        '<div style="font-size:11px;color:var(--t2);margin-top:2px">'+c.vendedor+' · '+c.cidade+' · '+df+'</div></div>'+
+        '<button class="btn bd bsm" onclick="remover(\"campos\",'+i+')">×</button></div>'+
+        (c.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.7;border-top:1px solid var(--b);padding-top:10px">'+c.obs+'</div>':'')+
+      '</div>';
+    }).join('');
+  }
+  function salvarPlano(){
+    var prob=document.getElementById('plProb').value.trim();
+    if(!prob){toast('Informe o problema.');return;}
+    DB.planos.push({problema:prob,solucao:document.getElementById('plSol').value,
+      responsavel:document.getElementById('plResp').value,prazo:document.getElementById('plPrazo').value,
+      prioridade:document.getElementById('plPrio').value,status:document.getElementById('plStatus').value,
+      obs:document.getElementById('plObs').value});
+    salvar();
+    ['plProb','plSol','plResp','plPrazo','plObs'].forEach(function(id){document.getElementById(id).value='';});
+    renderPlanos();toast('Plano salvo!');
+  }
+  function renderPlanos(){
+    var el=document.getElementById('listaPlanos');
+    if(!DB.planos.length){el.innerHTML='<div class="empty">Nenhum plano cadastrado.</div>';return;}
+    el.innerHTML=DB.planos.map(function(p,i){
       var pf=p.prazo?new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR'):null;
-      html+='<div style="border-bottom:1px solid var(--b);padding:10px 0">';
-      html+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">';
-      html+='<strong style="color:var(--t)">'+p.problema+'</strong>';
-      html+='<span class="badge '+(p.prioridade==='Alta'?'bdg':p.prioridade==='Média'?'bwn':'bnt')+'">'+p.prioridade+'</span>';
+      return'<div class="ic"><div class="ih"><div><div class="in">'+p.problema+'</div>'+
+        (p.solucao?'<div style="font-size:12px;color:var(--cy);margin-top:3px">→ '+p.solucao+'</div>':'')+
+        '</div><div style="display:flex;gap:6px;align-items:center">'+
+        '<span class="badge '+(p.prioridade==='Alta'?'bdg':p.prioridade==='Média'?'bwn':'bnt')+'">'+p.prioridade+'</span>'+
+        '<span class="badge '+(p.status==='Concluído'?'bok':p.status==='Em andamento'?'bwn':'bnt')+'">'+p.status+'</span>'+
+        '<button class="btn bd bsm" onclick="remover(\"planos\",'+i+')">×</button></div></div>'+
+        '<div class="im">'+(p.responsavel?'<div class="mp">'+p.responsavel+'</div>':'')+
+        (pf?'<div class="mp">Prazo: '+pf+'</div>':'')+'</div>'+
+        (p.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6">'+p.obs+'</div>':'')+
+      '</div>';
+    }).join('');
+  }
+  function salvarCliente(){
+    var nome=document.getElementById('cliNome').value.trim();
+    if(!nome){toast('Informe o nome do cliente.');return;}
+    DB.clientes.push({nome:nome,cidade:document.getElementById('cliCidade').value,
+      vendedor:document.getElementById('cliVend').value,status:document.getElementById('cliStatus').value,
+      obs:document.getElementById('cliObs').value});
+    salvar();
+    ['cliNome','cliCidade','cliVend','cliObs'].forEach(function(id){document.getElementById(id).value='';});
+    document.getElementById('cliStatus').selectedIndex=0;
+    renderClientes();toast('Cliente salvo!');
+  }
+  function renderClientes(){
+    var el=document.getElementById('listaClientes');
+    if(!DB.clientes.length){el.innerHTML='<div class="empty">Nenhum cliente cadastrado.</div>';return;}
+    el.innerHTML=DB.clientes.map(function(c,i){
+      var sc=c.status==='Em risco'?'bdg':c.status==='Estratégico'||c.status==='Expansão'?'bok':c.status==='Oportunidade'?'bwn':'bnt';
+      return'<div class="ic"><div class="ih"><div><div class="in">'+c.nome+'</div>'+
+        (c.cidade?'<div style="font-size:11px;color:var(--t2);margin-top:2px">'+c.cidade+(c.vendedor?' · '+c.vendedor:'')+'</div>':'')+
+        '</div><div style="display:flex;gap:6px;align-items:center">'+
+        (c.status?'<span class="badge '+sc+'">'+c.status+'</span>':'')+
+        '<button class="btn bd bsm" onclick="remover(\"clientes\",'+i+')">×</button></div></div>'+
+        (c.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6">'+c.obs+'</div>':'')+
+      '</div>';
+    }).join('');
+  }
+  var MSGS=[
+    'Feliz aniversário, {nome}! Que seu novo ciclo seja repleto de saúde, prosperidade e conquistas. Grande abraço! {ass}',
+    'Parabéns pelo seu dia, {nome}! Desejo muita saúde, paz e felicidade. Que este novo ciclo seja extraordinário! {ass}',
+    'Feliz aniversário, {nome}! Que Deus abençoe sua vida com saúde e muitas realizações. Grande abraço! {ass}'
+  ];
+  function buildMsg(a,idx){
+    var ass=DB.perfil.assinatura||'Leandro Felipe · Supervisor Comercial Arcofoods';
+    var base=a.msg&&a.msg.trim()?a.msg:MSGS[idx%MSGS.length];
+    return base.replace('{nome}',a.nome).replace('{ass}',ass);
+  }
+  function salvarAniv(){
+    var nome=document.getElementById('aNome').value.trim();
+    if(!nome){toast('Informe o nome.');return;}
+    DB.aniversarios.push({nome:nome,data:document.getElementById('aData').value,
+      tel:document.getElementById('aTel').value,email:document.getElementById('aEmail').value,
+      tipo:document.getElementById('aTipo').value,msg:document.getElementById('aMsg').value});
+    salvar();
+    ['aNome','aData','aTel','aEmail','aMsg'].forEach(function(id){document.getElementById(id).value='';});
+    document.getElementById('aTipo').selectedIndex=0;
+    renderAniv();toast('Aniversariante salvo!');
+  }
+  function renderAniv(){
+    var hoje=new Date(),hd=hoje.getFullYear(),hm=hoje.getMonth(),hdia=hoje.getDate();
+    var hojeA=DB.aniversarios.filter(function(a){
+      if(!a.data)return false;
+      var d=new Date(a.data+'T12:00');return d.getMonth()===hm&&d.getDate()===hdia;
+    });
+    document.getElementById('anivHoje').innerHTML=hojeA.length>0
+      ?'<div class="bn bn-cy" style="margin-bottom:14px"><span>🎂</span><div><strong>Aniversário Hoje!</strong> '+hojeA.map(function(a){return a.nome+' ('+a.tipo+')';}).join(', ')+'</div></div>':'';
+    var el=document.getElementById('listaAniv');
+    if(!DB.aniversarios.length){el.innerHTML='<div class="empty">Nenhum aniversariante cadastrado.</div>';return;}
+    var sorted=DB.aniversarios.map(function(a,i){return{a:a,i:i};}).sort(function(x,y){
+      if(!x.a.data)return 1;if(!y.a.data)return -1;
+      var dx=new Date(x.a.data+'T12:00'),dy=new Date(y.a.data+'T12:00');
+      var nx=new Date(hd,dx.getMonth(),dx.getDate()),ny=new Date(hd,dy.getMonth(),dy.getDate());
+      if(nx<new Date(hd,hm,hdia))nx.setFullYear(hd+1);
+      if(ny<new Date(hd,hm,hdia))ny.setFullYear(hd+1);
+      return nx-ny;
+    });
+    el.innerHTML=sorted.map(function(obj,idx){
+      var a=obj.a,i=obj.i,msg=buildMsg(a,idx);
+      var tel=a.tel?a.tel.replace(/\D/g,''):'';
+      var whats=tel?'https://wa.me/55'+tel+'?text='+encodeURIComponent(msg):null;
+      var df=a.data?new Date(a.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}):'—';
+      var dO=a.data?new Date(a.data+'T12:00'):null;
+      var diff=dO?Math.round((new Date(hd,dO.getMonth(),dO.getDate())-new Date(hd,hm,hdia))/86400000):null;
+      if(diff!==null&&diff<0)diff+=365;
+      return'<div class="ic"><div class="ih"><div><div class="in">'+a.nome+'</div>'+
+        '<div style="font-size:11px;color:var(--t2);margin-top:2px">'+a.tipo+' · '+df+'</div></div>'+
+        '<div style="display:flex;align-items:center;gap:6px">'+
+        (diff!==null?'<span class="badge '+(diff===0?'bok':'bnt')+'">'+(diff===0?'Hoje!':'em '+diff+' dia(s)')+'</span>':'')+
+        '<button class="btn bd bsm" onclick="remover(\"aniversarios\",'+i+')">×</button></div></div>'+
+        (a.tel||a.email?'<div class="ia">'+
+        (whats?'<a href="'+whats+'" target="_blank" class="btn bp bsm">WhatsApp</a>':'')+
+        (a.email?'<a href="mailto:'+a.email+'?subject=Feliz+Aniversário&body='+encodeURIComponent(msg)+'" class="btn bs bsm">E-mail</a>':'')+
+        '</div>':'')+
+      '</div>';
+    }).join('');
+  }
+  function gerarRelatorio(){
+    var p=DB.perfil,r=DB.biAtual.regional,vs=DB.biAtual.vendedores;
+    if(!vs||vs.length===0){toast('Lance os dados do BI primeiro.');return;}
+    var hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+    var mes=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    var baixa=(new Date().getMonth()>=4&&new Date().getMonth()<=8);
+    var crit=vs.filter(function(v){return st(v.proj,v.devPct)==='dg';});
+    var atenc=vs.filter(function(v){return st(v.proj,v.devPct)==='wn';});
+    var ok=vs.length-crit.length-atenc.length;
+    var sorted=vs.slice().sort(function(a,b){return n(b.proj)-n(a.proj);});
+    var top3=sorted.slice(0,3);
+    var bot3=sorted.slice(-3).reverse();
+  
+    // Positivação total
+    var totalPos=0,totalNPos=0;
+    DB.posChurn.forEach(function(p){totalPos+=parseInt(p.positivados||0);totalNPos+=parseInt(p.naoPositivados||0);});
+    var txPos=totalPos+totalNPos>0?((totalPos/(totalPos+totalNPos))*100).toFixed(1):0;
+  
+    // Churn críticos
+    var churnAltos=DB.posChurn.filter(function(p){return n(p.churnRate)>20;});
+  
+    // Planos ativos
+    var planosAtivos=DB.planos.filter(function(p){return p.status!=='Concluído';});
+  
+    // Score geral
+    var projMedia=vs.reduce(function(s,v){return s+n(v.proj);},0)/vs.length;
+    var situacao=projMedia>=85?'SAUDÁVEL':projMedia>=70?'ATENÇÃO':'CRÍTICA';
+    var situacaoCor=projMedia>=85?'var(--cy)':projMedia>=70?'var(--ye)':'var(--rd)';
+  
+    var html='<div style="max-width:760px;font-size:13px;line-height:1.7">';
+  
+    // CAPA
+    html+='<div class="rb" style="border-left:4px solid var(--cy);padding-left:20px">';
+    html+='<div style="font-size:22px;font-weight:700;color:var(--cy);margin-bottom:6px">RELATÓRIO EXECUTIVO DE SUPERVISÃO</div>';
+    html+='<div style="color:var(--t2)">'+hoje+' · '+p.empresa+' · Regional '+( p.regional||'Norte Fluminense')+'</div>';
+    html+='<div style="color:var(--t2)">Supervisor: <strong style="color:var(--t)">'+p.supervisor+'</strong></div>';
+    html+='<div style="margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border-radius:8px">';
+    html+='<strong style="color:var(--t)">Situação da Regional: </strong>';
+    html+='<span style="color:'+situacaoCor+';font-weight:700">'+situacao+'</span>';
+    html+=' · Projeção média da equipe: <strong style="color:'+situacaoCor+'">'+projMedia.toFixed(1)+'%</strong>';
+    html+=(baixa?' · <span style="color:var(--ye)">⚠ Baixa Temporada — Região dos Lagos</span>':'');
+    html+='</div></div>';
+  
+    // CONTEXTO
+    html+='<div class="rb"><div class="rs">Contexto Regional</div>';
+    html+='<div style="color:var(--t2);line-height:1.8">'+(p.contexto||'Região dos Lagos — sazonalidade impacta resultados na baixa temporada.')+'</div>';
+    if(baixa){
+      html+='<div style="margin-top:10px;padding:10px 14px;background:var(--ye2);border-radius:8px;color:var(--ye)">';
+      html+='<strong>Momento de Baixa Temporada:</strong> Os clientes da Região dos Lagos reduzem volume significativamente neste período. As metas da empresa não são ajustadas. O foco deve ser manter a base de clientes ativa, trabalhar o Mix Rentável e preparar a equipe para a explosão da alta temporada em outubro.';
       html+='</div>';
-      if(p.solucao) html+='<div style="font-size:12px;color:var(--cy)">→ Estratégia: '+p.solucao+'</div>';
-      if(p.responsavel||pf){
-        html+='<div style="font-size:11px;color:var(--t2);margin-top:4px">';
-        if(p.responsavel) html+='Responsável: '+p.responsavel+' ';
-        if(pf) html+='· Prazo: '+pf;
+    }
+    html+='</div>';
+  
+    // TERMÔMETRO REGIONAL
+    html+='<div class="rb"><div class="rs">Termômetro da Regional</div>';
+    html+=termRow('Projeção do Mês',fP(r.proj),'Meta: 100%',n(r.proj)>=85?'ok':n(r.proj)>=70?'wn':'dg',
+      n(r.proj)>=85?'Regional dentro da meta.':n(r.proj)>=70?'Atenção — abaixo da meta. Necessita aceleração.':'Situação crítica. Ação imediata necessária.');
+    html+=termRow('Faturamento Real',fP(r.fat),'',n(r.fat)>=69?'ok':'wn','');
+    html+=termRow('Margem Real',fP(r.marg),'Obj: '+fmt(r.objMarg||'17,32')+'%',n(r.marg)>=(n(r.objMarg||17.32))?'ok':'wn',
+      n(r.marg)<n(r.objMarg||17.32)?'Margem abaixo do objetivo. Orientar equipe sobre Mix Rentável.':'Margem dentro do objetivo.');
+    html+=termRow('Positivação',fmt(r.realPos)+' / '+fmt(r.objPos),'Saldo: '+fmt(r.saldoPos),parseInt(r.saldoPos||0)>=0?'ok':'dg',
+      parseInt(r.saldoPos||0)<0?Math.abs(parseInt(r.saldoPos||0))+' clientes a mais precisam comprar para bater o objetivo.':'Positivação dentro do objetivo.');
+    html+=termRow('Taxa de Positivação',txPos+'%','da base ativa',parseFloat(txPos)>=70?'ok':'dg',
+      parseFloat(txPos)<70?'Mais de 30% da base não comprou no mês. Foco em reativação urgente.':'Boa taxa de positivação.');
+    html+=termRow('Devolução',fP(r.devPct),'Limite: 0,65%',Math.abs(n(r.devPct))>DEV_LIM?'dg':'ok',
+      Math.abs(n(r.devPct))>DEV_LIM?'Devolução acima do limite. Investigar causas por vendedor.':'Devolução dentro do limite aceitável.');
+    html+=termRow('Venda Média Regional','R$ '+fmt(r.vendaMedia),'por cliente','ok','');
+    html+='</div>';
+  
+    // DIAGNÓSTICO DA EQUIPE
+    html+='<div class="rb"><div class="rs">Diagnóstico Individual da Equipe</div>';
+    html+='<div style="color:var(--t2);margin-bottom:14px">Análise de cada vendedor com indicadores e ações recomendadas:</div>';
+    vs.forEach(function(v,i){
+      var pc=DB.posChurn[i]||{};
+      var s=st(v.proj,v.devPct);
+      var cor=s==='ok'?'var(--cy)':s==='wn'?'var(--ye)':'var(--rd)';
+      var acoes=[];
+      if(n(v.proj)<70) acoes.push('Acompanhamento de campo URGENTE. Verificar carteira de clientes e identificar bloqueios.');
+      else if(n(v.proj)<85) acoes.push('Monitorar de perto. Visita de campo para acelerar positivação.');
+      if(Math.abs(n(v.devPct))>DEV_LIM) acoes.push('Devolução acima do limite ('+fP(v.devPct)+'). Conversar com o vendedor para identificar causa raiz.');
+      if(v.marg&&n(v.marg)<n(v.objMarg||17.5)) acoes.push('Margem abaixo do objetivo. Orientar sobre Mix Rentável e produtos com maior margem.');
+      if(pc.churnRate&&n(pc.churnRate)>20) acoes.push('Churn alto ('+pc.churnRate+'%). '+Math.round(n(pc.churnRate)/100*(parseInt(pc.positivados||0)+parseInt(pc.naoPositivados||0)))+' clientes perdidos. Plano de reativação necessário.');
+      if(parseInt(pc.naoPositivados||0)>15) acoes.push(pc.naoPositivados+' clientes não compraram no mês. Prioridade: visitar e reativar esses clientes.');
+      if(acoes.length===0) acoes.push('Manter o ritmo. Reconhecer o bom desempenho e usar como referência para a equipe.');
+      html+='<div style="border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;border-left:3px solid '+cor+'">';
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+      html+='<strong style="color:var(--t);font-size:14px">'+v.nome+'</strong>';
+      html+=badgeSt(v.proj,v.devPct);
+      html+='</div>';
+      html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">';
+      html+=miniStat('PROJ',fP(v.proj),s);
+      html+=miniStat('MARGEM',fP(v.marg),n(v.marg)>=(n(v.objMarg||17.5))?'ok':'wn');
+      html+=miniStat('DEV',fP(v.devPct),Math.abs(n(v.devPct))>DEV_LIM?'dg':'ok');
+      html+=miniStat('POSIT',fmt(v.realPos)+'/'+fmt(v.objPos),parseInt(v.saldoPos||0)>=0?'ok':'dg');
+      html+='</div>';
+      if(pc.positivados||pc.churnRate){
+        html+='<div style="font-size:11px;color:var(--t2);margin-bottom:8px">';
+        if(pc.positivados) html+='Positivados: <strong style="color:var(--cy)">'+pc.positivados+'</strong> · ';
+        if(pc.naoPositivados) html+='Não positivados: <strong style="color:var(--rd)">'+pc.naoPositivados+'</strong> · ';
+        if(pc.churnRate) html+='Churn: <strong style="color:'+(n(pc.churnRate)>20?'var(--rd)':'var(--ye)')+'">'+pc.churnRate+'%</strong>';
         html+='</div>';
       }
+      html+='<div style="font-size:11px;font-weight:600;color:var(--cy);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">Ações Recomendadas:</div>';
+      html+='<ul style="padding-left:16px;color:var(--t2);font-size:12px">';
+      acoes.forEach(function(a){html+='<li style="margin-bottom:3px">'+a+'</li>';});
+      html+='</ul></div>';
+    });
+    html+='</div>';
+  
+    // POSITIVAÇÃO E CHURN
+    if(DB.posChurn&&DB.posChurn.length>0){
+      html+='<div class="rb"><div class="rs">Análise de Positivação e Churn</div>';
+      html+='<div style="color:var(--t2);margin-bottom:12px">De <strong style="color:var(--t)">'+(totalPos+totalNPos)+'</strong> clientes na base: ';
+      html+='<strong style="color:var(--cy)">'+totalPos+' compraram</strong> e ';
+      html+='<strong style="color:var(--rd)">'+totalNPos+' não compraram</strong> no mês. ';
+      html+='Taxa de positivação: <strong style="color:'+(parseFloat(txPos)>=70?'var(--cy)':'var(--rd)')+'">'+txPos+'%</strong>.</div>';
+      if(churnAltos.length>0){
+        html+='<div style="padding:10px 14px;background:var(--rd2);border-radius:8px;margin-bottom:10px;font-size:12px;color:var(--t2)">';
+        html+='<strong style="color:var(--rd)">Atenção — Churn elevado:</strong> ';
+        html+=churnAltos.map(function(p){return p.nome+' ('+p.churnRate+'%)';}).join(', ');
+        html+='. Clientes estão parando de comprar. Investigar motivo e acionar plano de retenção.</div>';
+      }
+      html+='</div>';
+    }
+  
+    // PLANOS DE AÇÃO
+    if(planosAtivos.length>0){
+      html+='<div class="rb"><div class="rs">Planos de Ação em Andamento</div>';
+      planosAtivos.forEach(function(p){
+        var pf=p.prazo?new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR'):null;
+        html+='<div style="border-bottom:1px solid var(--b);padding:10px 0">';
+        html+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">';
+        html+='<strong style="color:var(--t)">'+p.problema+'</strong>';
+        html+='<span class="badge '+(p.prioridade==='Alta'?'bdg':p.prioridade==='Média'?'bwn':'bnt')+'">'+p.prioridade+'</span>';
+        html+='</div>';
+        if(p.solucao) html+='<div style="font-size:12px;color:var(--cy)">→ Estratégia: '+p.solucao+'</div>';
+        if(p.responsavel||pf){
+          html+='<div style="font-size:11px;color:var(--t2);margin-top:4px">';
+          if(p.responsavel) html+='Responsável: '+p.responsavel+' ';
+          if(pf) html+='· Prazo: '+pf;
+          html+='</div>';
+        }
+        html+='</div>';
+      });
+      html+='</div>';
+    }
+  
+    // DIRETRIZ DO MÊS
+    html+='<div class="rb" style="border-left:4px solid var(--cy);padding-left:20px"><div class="rs">Diretriz do Mês — O Que Fazer Agora</div>';
+    var diretrizes=[];
+    if(crit.length>0) diretrizes.push({p:'URGENTE',t:'Acompanhamento de campo com '+crit.map(function(v){return v.nome;}).join(', ')+'. Situação crítica — presença do supervisor é necessária.',c:'var(--rd)'});
+    if(totalNPos>20) diretrizes.push({p:'ALTA',t:'Reativar '+totalNPos+' clientes não positivados. Criar lista por vendedor e definir rota de reativação.',c:'var(--ye)'});
+    if(churnAltos.length>0) diretrizes.push({p:'ALTA',t:'Plano de retenção para clientes com churn elevado: '+churnAltos.map(function(p){return p.nome;}).join(', ')+'. Visita ao cliente para entender o motivo da saída.',c:'var(--ye)'});
+    diretrizes.push({p:'CONTÍNUO',t:'Orientar toda a equipe sobre o Mix Rentável. Incluir pelo menos 2 itens de alta margem em cada pedido.',c:'var(--cy)'});
+    if(baixa) diretrizes.push({p:'ESTRATÉGICO',t:'Preparar equipe para a alta temporada. Mapear clientes que irão expandir volume a partir de outubro e iniciar relacionamento agora.',c:'var(--cy)'});
+    diretrizes.forEach(function(d,i){
+      html+='<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--b)">';
+      html+='<div style="min-width:80px;text-align:center"><span style="background:rgba(0,0,0,0.3);color:'+d.c+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px">'+d.p+'</span></div>';
+      html+='<div style="font-size:13px;color:var(--t2)">'+(i+1)+'. '+d.t+'</div>';
       html+='</div>';
     });
     html+='</div>';
-  }
-
-  // DIRETRIZ DO MÊS
-  html+='<div class="rb" style="border-left:4px solid var(--cy);padding-left:20px"><div class="rs">Diretriz do Mês — O Que Fazer Agora</div>';
-  var diretrizes=[];
-  if(crit.length>0) diretrizes.push({p:'URGENTE',t:'Acompanhamento de campo com '+crit.map(function(v){return v.nome;}).join(', ')+'. Situação crítica — presença do supervisor é necessária.',c:'var(--rd)'});
-  if(totalNPos>20) diretrizes.push({p:'ALTA',t:'Reativar '+totalNPos+' clientes não positivados. Criar lista por vendedor e definir rota de reativação.',c:'var(--ye)'});
-  if(churnAltos.length>0) diretrizes.push({p:'ALTA',t:'Plano de retenção para clientes com churn elevado: '+churnAltos.map(function(p){return p.nome;}).join(', ')+'. Visita ao cliente para entender o motivo da saída.',c:'var(--ye)'});
-  diretrizes.push({p:'CONTÍNUO',t:'Orientar toda a equipe sobre o Mix Rentável. Incluir pelo menos 2 itens de alta margem em cada pedido.',c:'var(--cy)'});
-  if(baixa) diretrizes.push({p:'ESTRATÉGICO',t:'Preparar equipe para a alta temporada. Mapear clientes que irão expandir volume a partir de outubro e iniciar relacionamento agora.',c:'var(--cy)'});
-  diretrizes.forEach(function(d,i){
-    html+='<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--b)">';
-    html+='<div style="min-width:80px;text-align:center"><span style="background:rgba(0,0,0,0.3);color:'+d.c+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px">'+d.p+'</span></div>';
-    html+='<div style="font-size:13px;color:var(--t2)">'+(i+1)+'. '+d.t+'</div>';
+  
+    // CONCLUSÃO EXECUTIVA
+    html+='<div class="rb"><div class="rs">Conclusão Executiva</div>';
+    html+='<div style="color:var(--t2);line-height:1.9">';
+    html+='A Regional Norte Fluminense encerra o período com projeção de <strong style="color:'+situacaoCor+'">'+fP(r.proj)+'</strong>, ';
+    html+=baixa?'resultado esperado dado o período de baixa temporada característico da Região dos Lagos. ':'';
+    html+='com <strong style="color:var(--cy)">'+ok+' vendedor(es) saudáveis</strong>';
+    if(atenc.length>0) html+=', <strong style="color:var(--ye)">'+atenc.length+' em atenção</strong>';
+    if(crit.length>0) html+=', <strong style="color:var(--rd)">'+crit.length+' em situação crítica</strong>';
+    html+='. ';
+    html+='A taxa de positivação de <strong style="color:'+(parseFloat(txPos)>=70?'var(--cy)':'var(--rd)')+'">'+txPos+'%</strong> ';
+    html+=parseFloat(txPos)<70?'indica que uma parte relevante da base não está sendo atendida — oportunidade imediata de crescimento. ':'demonstra boa cobertura da base de clientes. ';
+    html+='O foco imediato da supervisão está em ';
+    var focos=[];
+    if(crit.length>0) focos.push('reverter os casos críticos com acompanhamento direto em campo');
+    if(totalNPos>10) focos.push('reativar clientes não positivados');
+    if(churnAltos.length>0) focos.push('conter o churn elevado');
+    focos.push('elevar o mix de produtos rentáveis em toda a equipe');
+    html+=focos.join(', ')+'.';
+    html+='</div></div>';
+  
+    html+='<div style="font-size:10px;color:var(--t3);text-align:center;padding:16px;letter-spacing:1px">GERENCION · Sistema de Supervisão Comercial · '+p.empresa+' · '+hoje+'</div>';
     html+='</div>';
-  });
-  html+='</div>';
-
-  // CONCLUSÃO EXECUTIVA
-  html+='<div class="rb"><div class="rs">Conclusão Executiva</div>';
-  html+='<div style="color:var(--t2);line-height:1.9">';
-  html+='A Regional Norte Fluminense encerra o período com projeção de <strong style="color:'+situacaoCor+'">'+fP(r.proj)+'</strong>, ';
-  html+=baixa?'resultado esperado dado o período de baixa temporada característico da Região dos Lagos. ':'';
-  html+='com <strong style="color:var(--cy)">'+ok+' vendedor(es) saudáveis</strong>';
-  if(atenc.length>0) html+=', <strong style="color:var(--ye)">'+atenc.length+' em atenção</strong>';
-  if(crit.length>0) html+=', <strong style="color:var(--rd)">'+crit.length+' em situação crítica</strong>';
-  html+='. ';
-  html+='A taxa de positivação de <strong style="color:'+(parseFloat(txPos)>=70?'var(--cy)':'var(--rd)')+'">'+txPos+'%</strong> ';
-  html+=parseFloat(txPos)<70?'indica que uma parte relevante da base não está sendo atendida — oportunidade imediata de crescimento. ':'demonstra boa cobertura da base de clientes. ';
-  html+='O foco imediato da supervisão está em ';
-  var focos=[];
-  if(crit.length>0) focos.push('reverter os casos críticos com acompanhamento direto em campo');
-  if(totalNPos>10) focos.push('reativar clientes não positivados');
-  if(churnAltos.length>0) focos.push('conter o churn elevado');
-  focos.push('elevar o mix de produtos rentáveis em toda a equipe');
-  html+=focos.join(', ')+'.';
-  html+='</div></div>';
-
-  html+='<div style="font-size:10px;color:var(--t3);text-align:center;padding:16px;letter-spacing:1px">GERENCION · Sistema de Supervisão Comercial · '+p.empresa+' · '+hoje+'</div>';
-  html+='</div>';
-
-  document.getElementById('relArea').innerHTML=html;
-  toast('Relatório executivo gerado!');
-}
-
-function termRow(lbl,val,sub,status,desc){
-  var cor=status==='ok'?'var(--cy)':status==='wn'?'var(--ye)':'var(--rd)';
-  return'<div style="display:flex;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--b);gap:12px">'+
-    '<div style="min-width:160px;font-size:12px;color:var(--t2)">'+lbl+'</div>'+
-    '<div style="min-width:100px"><strong style="color:'+cor+'">'+val+'</strong>'+(sub?'<div style="font-size:10px;color:var(--t3)">'+sub+'</div>':'')+'</div>'+
-    (desc?'<div style="font-size:12px;color:var(--t2);flex:1">'+desc+'</div>':'')+
-  '</div>';
-}
-function miniStat(lbl,val,status){
-  var cor=status==='ok'?'var(--cy)':status==='wn'?'var(--ye)':'var(--rd)';
-  return'<div style="background:var(--s2);border-radius:8px;padding:8px;text-align:center">'+
-    '<div style="font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">'+lbl+'</div>'+
-    '<div style="font-size:14px;font-weight:700;color:'+cor+'">'+val+'</div>'+
-  '</div>';
-}
-
-function salvarPerfil(){
-  DB.perfil={empresa:document.getElementById('pfEmp').value,regional:document.getElementById('pfReg').value,
-    supervisor:document.getElementById('pfSup').value,assinatura:document.getElementById('pfAss').value,
-    contexto:document.getElementById('pfCtx').value};
-  salvar();
-  document.getElementById('pvEmp').textContent=DB.perfil.empresa||'—';
-  document.getElementById('pvReg').textContent=DB.perfil.regional||'—';
-  document.getElementById('pvSup').textContent=DB.perfil.supervisor||'—';
-  toast('Perfil salvo!');
-}
-function resetar(){
-  if(confirm('Resetar todos os dados? Esta ação não pode ser desfeita.')){
-    localStorage.removeItem(KEY);location.reload();
+  
+    document.getElementById('relArea').innerHTML=html;
+    toast('Relatório executivo gerado!');
   }
-}
-
-function renderPos(){
-  var el=document.getElementById('posBox');
-  if(!el)return;
-  if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de positivação.</div>';return;}
-  var tp=0,tn=0;
-  DB.posChurn.forEach(function(p){tp+=parseInt(p.positivados||0);tn+=parseInt(p.naoPositivados||0);});
-  var tx=tp+tn>0?((tp/(tp+tn))*100).toFixed(1):0;
-  el.innerHTML='<div class="stats s3" style="margin-bottom:14px">'+
-    '<div class="stat"><div class="st-l">Positivados</div><div class="st-v">'+tp+'</div></div>'+
-    '<div class="stat dg"><div class="st-l">Não Positivados</div><div class="st-v">'+tn+'</div></div>'+
-    '<div class="stat '+(parseFloat(tx)>=70?'':'wn')+'"><div class="st-l">Taxa</div><div class="st-v">'+tx+'%</div></div>'+
-    '</div><div class="tw"><table><thead><tr><th>Vendedor</th><th>Positivados</th><th>Não Positivados</th><th>Taxa</th><th>Situação</th></tr></thead><tbody>'+
-    DB.posChurn.map(function(p){
-      var tot=(parseInt(p.positivados||0))+(parseInt(p.naoPositivados||0));
-      var tx=tot>0?((parseInt(p.positivados||0)/tot)*100).toFixed(1):0;
-      var np=parseInt(p.naoPositivados||0);
-      return'<tr><td style="font-weight:600">'+p.nome+'</td>'+
-        '<td style="color:var(--cy)">'+fmt(p.positivados)+'</td>'+
-        '<td style="color:var(--rd)">'+fmt(p.naoPositivados)+'</td>'+
-        '<td>'+tx+'%</td>'+
-        '<td>'+(np>20?'<span class="badge bdg">URGENTE</span>':np>10?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+'</td></tr>';
-    }).join('')+'</tbody></table></div>';
-}
-
-function renderChurn(){
-  var el=document.getElementById('churnBox');
-  if(!el)return;
-  if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de churn.</div>';return;}
-  var com=DB.posChurn.filter(function(p){return p.churnRate!=='';});
-  if(com.length===0){el.innerHTML='<div class="empty">Nenhum dado de churn lançado.</div>';return;}
-  el.innerHTML='<div class="g2">'+com.map(function(p){
-    var c=n(p.churnRate);
-    return'<div class="card">'+
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'+
-        '<div style="font-weight:700">'+p.nome+'</div>'+
-        (c>30?'<span class="badge bdg">CRÍTICO</span>':c>15?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+
-      '</div>'+
-      '<div style="font-size:44px;font-weight:700;color:'+(c>30?'var(--rd)':c>15?'var(--ye)':'var(--cy)')+';line-height:1">'+c.toFixed(1)+'%</div>'+
-      '<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-top:4px">CHURN RATE</div>'+
-      (c>15?'<div style="margin-top:10px;font-size:12px;color:var(--t2);line-height:1.6">'+(c>30?'Situação crítica. Clientes migrando para a concorrência.':'Churn acima do aceitável. Reativar clientes perdidos.')+'</div>':'')+
+  
+  function termRow(lbl,val,sub,status,desc){
+    var cor=status==='ok'?'var(--cy)':status==='wn'?'var(--ye)':'var(--rd)';
+    return'<div style="display:flex;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--b);gap:12px">'+
+      '<div style="min-width:160px;font-size:12px;color:var(--t2)">'+lbl+'</div>'+
+      '<div style="min-width:100px"><strong style="color:'+cor+'">'+val+'</strong>'+(sub?'<div style="font-size:10px;color:var(--t3)">'+sub+'</div>':'')+'</div>'+
+      (desc?'<div style="font-size:12px;color:var(--t2);flex:1">'+desc+'</div>':'')+
     '</div>';
-  }).join('')+'</div>';
-}
-</script>
-</body>
-</html>
+  }
+  function miniStat(lbl,val,status){
+    var cor=status==='ok'?'var(--cy)':status==='wn'?'var(--ye)':'var(--rd)';
+    return'<div style="background:var(--s2);border-radius:8px;padding:8px;text-align:center">'+
+      '<div style="font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">'+lbl+'</div>'+
+      '<div style="font-size:14px;font-weight:700;color:'+cor+'">'+val+'</div>'+
+    '</div>';
+  }
+  
+  function copiarRelatorio(){
+    var el=document.getElementById('relArea');
+    if(!el){toast('Área do relatório não encontrada.');return;}
+    if(el.querySelector('.empty')){toast('Clique em Gerar Relatório primeiro.');return;}
+    var text=el.innerText||el.textContent||'';
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){toast('Relatório copiado!');})
+        .catch(function(){toast('Não foi possível copiar. Use Imprimir.');});
+    }else{
+      toast('Selecione o texto do relatório e copie manualmente.');
+    }
+  }
+  function salvarPerfil(){
+    DB.perfil={empresa:document.getElementById('pfEmp').value,regional:document.getElementById('pfReg').value,
+      supervisor:document.getElementById('pfSup').value,cargo:document.getElementById('pfCargo').value,
+      assinatura:document.getElementById('pfAss').value,contexto:document.getElementById('pfCtx').value};
+    salvar();
+    document.getElementById('pvEmp').textContent=DB.perfil.empresa||'—';
+    document.getElementById('pvReg').textContent=DB.perfil.regional||'—';
+    document.getElementById('pvSup').textContent=DB.perfil.supervisor||'—';
+    toast('Perfil salvo!');
+  }
+  function resetar(){
+    if(confirm('Resetar todos os dados? Esta ação não pode ser desfeita.')){
+      localStorage.removeItem(KEY);location.reload();
+    }
+  }
+  
+  function renderPos(){
+    var el=document.getElementById('posBox');
+    if(!el)return;
+    if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de positivação.</div>';return;}
+    var tp=0,tn=0;
+    DB.posChurn.forEach(function(p){tp+=parseInt(p.positivados||0);tn+=parseInt(p.naoPositivados||0);});
+    var tx=tp+tn>0?((tp/(tp+tn))*100).toFixed(1):0;
+    el.innerHTML='<div class="stats s3" style="margin-bottom:14px">'+
+      '<div class="stat"><div class="st-l">Positivados</div><div class="st-v">'+tp+'</div></div>'+
+      '<div class="stat dg"><div class="st-l">Não Positivados</div><div class="st-v">'+tn+'</div></div>'+
+      '<div class="stat '+(parseFloat(tx)>=70?'':'wn')+'"><div class="st-l">Taxa</div><div class="st-v">'+tx+'%</div></div>'+
+      '</div><div class="tw"><table><thead><tr><th>Vendedor</th><th>Positivados</th><th>Não Positivados</th><th>Taxa</th><th>Situação</th></tr></thead><tbody>'+
+      DB.posChurn.map(function(p){
+        var tot=(parseInt(p.positivados||0))+(parseInt(p.naoPositivados||0));
+        var tx=tot>0?((parseInt(p.positivados||0)/tot)*100).toFixed(1):0;
+        var np=parseInt(p.naoPositivados||0);
+        return'<tr><td style="font-weight:600">'+p.nome+'</td>'+
+          '<td style="color:var(--cy)">'+fmt(p.positivados)+'</td>'+
+          '<td style="color:var(--rd)">'+fmt(p.naoPositivados)+'</td>'+
+          '<td>'+tx+'%</td>'+
+          '<td>'+(np>20?'<span class="badge bdg">URGENTE</span>':np>10?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+'</td></tr>';
+      }).join('')+'</tbody></table></div>';
+  }
+  
+  function renderChurn(){
+    var el=document.getElementById('churnBox');
+    if(!el)return;
+    if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de churn.</div>';return;}
+    var com=DB.posChurn.filter(function(p){return p.churnRate!=='';});
+    if(com.length===0){el.innerHTML='<div class="empty">Nenhum dado de churn lançado.</div>';return;}
+    el.innerHTML='<div class="g2">'+com.map(function(p){
+      var c=n(p.churnRate);
+      return'<div class="card">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'+
+          '<div style="font-weight:700">'+p.nome+'</div>'+
+          (c>30?'<span class="badge bdg">CRÍTICO</span>':c>15?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+
+        '</div>'+
+        '<div style="font-size:44px;font-weight:700;color:'+(c>30?'var(--rd)':c>15?'var(--ye)':'var(--cy)')+';line-height:1">'+c.toFixed(1)+'%</div>'+
+        '<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-top:4px">CHURN RATE</div>'+
+        (c>15?'<div style="margin-top:10px;font-size:12px;color:var(--t2);line-height:1.6">'+(c>30?'Situação crítica. Clientes migrando para a concorrência.':'Churn acima do aceitável. Reativar clientes perdidos.')+'</div>':'')+
+      '</div>';
+    }).join('')+'</div>';
+  }
+  </script>
+  <script>
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',function(){
+      navigator.serviceWorker.register('./sw.js').catch(function(){});
+    });
+  }
+  </script>
+  </body>
+  </html>
