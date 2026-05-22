@@ -501,8 +501,10 @@ function buildBIForms(){
     return'<div class="biv"><div class="biv-t">'+v.cod+' — '+v.nome+
       '</div>'+
       '<div class="g4">'+
-      bf('v'+i+'objFat','% OBJ FAT',cur.objFat)+bf('v'+i+'objMarg','OBJ % Margem',cur.objMarg)+bf('v'+i+'fat','% FAT Real',cur.fat)+
+      bf('v'+i+'objFat','% OBJ FAT',cur.objFat)+
+      bf('v'+i+'fat','% FAT Real',cur.fat)+
       bf('v'+i+'proj','% PROJ',cur.proj)+
+      bf('v'+i+'objMarg','OBJ % Margem',cur.objMarg)+
       bf('v'+i+'marg','% Margem Real',cur.marg)+
       bf('v'+i+'objPos','OBJ Posit',cur.objPos)+
       bf('v'+i+'realPos','Real Posit',cur.realPos)+
