@@ -445,12 +445,14 @@ function statusBadge(proj,devPct){
 function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('on');setTimeout(function(){el.classList.remove('on');},2600);}
 function remover(lista,idx){DB[lista].splice(idx,1);save();renderAll();toast('Removido.');}
 
-load();
-initApp();
-setTimeout(function(){
-  var sp=document.getElementById('splash');
-  if(sp)sp.style.display='none';
-},1500);
+document.addEventListener('DOMContentLoaded',function(){
+  load();
+  initApp();
+  setTimeout(function(){
+    var sp=document.getElementById('splash');
+    if(sp)sp.style.display='none';
+  },1500);
+});
 
 function initApp(){
   var p=DB.perfil;
