@@ -185,10 +185,6 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 </head>
 <body>
 
-  <div class="sp-txt">Supervisão Comercial · Norte Fluminense</div>
-  <div class="sp-bar"><div class="sp-prog" id="prog"></div></div>
-</div>
-
 <div id="toast"></div>
 
 <!-- TOPBAR MOBILE -->
@@ -630,7 +626,7 @@ function renderDash(){
       return'<tr>'+
         '<td style="color:var(--t2)">'+(i+1)+'</td>'+
         '<td style="font-weight:600">'+v.nome+'</td>'+
-        '<td style="color:var(--('+s==='ok'?'cy':s==='wn'?'ye':'rd')+');font-weight:700">'+fP(v.proj)+'</td>'+
+        '<td style="color:'+(s==='ok'?'var(--cy)':s==='wn'?'var(--ye)':'var(--rd)')+';font-weight:700">'+fP(v.proj)+'</td>'+
         '<td>'+fP(v.fat)+'</td>'+
         '<td style="color:'+(n(v.marg)>=v.om?'var(--cy)':'var(--ye)')+'">'+fP(v.marg)+'</td>'+
         '<td>'+fmt(v.realPos)+'/'+fmt(v.objPos)+'</td>'+
