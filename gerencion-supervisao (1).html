@@ -40,6 +40,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);font-siz
 .nb{display:flex;align-items:center;gap:8px;width:100%;padding:9px 10px;border-radius:8px;border:none;background:none;color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;text-align:left;transition:all .15s;margin-bottom:2px;}
 .nb:hover{background:rgba(255,255,255,0.05);color:var(--t);}
 .nb.on{background:var(--cy2);color:var(--cy);font-weight:600;}
+.sb-backup{padding:10px 12px 14px;border-top:1px solid var(--b);flex-shrink:0;}
+.sb-backup .nav-grp{padding:0 4px 6px;}
+.btn-backup{display:block;width:100%;padding:6px 10px;margin-bottom:4px;border:1px solid var(--b);border-radius:6px;background:transparent;color:var(--t3);font-family:'Inter',sans-serif;font-size:10px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s;}
+.btn-backup:last-child{margin-bottom:0;}
+.btn-backup:hover{color:var(--t2);border-color:var(--b2);background:rgba(255,255,255,0.04);}
 #main{flex:1;}
 .pg{display:none;padding:28px 32px;}
 .pg.on{display:block;}
@@ -213,6 +218,11 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <button class="nb" onclick="ir('relatorio',this)">📄 Relatório Executivo</button>
       <button class="nb" onclick="ir('perfil',this)">⚙ Perfil</button>
       <button class="nb" onclick="ir('tutorial',this)">📘 Tutorial</button>
+    </div>
+    <div class="sb-backup no-print">
+      <div class="nav-grp">Dados</div>
+      <button type="button" class="btn-backup" onclick="exportarDados()">Exportar Dados</button>
+      <button type="button" class="btn-backup" onclick="importarDados()">Importar Dados</button>
     </div>
   </div>
   <div id="main">
@@ -1478,6 +1488,37 @@ tr:hover td{background:rgba(255,255,255,0.02);}
   function resetar(){
     if(confirm('Resetar todos os dados? Esta ação não pode ser desfeita.')){
       localStorage.removeItem(KEY);location.reload();
+    }
+  }
+  function exportarDados(){
+    try{
+      salvar();
+      var payload=localStorage.getItem(KEY);
+      if(!payload){toast('Nenhum dado salvo para exportar.');return;}
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(payload).then(function(){
+          toast('Dados copiados! Cole em Importar no novo link.');
+        }).catch(function(){
+          window.prompt('Copie todo o texto (Ctrl+A, Ctrl+C):',payload);
+          toast('Copie o texto da janela.');
+        });
+      }else{
+        window.prompt('Copie todo o texto (Ctrl+A, Ctrl+C):',payload);
+        toast('Copie o texto da janela.');
+      }
+    }catch(e){toast('Erro ao exportar.');}
+  }
+  function importarDados(){
+    var texto=window.prompt('Cole aqui o backup exportado (JSON completo):','');
+    if(texto===null)return;
+    texto=String(texto).trim();
+    if(!texto){toast('Nenhum dado colado.');return;}
+    try{
+      JSON.parse(texto);
+      localStorage.setItem(KEY,texto);
+      location.reload();
+    }catch(e){
+      toast('Backup inválido. Exporte no link antigo e cole o JSON inteiro.');
     }
   }
   
