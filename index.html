@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#00E5C3">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GERENCION">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>GERENCION Supervisão</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#060C18;--s1:#0A1020;--s2:#0F1628;
+  --b:rgba(255,255,255,0.09);--b2:rgba(255,255,255,0.15);
+  --cy:#00E5C3;--cy2:rgba(0,229,195,0.1);
+  --rd:#FF4560;--rd2:rgba(255,69,96,0.12);
+  --ye:#FFB800;--ye2:rgba(255,184,0,0.12);
+  --t:#F0F4FF;--t2:#B0BBC8;--t3:#6A7A8E;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);font-size:14px;line-height:1.5;}
+#topbar{display:none;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--s1);border-bottom:1px solid var(--b);position:sticky;top:0;z-index:100;}
+.top-logo{font-size:16px;font-weight:800;letter-spacing:4px;color:var(--cy);}
+#menuBtn{padding:7px 14px;border:1px solid var(--b2);border-radius:8px;background:none;color:var(--t2);font-size:13px;font-weight:600;cursor:pointer;}
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199;}
+#app{display:flex;min-height:100vh;}
+#sidebar{width:255px;min-width:255px;background:var(--s1);border-right:1px solid var(--b);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{font-size:20px;font-weight:800;letter-spacing:4px;color:var(--cy);padding:24px 20px 4px;}
+.sb-sub{font-size:9px;letter-spacing:2px;color:var(--t3);padding:0 20px 16px;text-transform:uppercase;}
+.sb-pf{margin:0 12px 12px;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:12px 14px;}
+.pf-lbl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:2px;}
+.pf-val{font-size:12px;font-weight:600;color:var(--t);margin-bottom:8px;}
+.pf-val:last-child{margin-bottom:0;}
+.sb-nav{padding:4px 10px 20px;flex:1;}
+.nav-grp{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);padding:12px 8px 4px;}
+.nb{display:flex;align-items:center;gap:8px;width:100%;padding:9px 10px;border-radius:8px;border:none;background:none;color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;text-align:left;transition:all .15s;margin-bottom:2px;}
+.nb:hover{background:rgba(255,255,255,0.05);color:var(--t);}
+.nb.on{background:var(--cy2);color:var(--cy);font-weight:600;}
+.sb-backup{padding:10px 12px 14px;border-top:1px solid var(--b);flex-shrink:0;}
+.sb-backup .nav-grp{padding:0 4px 6px;}
+.btn-backup{display:block;width:100%;padding:6px 10px;margin-bottom:4px;border:1px solid var(--b);border-radius:6px;background:transparent;color:var(--t3);font-family:'Inter',sans-serif;font-size:10px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s;}
+.btn-backup:last-child{margin-bottom:0;}
+.btn-backup:hover{color:var(--t2);border-color:var(--b2);background:rgba(255,255,255,0.04);}
+#main{flex:1;}
+.pg{display:none;padding:28px 32px;}
+.pg.on{display:block;}
+.ph{margin-bottom:24px;}
+.pt{font-size:26px;font-weight:700;color:var(--t);}
+.ps{font-size:12px;color:var(--t2);margin-top:4px;}
+.card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:20px;margin-bottom:14px;}
+.ct{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);margin-bottom:14px;}
+.stats{display:grid;gap:12px;margin-bottom:14px;}
+.s4{grid-template-columns:repeat(4,1fr);}
+.s3{grid-template-columns:repeat(3,1fr);}
+.stat{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:16px 18px;}
+.st-l{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t2);margin-bottom:6px;}
+.st-v{font-size:32px;font-weight:700;color:var(--cy);line-height:1;}
+.st-s{font-size:11px;color:var(--t2);margin-top:4px;}
+.stat.wn .st-v{color:var(--ye);}
+.stat.dg .st-v{color:var(--rd);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+.fg{margin-bottom:12px;}
+.fl{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--t2);margin-bottom:5px;display:block;}
+.inp{width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .15s;}
+.inp:focus{border-color:var(--cy);}
+.inp::placeholder{color:var(--t3);}
+textarea.inp{resize:vertical;min-height:80px;}
+select.inp{cursor:pointer;}
+.btn{padding:9px 16px;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s;}
+.btn:hover{opacity:.85;}
+.bp{background:var(--cy);color:#04080F;}
+.bs{background:transparent;color:var(--t2);border:1px solid var(--b2);}
+.bd{background:var(--rd2);color:var(--rd);border:1px solid rgba(255,69,96,.2);}
+.bsm{padding:5px 10px;font-size:12px;}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+.bok{background:rgba(0,229,195,.12);color:var(--cy);border:1px solid rgba(0,229,195,.2);}
+.bwn{background:var(--ye2);color:var(--ye);border:1px solid rgba(255,184,0,.2);}
+.bdg{background:var(--rd2);color:var(--rd);border:1px solid rgba(255,69,96,.2);}
+.bnt{background:var(--s2);color:var(--t2);border:1px solid var(--b);}
+.tw{overflow-x:auto;border:1px solid var(--b);border-radius:12px;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 12px;text-align:left;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t2);background:var(--s1);white-space:nowrap;border-bottom:1px solid var(--b);}
+td{padding:11px 12px;border-bottom:1px solid var(--b);font-size:12px;color:var(--t);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.ic{background:var(--s1);border:1px solid var(--b);border-radius:10px;padding:14px 16px;margin-bottom:8px;}
+.ih{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;}
+.in{font-weight:600;font-size:13px;color:var(--t);}
+.im{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.mp{background:var(--s2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--t2);}
+.ia{display:flex;gap:6px;margin-top:10px;}
+.dr{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--b);font-size:12px;color:var(--t);}
+.dr:last-child{border:none;}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.bn{border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:12px;color:var(--t2);display:flex;gap:10px;align-items:flex-start;}
+.bn-cy{background:rgba(0,229,195,.06);border:1px solid rgba(0,229,195,.15);}
+.bn-ye{background:var(--ye2);border:1px solid rgba(255,184,0,.2);}
+.bn-rd{background:var(--rd2);border:1px solid rgba(255,69,96,.2);}
+.vc{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:16px 18px;margin-bottom:10px;}
+.vc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.vc-nome{font-weight:700;font-size:14px;color:var(--t);}
+.vc-cod{font-size:10px;color:var(--t3);margin-top:1px;}
+.vc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:8px;}
+.vm{background:var(--s2);border-radius:8px;padding:8px;text-align:center;}
+.vm-l{font-size:9px;text-transform:uppercase;color:var(--t2);margin-bottom:3px;}
+.vm-v{font-size:15px;font-weight:700;color:var(--t);}
+.vm-v.ok{color:var(--cy);}
+.vm-v.wn{color:var(--ye);}
+.vm-v.dg{color:var(--rd);}
+.biv{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;}
+.biv-t{font-weight:700;font-size:13px;color:var(--cy);margin-bottom:12px;}
+.saude-box{border-radius:16px;padding:24px;text-align:center;margin-bottom:14px;}
+.saude-titulo{font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.saude-valor{font-size:72px;font-weight:700;line-height:1;}
+.saude-desc{font-size:13px;margin-top:8px;opacity:.8;}
+.rb{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:20px 22px;margin-bottom:14px;page-break-inside:avoid;break-inside:avoid;}
+.rs{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cy);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--b);}
+.rl{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--b);font-size:12px;color:var(--t);}
+.rl:last-child{border:none;}
+.rv{font-weight:600;}
+.rv.ok{color:var(--cy);}
+.rv.wn{color:var(--ye);}
+.rv.dg{color:var(--rd);}
+.rel-texto{font-size:13px;color:var(--t2);line-height:1.9;}
+.rel-texto strong{color:var(--t);}
+.tut-step{background:var(--s2);border:1px solid var(--b);border-radius:12px;padding:20px;margin-bottom:12px;}
+.tut-num{width:32px;height:32px;border-radius:50%;background:var(--cy);color:#04080F;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:12px;}
+.tut-titulo{font-weight:700;font-size:15px;margin-bottom:8px;color:var(--t);}
+.tut-desc{font-size:13px;color:var(--t2);line-height:1.8;}
+.tut-dica{background:rgba(0,229,195,.06);border:1px solid rgba(0,229,195,.15);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:var(--t2);}
+.empty{text-align:center;padding:36px;color:var(--t2);font-size:13px;}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--s1);border:1px solid rgba(0,229,195,.3);border-radius:10px;padding:10px 16px;font-size:12px;color:var(--cy);z-index:9999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;}
+#toast.on{opacity:1;transform:translateY(0);}
+@media(max-width:860px){
+  #topbar{display:flex;}
+  #sidebar{position:fixed;top:0;left:0;height:100vh;z-index:200;transform:translateX(-100%);transition:transform .25s;}
+  #sidebar.aberto{transform:translateX(0);}
+  #overlay.on{display:block;}
+  .pg{padding:18px 14px;}
+  .s4{grid-template-columns:1fr 1fr;}
+  .s3{grid-template-columns:1fr 1fr;}
+  .g2,.g3,.g4{grid-template-columns:1fr 1fr;}
+  .vc-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media(max-width:480px){
+  .s4,.s3,.g2,.g3,.g4{grid-template-columns:1fr;}
+  .vc-grid{grid-template-columns:repeat(2,1fr);}
+}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+@media print{
+  #topbar,#sidebar,#overlay,#toast,.no-print{display:none!important;}
+  .rb{page-break-inside:avoid!important;break-inside:avoid!important;}
+  #relArea>div>div{page-break-inside:avoid;break-inside:avoid;}
+  #app{display:block!important;}
+  .pg{display:none!important;}
+  #relatorio{display:block!important;padding:16px!important;}
+  body{background:white;color:black;}
+  .rb,.tut-step,.vc,.ic,.card,.stat{background:white;border:1px solid #ddd;}
+  .rel-texto,.ct,.rs,.st-l,.fl,.pf-lbl{color:#555;}
+  .rel-texto strong,.pt,.in,.vc-nome,.tut-titulo{color:black;}
+  .rv.ok,.vm-v.ok,.st-v{color:#00aa88;}
+  .rv.wn,.vm-v.wn{color:#cc8800;}
+  .rv.dg,.vm-v.dg{color:#cc2244;}
+  .badge.bok{background:#e0fff8;color:#00aa88;border-color:#00aa88;}
+  .badge.bwn{background:#fff8e0;color:#cc8800;border-color:#cc8800;}
+  .badge.bdg{background:#ffe0e5;color:#cc2244;border-color:#cc2244;}
+}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div id="topbar">
+  <div class="top-logo">GERENCION</div>
+  <button id="menuBtn" onclick="abrirMenu()">☰ Menu</button>
+</div>
+<div id="overlay" onclick="fecharMenu()"></div>
+<div id="app">
+  <div id="sidebar">
+    <div class="sb-logo">GERENCION</div>
+    <div class="sb-sub">Supervisão Comercial</div>
+    <div class="sb-pf">
+      <div class="pf-lbl">Empresa</div><div class="pf-val" id="pvEmp">Arcofoods</div>
+      <div class="pf-lbl">Regional</div><div class="pf-val" id="pvReg">Norte Fluminense</div>
+      <div class="pf-lbl">Supervisor</div><div class="pf-val" id="pvSup" style="margin-bottom:0">Leandro Felipe</div>
+    </div>
+    <div class="sb-nav">
+      <div class="nav-grp">Visão Geral</div>
+      <button class="nb on" onclick="ir('dashboard',this)">◈ Dashboard</button>
+      <button class="nb" onclick="ir('saude',this)">❤ Saúde da Regional</button>
+      <button class="nb" onclick="ir('bi',this)">⊕ Lançar BI</button>
+      <button class="nb" onclick="ir('comparativo',this)">⇅ Comparativo Mensal</button>
+      <div class="nav-grp">Equipe</div>
+      <button class="nb" onclick="ir('equipe',this)">◉ Análise da Equipe</button>
+      <button class="nb" onclick="ir('scores',this)">★ Score dos Vendedores</button>
+      <button class="nb" onclick="ir('positivacao',this)">◎ Positivação</button>
+      <button class="nb" onclick="ir('churn',this)">⚠ Churn</button>
+      <div class="nav-grp">Estratégia</div>
+      <button class="nb" onclick="ir('campo',this)">🚗 Campo</button>
+      <button class="nb" onclick="ir('plano',this)">◆ Plano de Ação</button>
+      <button class="nb" onclick="ir('clientes',this)">🏪 Clientes</button>
+      <div class="nav-grp">Relacionamento</div>
+      <button class="nb" onclick="ir('aniversarios',this)">🎂 Aniversariantes</button>
+      <div class="nav-grp">Gestão</div>
+      <button class="nb" onclick="ir('relatorio',this)">📄 Relatório Executivo</button>
+      <button class="nb" onclick="ir('perfil',this)">⚙ Perfil</button>
+      <button class="nb" onclick="ir('tutorial',this)">📘 Tutorial</button>
+      <button class="nb" onclick="ir('apresentacao',this)">🎯 Apresentação</button>
+    </div>
+    <div class="sb-backup no-print">
+            <div class="nav-grp">Comercial</div>
+      <button class="nb" onclick="ir('negociacao',this)">🤝 Negociação</button>
+      <div class="nav-grp">Dados</div>
+      <button type="button" class="btn-backup" onclick="exportarDados()">Exportar Dados</button>
+      <button type="button" class="btn-backup" onclick="importarDados()">Importar Dados</button>
+    </div>
+  </div>
+  <div id="main">
+    <div id="dashboard" class="pg on">
+      <div class="ph"><div class="pt">Dashboard</div><div class="ps" id="dashData"></div></div>
+      <div id="sazBanner"></div>
+      <div class="stats s4">
+        <div class="stat" id="stProj"><div class="st-l">Projeção Regional</div><div class="st-v" id="dProj">—</div><div class="st-s">Meta: 100% · Premiação ≥90%</div></div>
+        <div class="stat" id="stPos"><div class="st-l">Saldo Positivação</div><div class="st-v" id="dPos">—</div><div class="st-s" id="dPosSub">—</div></div>
+        <div class="stat" id="stDev"><div class="st-l">% Devolução</div><div class="st-v" id="dDev">—</div><div class="st-s">Limite: 0,65%</div></div>
+        <div class="stat" id="stSaude"><div class="st-l">Saúde da Regional</div><div class="st-v" id="dSaude">—</div><div class="st-s" id="dSaudeLbl">—</div></div>
+      </div>
+      <div class="stats s4" style="margin-bottom:14px">
+        <div class="stat" id="stPremio"><div class="st-l">Sua Premiação Atual</div><div class="st-v" id="stPremioVal" style="font-size:18px">—</div><div class="st-s" id="stPremioSub">Baseada na projeção da equipe</div></div>
+        <div class="stat" id="stVendMedia"><div class="st-l">Venda Média Regional</div><div class="st-v" id="dVendMedia" style="font-size:22px">—</div><div class="st-s">R$ por cliente</div></div>
+        <div class="stat" id="stSku"><div class="st-l">SKU/Cliente Regional</div><div class="st-v" id="dSku" style="font-size:22px">—</div><div class="st-s">Indicador preditivo</div></div>
+        <div class="stat" id="stMargem"><div class="st-l">Margem Regional</div><div class="st-v" id="dMargem">—</div><div class="st-s">Meta: 17,5% · Mín: 15,5%</div></div>
+      </div>
+      <div class="g2">
+        <div class="card"><div class="ct">Diagnóstico Rápido</div><div id="diagBox"><div class="empty">Lance os dados do BI.</div></div></div>
+        <div class="card"><div class="ct">Alertas Preditivos</div><div id="alertBox"><div class="empty">Nenhum alerta.</div></div></div>
+      </div>
+      <div class="card"><div class="ct">Ranking da Equipe — Score Geral</div><div id="rankBox"><div class="empty">Lance os dados do BI.</div></div></div>
+    </div>
+
+    <div id="saude" class="pg">
+      <div class="ph"><div class="pt">Saúde da Regional</div><div class="ps">Índice geral de performance — Norte Fluminense</div></div>
+      <div id="saudeBox"><div class="empty">Lance os dados do BI para ver a saúde da regional.</div></div>
+    </div>
+
+    <div id="bi" class="pg">
+      <div class="ph"><div class="pt">Lançar BI</div><div class="ps">Preencha semanalmente com os dados do Power BI</div></div>
+      <div class="bn bn-cy"><span>ℹ</span><div>Use os dados da <strong>Página 1</strong> do BI para a Regional e Vendedores. <strong>Página 6</strong> para Positivação. <strong>Página 7</strong> para Churn. Preencha na mesma ordem do BI.</div></div>
+      <div class="card">
+        <div class="ct">Regional Norte Fluminense — Página 1</div>
+        <div class="g4">
+          <div class="fg"><label class="fl">% OBJ FAT</label><input id="rObjFat" class="inp" placeholder="ex: 69,16"></div>
+          <div class="fg"><label class="fl">% FAT Real</label><input id="rFat" class="inp" placeholder="ex: 60,53"></div>
+          <div class="fg"><label class="fl">% PROJ</label><input id="rProj" class="inp" placeholder="ex: 87,52"></div>
+          <div class="fg"><label class="fl">OBJ % Margem</label><input id="rObjMarg" class="inp" placeholder="ex: 17,32"></div>
+          <div class="fg"><label class="fl">% Margem Real</label><input id="rMarg" class="inp" placeholder="ex: 15,24"></div>
+          <div class="fg"><label class="fl">OBJ Posit</label><input id="rObjPos" class="inp" placeholder="ex: 935"></div>
+          <div class="fg"><label class="fl">Real Posit</label><input id="rRealPos" class="inp" placeholder="ex: 732"></div>
+          <div class="fg"><label class="fl">Saldo Posit</label><input id="rSaldoPos" class="inp" placeholder="ex: -203"></div>
+          <div class="fg"><label class="fl">DEV R$</label><input id="rDevR" class="inp" placeholder="ex: -13729"></div>
+          <div class="fg"><label class="fl">% DEV</label><input id="rDevPct" class="inp" placeholder="ex: -0,49"></div>
+          <div class="fg"><label class="fl">SKU/CLI</label><input id="rSku" class="inp" placeholder="ex: 13,54"></div>
+          <div class="fg"><label class="fl">Venda Média</label><input id="rVendaMedia" class="inp" placeholder="ex: 3836"></div>
+          <div class="fg"><label class="fl">Preço/KG</label><input id="rPrecoKg" class="inp" placeholder="ex: 11,96"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">Por Vendedor — Página 1 (mesma ordem do BI)</div>
+        <div id="fVendedores"></div>
+        <button class="btn bp no-print" style="margin-top:14px" onclick="salvarBI()">💾 Salvar BI Regional e Vendedores</button>
+      </div>
+      <div class="card">
+        <div class="ct">Positivação e Churn — Páginas 6 e 7</div>
+        <div id="fPosChurn"></div>
+        <button class="btn bs no-print" style="margin-top:12px" onclick="salvarPosChurn()">💾 Salvar Positivação e Churn</button>
+      </div>
+    </div>
+
+    <div id="comparativo" class="pg">
+      <div class="ph"><div class="pt">Comparativo Mensal</div><div class="ps">Evolução completa mês a mês — todos os indicadores</div></div>
+      <div id="compBox"><div class="empty">Lance o BI pelo menos duas vezes para ver o comparativo.</div></div>
+    </div>
+
+    <div id="equipe" class="pg">
+      <div class="ph"><div class="pt">Análise da Equipe</div><div class="ps">Diagnóstico individual com alertas preditivos</div></div>
+      <div id="equipeBox"><div class="empty">Lance os dados do BI.</div></div>
+    </div>
+
+    <div id="scores" class="pg">
+      <div class="ph"><div class="pt">Score dos Vendedores</div><div class="ps">Índice de performance 0 a 100 — visão instantânea da equipe</div></div>
+      <div class="bn bn-cy"><span>★</span><div>O Score reflete os pesos reais da Arcofoods: <strong>Projeção 40pts</strong> (≥110%=máx · ≥100%=base · ≥90%=parcial · &lt;90%=sem premiação), <strong>Positivação 25pts</strong>, <strong>Churn 20pts</strong> (limite 9%), <strong>Margem 10pts</strong> (mín 15,5%), <strong>Devolução 5pts</strong>. Score ≥70 = saudável.</div></div>
+      <div id="scoresBox"><div class="empty">Lance os dados do BI para ver os scores.</div></div>
+    </div>
+
+    <div id="positivacao" class="pg">
+      <div class="ph"><div class="pt">Positivação</div><div class="ps">Clientes positivados e não positivados por vendedor</div></div>
+      <div id="posBox"><div class="empty">Lance os dados de positivação.</div></div>
+    </div>
+
+    <div id="churn" class="pg">
+      <div class="ph"><div class="pt">Churn</div><div class="ps">Taxa de perda de clientes — quem está perdendo e por quê</div></div>
+      <div id="churnBox"><div class="empty">Lance os dados de churn.</div></div>
+    </div>
+
+    <div id="campo" class="pg">
+      <div class="ph"><div class="pt">Acompanhamento de Campo</div><div class="ps">Registros de visitas, oportunidades e próximos passos</div></div>
+      <div class="card">
+        <div class="ct">Novo Registro</div>
+        <div class="g2">
+          <div class="fg"><label class="fl">Vendedor</label><input id="caVend" class="inp" placeholder="Nome do vendedor"></div>
+          <div class="fg"><label class="fl">Data</label><input type="date" id="caData" class="inp"></div>
+          <div class="fg"><label class="fl">Cidade</label><input id="caCidade" class="inp" placeholder="Cidade visitada"></div>
+          <div class="fg"><label class="fl">Cliente</label><input id="caCliente" class="inp" placeholder="Estabelecimento"></div>
+        </div>
+        <div class="fg"><label class="fl">Observações, oportunidades e próximos passos</label><textarea id="caObs" class="inp" placeholder="Descreva o que foi visto, o que foi combinado e o que fazer na próxima visita..."></textarea></div>
+        <button class="btn bp" onclick="salvarCampo()">Salvar Registro</button>
+      </div>
+      <div id="listaCampo"></div>
+    </div>
+
+    <div id="plano" class="pg">
+      <div class="ph"><div class="pt">Plano de Ação</div><div class="ps">Estratégias, ações corretivas e acompanhamento</div></div>
+      <div class="card">
+        <div class="ct">Novo Plano</div>
+        <div class="g2">
+          <div class="fg"><label class="fl">Problema identificado</label><input id="plProb" class="inp" placeholder="Descreva o problema"></div>
+          <div class="fg"><label class="fl">Estratégia / Solução</label><input id="plSol" class="inp" placeholder="Como vai resolver"></div>
+          <div class="fg"><label class="fl">Responsável</label><input id="plResp" class="inp" placeholder="Vendedor ou equipe"></div>
+          <div class="fg"><label class="fl">Prazo</label><input type="date" id="plPrazo" class="inp"></div>
+          <div class="fg"><label class="fl">Prioridade</label><select id="plPrio" class="inp"><option>Alta</option><option>Média</option><option>Baixa</option></select></div>
+          <div class="fg"><label class="fl">Status</label><select id="plStatus" class="inp"><option>Em andamento</option><option>Concluído</option><option>Pendente</option></select></div>
+        </div>
+        <div class="fg"><label class="fl">Detalhamento completo</label><textarea id="plObs" class="inp" placeholder="Descreva em detalhes o plano, as ações e o resultado esperado..."></textarea></div>
+        <button class="btn bp" onclick="salvarPlano()">Salvar Plano</button>
+      </div>
+      <div id="listaPlanos"></div>
+    </div>
+
+    <div id="clientes" class="pg">
+      <div class="ph"><div class="pt">Clientes Estratégicos</div><div class="ps">Monitoramento de clientes prioritários da regional</div></div>
+      <div class="card">
+        <div class="ct">Novo Cliente</div>
+        <div class="g2">
+          <div class="fg"><label class="fl">Nome</label><input id="cliNome" class="inp" placeholder="Nome do estabelecimento"></div>
+          <div class="fg"><label class="fl">Cidade</label><input id="cliCidade" class="inp" placeholder="Cidade"></div>
+          <div class="fg"><label class="fl">Vendedor responsável</label><input id="cliVend" class="inp" placeholder="Nome do vendedor"></div>
+          <div class="fg"><label class="fl">Status</label><select id="cliStatus" class="inp"><option value="">Selecione...</option><option>Estratégico</option><option>Expansão</option><option>Em risco</option><option>Oportunidade</option><option>Ativo</option></select></div>
+        </div>
+        <div class="fg"><label class="fl">Observações</label><textarea id="cliObs" class="inp" placeholder="Anotações, histórico e próximas ações para este cliente..."></textarea></div>
+        <button class="btn bp" onclick="salvarCliente()">Salvar Cliente</button>
+      </div>
+      <div id="listaClientes"></div>
+    </div>
+
+    <div id="aniversarios" class="pg">
+      <div class="ph"><div class="pt">Aniversariantes</div><div class="ps">Relacionamento que fideliza e diferencia</div></div>
+      <div id="anivHoje"></div>
+      <div class="card">
+        <div class="ct">Cadastrar</div>
+        <div class="g2">
+          <div class="fg"><label class="fl">Nome</label><input id="aNome" class="inp" placeholder="Nome completo"></div>
+          <div class="fg"><label class="fl">Data de Aniversário</label><input type="date" id="aData" class="inp"></div>
+          <div class="fg"><label class="fl">Telefone (WhatsApp)</label><input id="aTel" class="inp" placeholder="(xx) xxxxx-xxxx"></div>
+          <div class="fg"><label class="fl">E-mail</label><input id="aEmail" class="inp" placeholder="email@email.com"></div>
+          <div class="fg"><label class="fl">Tipo</label><select id="aTipo" class="inp"><option>Vendedor</option><option>Cliente</option><option>Outro</option></select></div>
+          <div class="fg"><label class="fl">Mensagem personalizada (opcional)</label><input id="aMsg" class="inp" placeholder="Deixe em branco para mensagem padrão"></div>
+        </div>
+        <button class="btn bp" onclick="salvarAniv()">Salvar</button>
+      </div>
+      <div id="listaAniv"></div>
+    </div>
+
+    <div id="relatorio" class="pg">
+      <div class="ph">
+        <div><div class="pt">Relatório Executivo</div><div class="ps">Diagnóstico completo, profundo e profissional da regional</div></div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap" class="no-print">
+          <button class="btn bp" onclick="gerarRelatorio()">Gerar Relatório</button>
+          <button class="btn bs" onclick="imprimirRelatorio()">🖨 Imprimir</button>
+          <button class="btn bs" onclick="enviarWhatsApp()">💬 WhatsApp / PDF</button>
+          <button class="btn bs" onclick="enviarEmail()">✉ E-mail / PDF</button>
+        </div>
+      </div>
+      <div id="relArea"><div class="empty">Clique em "Gerar Relatório" para criar o relatório executivo completo.</div></div>
+    </div>
+
+    <div id="perfil" class="pg">
+      <div class="ph"><div class="pt">Perfil</div><div class="ps">Configurações do sistema</div></div>
+      <div class="card" style="max-width:500px">
+        <div class="fg"><label class="fl">Empresa</label><input id="pfEmp" class="inp" placeholder="Nome da empresa"></div>
+        <div class="fg"><label class="fl">Regional</label><input id="pfReg" class="inp" placeholder="Ex: Norte Fluminense"></div>
+        <div class="fg"><label class="fl">Supervisor</label><input id="pfSup" class="inp" placeholder="Seu nome completo"></div>
+        <div class="fg"><label class="fl">Cargo</label><input id="pfCargo" class="inp" placeholder="Ex: Supervisor de Vendas"></div>
+        <div class="fg"><label class="fl">Assinatura das mensagens</label><input id="pfAss" class="inp" placeholder="Ex: Leandro Felipe · Supervisor de Vendas Arcofoods"></div>
+        <div class="fg"><label class="fl">Contexto da Regional (para relatórios)</label><textarea id="pfCtx" class="inp" placeholder="Ex: Região dos Lagos — alta sazonalidade de setembro a abril..."></textarea></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn bp" onclick="salvarPerfil()">Salvar Perfil</button>
+          <button class="btn bd" onclick="resetar()">Resetar Dados</button>
+        </div>
+      </div>
+    </div>
+
+        <div id="tutorial" class="pg">
+      <div class="ph"><div class="pt">Tutorial Completo</div><div class="ps">Aprenda a usar o GERENCION do zero ao avançado — guia para Supervisores de Vendas</div></div>
+      <div class="bn bn-cy"><span>📘</span><div>Este tutorial cobre todas as funcionalidades do sistema. Leia uma vez do início ao fim e depois use como consulta rápida. O GERENCION foi desenvolvido para transformar dados do Power BI em inteligência comercial prática.</div></div>
+
+      <div class="tut-step">
+        <div class="tut-num">1</div>
+        <div class="tut-titulo">O que é o GERENCION e como ele funciona</div>
+        <div class="tut-desc">O GERENCION é um sistema de supervisão comercial que transforma os dados brutos do Power BI em diagnósticos, alertas e planos de ação inteligentes. Ele não substitui o BI — ele o amplifica.<br><br>
+        <strong>Lógica do sistema:</strong><br>
+        1. Você lança os dados do BI semanalmente<br>
+        2. O sistema calcula automaticamente o Score de cada vendedor<br>
+        3. Gera diagnósticos, alertas e recomendações<br>
+        4. Você age com base nessas informações<br><br>
+        <strong>Onde os dados ficam salvos?</strong> No próprio dispositivo (localStorage do navegador). Por isso, use sempre o mesmo dispositivo ou exporte/importe os dados regularmente.<br><br>
+        <strong>O sistema funciona offline?</strong> Sim, após o primeiro carregamento funciona sem internet.</div>
+        <div class="tut-dica">💡 O GERENCION é sua ferramenta secreta. Enquanto outros supervisores chegam nas reuniões com achismos, você chega com dados, diagnósticos e planos de ação prontos.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">2</div>
+        <div class="tut-titulo">Primeiro Acesso — Configure seu Perfil</div>
+        <div class="tut-desc">Antes de usar qualquer função, configure seu perfil. Vá em <strong>⚙ Perfil</strong> no menu lateral e preencha todos os campos:<br><br>
+        <strong>Empresa:</strong> Nome da empresa (ex: Arcofoods)<br>
+        <strong>Regional:</strong> Nome da sua regional (ex: Norte Fluminense)<br>
+        <strong>Supervisor:</strong> Seu nome completo<br>
+        <strong>Cargo:</strong> Seu cargo (ex: Supervisor de Vendas)<br>
+        <strong>Assinatura:</strong> Como quer assinar mensagens e relatórios. Use duas linhas:<br>
+        &nbsp;&nbsp;&nbsp;Seu Nome<br>
+        &nbsp;&nbsp;&nbsp;Supervisor de Vendas - Nome da Empresa<br>
+        <strong>Contexto da Regional:</strong> Descreva as características da sua região — sazonalidade, perfil dos clientes, principais desafios. Esse texto aparece automaticamente no Relatório Executivo.<br><br>
+        Após preencher tudo, clique em <strong>Salvar Perfil</strong>.</div>
+        <div class="tut-dica">💡 O Contexto da Regional é o que diferencia o seu relatório. Quanto mais detalhado, mais inteligente e personalizado fica o diagnóstico automático.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">3</div>
+        <div class="tut-titulo">Lançar BI — O Coração do Sistema</div>
+        <div class="tut-desc">Toda semana, após a atualização do Power BI, acesse <strong>⊕ Lançar BI</strong> e preencha os dados em 3 etapas:<br><br>
+        <strong>Etapa 1 — Regional (Página 1 do BI):</strong><br>
+        Preencha os dados da linha da sua regional na mesma ordem dos campos:<br>
+        % OBJ FAT · % FAT Real · % PROJ · OBJ % Margem · % Margem Real · OBJ Posit · Real Posit · Saldo Posit · DEV R$ · % DEV · SKU/CLI · Venda Média · Preço/KG<br><br>
+        <strong>Etapa 2 — Vendedores (Página 1 do BI):</strong><br>
+        Para cada vendedor, preencha os mesmos campos na mesma ordem. Se um campo não aparecer para aquele vendedor no BI, deixe em branco — o sistema trata como zero.<br><br>
+        <strong>Etapa 3 — Positivação e Churn (Páginas 6 e 7 do BI):</strong><br>
+        Para cada vendedor: Positivados · Não Positivados · Churn Rate %<br><br>
+        Ao final, clique em <strong>💾 Salvar BI Regional e Vendedores</strong> e depois em <strong>💾 Salvar Positivação e Churn</strong>.</div>
+        <div class="tut-dica">💡 Salve sempre os dois botões separadamente. O sistema guarda o BI anterior automaticamente para o Comparativo Mensal — por isso, ao lançar um novo BI, o anterior é preservado.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">4</div>
+        <div class="tut-titulo">Dashboard — Sua Bússola Diária</div>
+        <div class="tut-desc">O Dashboard é a primeira tela que você deve verificar toda manhã. Ele mostra o estado atual da regional em segundos.<br><br>
+        <strong>Como ler os 4 cards principais:</strong><br>
+        🟢 <strong>Projeção Regional:</strong> % de quanto a equipe já faturou em relação à meta do mês. Meta = 100%. Sua premiação começa em 90%.<br>
+        🟢 <strong>Saldo Positivação:</strong> Quantos clientes ainda precisam comprar para bater o objetivo. Número negativo = clientes faltando. Positivo = meta batida.<br>
+        🟢 <strong>% Devolução:</strong> Percentual de devolução da regional. Limite máximo: 0,65%. Acima disso é alerta vermelho.<br>
+        🟢 <strong>Saúde da Regional:</strong> Score geral de 0 a 100 calculado pelo sistema com base em todos os indicadores.<br><br>
+        <strong>Como ler os 4 cards secundários:</strong><br>
+        💰 <strong>Sua Premiação Atual:</strong> Baseada na projeção da equipe. Abaixo de 90% = sem premiação. 90-99% = parcial. 100-109% = base. 110%+ = máxima.<br>
+        📊 <strong>Venda Média Regional:</strong> Ticket médio por cliente. Indicador preditivo — mostra onde você chegará.<br>
+        📦 <strong>SKU/Cliente Regional:</strong> Média de produtos por cliente. Baixo = oportunidade de crescimento não explorada.<br>
+        📈 <strong>Margem Regional:</strong> % de margem atual. Meta: 17,5%. Mínimo aceitável: 15,5%.<br><br>
+        <strong>Diagnóstico Rápido:</strong> Resumo visual de quantos vendedores estão saudáveis, em atenção e em situação crítica.<br><br>
+        <strong>Alertas Preditivos:</strong> O sistema identifica padrões de risco antes que virem problema. Leia cada alerta e aja.</div>
+        <div class="tut-dica">💡 Verifique o Dashboard toda manhã antes de qualquer outra atividade. Os Alertas Preditivos são seu diferencial — eles avisam o que vai acontecer antes que aconteça.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">5</div>
+        <div class="tut-titulo">Saúde da Regional — O Índice Geral</div>
+        <div class="tut-desc">A Saúde da Regional é um índice de 0 a 100 que resume a performance de toda a equipe em um único número.<br><br>
+        <strong>Como interpretar:</strong><br>
+        🟢 <strong>70 a 100:</strong> Regional saudável. Manter o ritmo e monitorar.<br>
+        🟡 <strong>50 a 69:</strong> Atenção. Identifique os vendedores em queda e acione planos de ação.<br>
+        🔴 <strong>0 a 49:</strong> Situação crítica. Intervenção imediata em toda a equipe.<br><br>
+        <strong>Score por Indicador:</strong> Mostra qual indicador está puxando o score para baixo — projeção, margem, positivação, devolução ou churn.<br><br>
+        <strong>Distribuição da Equipe:</strong> Quantos vendedores estão em cada faixa.<br><br>
+        <strong>Score Individual:</strong> Score de cada vendedor em um card visual. Use para identificar rapidamente quem precisa de atenção.</div>
+        <div class="tut-dica">💡 Leve o score da regional para as reuniões com a diretoria. É um número único que resume tudo — muito mais poderoso do que uma planilha cheia de dados.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">6</div>
+        <div class="tut-titulo">Score dos Vendedores — Quem Precisa de Atenção Agora</div>
+        <div class="tut-desc">O Score é uma nota de 0 a 100 calculada com os pesos reais da empresa:<br><br>
+        <strong>🏆 Projeção: 40 pontos</strong> (maior peso — define sua premiação)<br>
+        &nbsp;&nbsp;• 110%+ = 40pts &nbsp;&nbsp;• 100-109% = 35pts &nbsp;&nbsp;• 90-99% = 20pts &nbsp;&nbsp;• 80-89% = 8pts &nbsp;&nbsp;• Abaixo de 80% = 0pts<br><br>
+        <strong>👥 Positivação: 25 pontos</strong><br>
+        &nbsp;&nbsp;• Taxa ≥90% = 25pts &nbsp;&nbsp;• ≥75% = 18pts &nbsp;&nbsp;• ≥60% = 10pts &nbsp;&nbsp;• ≥45% = 4pts<br><br>
+        <strong>📉 Churn: 20 pontos</strong> (limite 9%)<br>
+        &nbsp;&nbsp;• ≤9% = 20pts &nbsp;&nbsp;• ≤15% = 10pts &nbsp;&nbsp;• ≤20% = 4pts &nbsp;&nbsp;• Acima = 0pts<br><br>
+        <strong>📊 Margem: 10 pontos</strong><br>
+        &nbsp;&nbsp;• ≥17,5% = 10pts &nbsp;&nbsp;• ≥15,5% = 7pts &nbsp;&nbsp;• ≥14,9% = 3pts<br><br>
+        <strong>↩️ Devolução: 5 pontos</strong><br>
+        &nbsp;&nbsp;• ≤0,65% = 5pts &nbsp;&nbsp;• ≤1,3% = 2pts &nbsp;&nbsp;• Acima = 0pts<br><br>
+        <strong>Como usar:</strong> O ranking é ordenado do maior para o menor score. Vendedores com score abaixo de 50 precisam de intervenção urgente. Entre 50 e 70, monitoramento próximo. Acima de 70, manutenção.</div>
+        <div class="tut-dica">💡 Use o Score para priorizar visitas de campo. Comece sempre pelo vendedor com menor score — ele tem o maior impacto na sua premiação e na saúde da regional.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">7</div>
+        <div class="tut-titulo">Análise da Equipe — Diagnóstico Individual Profundo</div>
+        <div class="tut-desc">Esta tela mostra cada vendedor com todos os seus indicadores e um diagnóstico automático gerado pelo sistema.<br><br>
+        <strong>Como ler cada card de vendedor:</strong><br>
+        • <strong>PROJ%:</strong> % de projeção — se está abaixo de 90%, impacta sua premiação<br>
+        • <strong>FAT%:</strong> % do faturamento real sobre o objetivo<br>
+        • <strong>MARG%:</strong> % de margem real — meta 17,5%, mínimo 15,5%<br>
+        • <strong>POSIT:</strong> Clientes positivados / objetivo<br>
+        • <strong>SALDO:</strong> Diferença entre positivados e objetivo<br>
+        • <strong>%DEV:</strong> % de devolução — limite 0,65%<br><br>
+        <strong>Tags informativos:</strong> SKU/CLI, Venda Média, Preço/KG, Positivados, Não Positivados, Churn%, Taxa de Positivação.<br><br>
+        <strong>Alertas automáticos:</strong> O sistema identifica e exibe em vermelho (ALERTA) ou amarelo (ATENÇÃO) cada problema encontrado, com a ação recomendada.<br><br>
+        <strong>Botão + Plano:</strong> Abre o Plano de Ação com o nome do vendedor já preenchido. Use sempre que identificar um problema.</div>
+        <div class="tut-dica">💡 Consulte esta tela antes de ir a campo. Ela diz exatamente o que conversar com cada vendedor — você chega na conversa preparado, com dados na mão.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">8</div>
+        <div class="tut-titulo">Positivação — Controle da Base de Clientes</div>
+        <div class="tut-desc">Positivação é quantos clientes da carteira compraram no mês. É um dos 3 maiores KPIs avaliados pela diretoria.<br><br>
+        <strong>Como ler:</strong><br>
+        • <strong>Positivados:</strong> Clientes que compraram no mês<br>
+        • <strong>Não Positivados:</strong> Clientes que não compraram — esses precisam ser ativados<br>
+        • <strong>Taxa:</strong> % da base ativa que comprou. Meta: acima de 70%<br><br>
+        <strong>Situação por vendedor:</strong><br>
+        🔴 URGENTE = mais de 20 clientes não positivados<br>
+        🟡 ATENÇÃO = 10 a 20 clientes não positivados<br>
+        🟢 OK = menos de 10 clientes não positivados<br><br>
+        <strong>O que fazer:</strong> Para cada vendedor com clientes não positivados, crie um Plano de Ação com rota de reativação — ligue para os clientes, entenda o motivo e apresente uma proposta.</div>
+        <div class="tut-dica">💡 Clientes não positivados são oportunidades perdidas, não problemas. Cada cliente que volta a comprar melhora sua positivação, sua projeção e sua premiação.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">9</div>
+        <div class="tut-titulo">Churn — Taxa de Perda de Clientes</div>
+        <div class="tut-desc">Churn é o percentual de clientes que pararam de comprar. É um dos 3 maiores KPIs avaliados pela diretoria.<br><br>
+        <strong>Limite máximo: 9%</strong><br>
+        🟢 Até 9% = OK — dentro do aceitável<br>
+        🟡 9% a 15% = ATENÇÃO — monitorar e agir<br>
+        🔴 Acima de 15% = CRÍTICO — clientes migrando para a concorrência<br><br>
+        <strong>O que fazer com churn alto:</strong><br>
+        1. Identifique quais clientes saíram<br>
+        2. Ligue para cada um e entenda o motivo<br>
+        3. Apresente uma proposta de retorno<br>
+        4. Crie um Plano de Ação com prazo e responsável<br><br>
+        <strong>Churn + Projeção baixa = alerta máximo:</strong> Essa combinação indica risco de queda acelerada no próximo mês. O sistema alerta automaticamente quando isso acontece.</div>
+        <div class="tut-dica">💡 É muito mais fácil e barato recuperar um cliente que saiu do que conquistar um novo. Priorize a retenção antes da prospecção.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">10</div>
+        <div class="tut-titulo">Comparativo Mensal — A Evolução que Impressiona</div>
+        <div class="tut-desc">O Comparativo mostra a evolução de cada vendedor do mês anterior para o mês atual — todos os indicadores lado a lado.<br><br>
+        <strong>Como ler:</strong><br>
+        • <strong>Score Ant / Score Atual:</strong> Evolução do score — subiu ou caiu?<br>
+        • <strong>Evolução Score:</strong> +pts em verde (melhorou) ou -pts em vermelho (piorou)<br>
+        • <strong>Delta Proj:</strong> Quantos pontos percentuais a projeção subiu ou caiu<br><br>
+        <strong>Importante:</strong> Este módulo só funciona após o segundo lançamento de BI. Quando você lança um novo BI, o sistema salva o anterior automaticamente como base de comparação.<br><br>
+        <strong>Como usar nas reuniões:</strong> Leve o Comparativo para mostrar evolução com dados concretos. "Esse vendedor melhorou 8 pontos no score este mês" é muito mais poderoso do que uma opinião.</div>
+        <div class="tut-dica">💡 O Comparativo é sua melhor ferramenta para reuniões com a diretoria. Mostra que você acompanha a evolução da equipe de forma sistemática e com dados reais.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">11</div>
+        <div class="tut-titulo">Acompanhamento de Campo — Registre Tudo</div>
+        <div class="tut-desc">Registre cada visita de campo — cliente visitado, cidade, data, vendedor acompanhado e o que foi visto, combinado e os próximos passos.<br><br>
+        <strong>O que registrar em Observações:</strong><br>
+        • O que foi identificado na visita<br>
+        • O que foi combinado com o vendedor e/ou cliente<br>
+        • Oportunidades identificadas<br>
+        • Próximos passos e prazo<br><br>
+        <strong>Por que registrar?</strong> O histórico de campo mostra que você é um supervisor presente e organizado. Em reuniões com a diretoria, você consegue dizer exatamente quando foi a campo, com quem e o que foi feito.<br><br>
+        <strong>Dica de rotina:</strong> Registre imediatamente após a visita, ainda no carro ou no local. Nunca deixe para depois — os detalhes se perdem.</div>
+        <div class="tut-dica">💡 Um supervisor que registra tudo demonstra profissionalismo e organização. Isso diferencia você de qualquer outro supervisor da empresa.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">12</div>
+        <div class="tut-titulo">Plano de Ação — O que Você Está Fazendo para Resolver</div>
+        <div class="tut-desc">Sempre que identificar um problema — na Análise da Equipe, nos Alertas ou nas visitas de campo — crie um Plano de Ação.<br><br>
+        <strong>Campos do Plano:</strong><br>
+        • <strong>Problema identificado:</strong> Descreva o problema de forma clara e objetiva<br>
+        • <strong>Estratégia / Solução:</strong> Como você vai resolver<br>
+        • <strong>Responsável:</strong> Quem vai executar (vendedor, você, equipe)<br>
+        • <strong>Prazo:</strong> Data limite para resolução<br>
+        • <strong>Prioridade:</strong> Alta, Média ou Baixa<br>
+        • <strong>Status:</strong> Em andamento, Concluído ou Pendente<br>
+        • <strong>Detalhamento:</strong> Descreva em detalhes as ações e o resultado esperado<br><br>
+        Os planos ativos aparecem automaticamente no Relatório Executivo.<br><br>
+        <strong>Botão + Plano na Análise da Equipe:</strong> Ao clicar, abre o formulário com o nome do vendedor já preenchido — agiliza muito o processo.</div>
+        <div class="tut-dica">💡 Qualquer supervisor vê o problema. Poucos têm o plano estruturado para resolver. O Plano de Ação é o que transforma um supervisor reativo em um supervisor estratégico.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">13</div>
+        <div class="tut-titulo">Clientes Estratégicos — Monitoramento Prioritário</div>
+        <div class="tut-desc">Cadastre os clientes mais importantes da regional para acompanhamento próximo — aqueles que têm maior volume, maior potencial ou que estão em risco.<br><br>
+        <strong>Status disponíveis:</strong><br>
+        🟢 <strong>Estratégico:</strong> Cliente de alto volume — prioridade máxima<br>
+        🟢 <strong>Expansão:</strong> Cliente com potencial de crescimento<br>
+        🔴 <strong>Em risco:</strong> Cliente com sinais de saída — ação urgente<br>
+        🟡 <strong>Oportunidade:</strong> Cliente com potencial não explorado<br>
+        ⚪ <strong>Ativo:</strong> Cliente regular em acompanhamento<br><br>
+        <strong>Como usar:</strong> Em cada cliente, registre o histórico, o vendedor responsável e as próximas ações planejadas. Revise semanalmente.</div>
+        <div class="tut-dica">💡 Os clientes "Em risco" devem ser visitados pessoalmente pelo supervisor. Sua presença demonstra ao cliente a importância que ele tem para a empresa.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">14</div>
+        <div class="tut-titulo">Aniversariantes — Relacionamento que Fideliza</div>
+        <div class="tut-desc">Cadastre todos os vendedores da equipe e os clientes estratégicos com data de aniversário, telefone e e-mail.<br><br>
+        <strong>O sistema faz automaticamente:</strong><br>
+        • Avisa quando alguém faz aniversário hoje<br>
+        • Mostra quantos dias faltam para cada aniversário<br>
+        • Ordena os próximos aniversários por data<br><br>
+        <strong>Botão WhatsApp:</strong> Abre o WhatsApp com uma mensagem padrão com emojis já preenchida, com sua assinatura. É só enviar.<br><br>
+        <strong>Botão ✨ Msg IA:</strong> Gera uma mensagem única e personalizada com emojis, diferente a cada clique — para vendedores (linguagem de equipe) ou clientes (linguagem de parceria). Muito mais impactante do que uma mensagem genérica.<br><br>
+        <strong>Botão E-mail:</strong> Abre o app de e-mail com a mensagem já preenchida.<br><br>
+        <strong>Tipos:</strong> Cadastre como Vendedor, Cliente ou Outro — o sistema adapta o tom da mensagem automaticamente.</div>
+        <div class="tut-dica">💡 Uma mensagem de aniversário do supervisor cria um vínculo que nenhum número de BI cria. É o toque humano que diferencia um líder de um gerente.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">15</div>
+        <div class="tut-titulo">Relatório Executivo — Sua Apresentação Profissional</div>
+        <div class="tut-desc">O Relatório Executivo é o documento mais completo do sistema. Clique em <strong>Gerar Relatório</strong> e o sistema cria automaticamente um diagnóstico profissional com:<br><br>
+        • <strong>Situação da Regional:</strong> Status geral com projeção média<br>
+        • <strong>Sua Premiação Atual:</strong> Baseada na projeção da equipe<br>
+        • <strong>Contexto Regional:</strong> Texto do seu perfil + sazonalidade<br>
+        • <strong>Termômetro da Regional:</strong> Todos os indicadores com diagnóstico<br>
+        • <strong>Diagnóstico Individual:</strong> Análise de cada vendedor com ações recomendadas<br>
+        • <strong>Positivação e Churn:</strong> Análise da base de clientes<br>
+        • <strong>Planos de Ação:</strong> Todos os planos ativos<br>
+        • <strong>Diretrizes do Mês:</strong> O que fazer agora, em ordem de prioridade<br>
+        • <strong>Conclusão Executiva:</strong> Síntese em linguagem profissional<br><br>
+        <strong>Botões de ação:</strong><br>
+        🖨 <strong>Imprimir:</strong> Imprime o relatório diretamente<br>
+        💬 <strong>WhatsApp / PDF:</strong> Abre o relatório completo e colorido para salvar como PDF e enviar<br>
+        ✉ <strong>E-mail / PDF:</strong> Mesmo que WhatsApp + botão de copiar texto</div>
+        <div class="tut-dica">💡 Gere o relatório antes de toda reunião. Ele transforma dados brutos em linguagem executiva profissional — você chega preparado enquanto outros chegam improvisando.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">16</div>
+        <div class="tut-titulo">Negociação Comercial — Propostas Profissionais</div>
+        <div class="tut-desc">O módulo de Negociação permite criar propostas comerciais estruturadas para aprovação interna quando precisar de condições especiais de preço.<br><br>
+        <strong>Como usar:</strong><br>
+        1. Preencha os dados da negociação: cliente, vendedor, concorrente, total de SKUs e contexto/justificativa<br>
+        2. Clique em <strong>+ Adicionar Produto</strong> para cada item em negociação<br>
+        3. Para cada produto, informe: nome, quantidade, preço tabela, preço vendedor e preço ideal<br>
+        4. O sistema calcula automaticamente a diferença unitária, % de investimento e valor total<br>
+        5. Clique em <strong>✨ Gerar com IA</strong> para criar o documento formatado<br>
+        6. Clique em <strong>📄 Gerar PDF</strong> para abrir e salvar como PDF<br><br>
+        <strong>O que o sistema calcula:</strong><br>
+        • Diferença entre preço vendedor e preço ideal<br>
+        • Percentual de investimento sobre o preço tabela<br>
+        • Valor total do investimento por produto<br>
+        • Resumo do investimento total da negociação</div>
+        <div class="tut-dica">💡 Uma proposta de negociação bem estruturada tem muito mais chance de aprovação do que um pedido verbal. Mostre o impacto financeiro e a justificativa estratégica.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">17</div>
+        <div class="tut-titulo">Apresentação — Slides para a Diretoria</div>
+        <div class="tut-desc">O modo Apresentação transforma todos os dados do sistema em slides profissionais para reuniões com a diretoria ou apresentações em data show.<br><br>
+        <strong>Como usar:</strong><br>
+        1. Lance o BI antes de abrir a apresentação<br>
+        2. Clique em <strong>▶ Iniciar Apresentação</strong><br>
+        3. Uma nova janela abre com os slides<br>
+        4. Conecte no data show e pressione <strong>F11</strong> para tela cheia<br>
+        5. Navegue com os botões Anterior/Próximo ou as <strong>setas do teclado</strong><br><br>
+        <strong>O que está em cada slide:</strong><br>
+        • Slide 1: Capa executiva com situação da regional<br>
+        • Slide 2: Termômetro com todos os indicadores<br>
+        • Slide 3: Diagnóstico geral da equipe<br>
+        • Slide 4: Ranking completo por score<br>
+        • Slides 5+: Um slide por vendedor com diagnóstico individual completo<br>
+        • Slide Positivação/Churn: Detalhe da base de clientes<br>
+        • Slide Planos de Ação: O que está sendo feito<br>
+        • Slide Final: Diretrizes e conclusão executiva<br><br>
+        A apresentação é 100% responsiva — funciona em tablet, notebook e telão.</div>
+        <div class="tut-dica">💡 Imagina você conectar o notebook no data show e apresentar slides profissionais com dados reais da equipe. Isso impressiona qualquer diretoria e separa você de qualquer outro supervisor.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">18</div>
+        <div class="tut-titulo">Exportar e Importar Dados — Nunca Perca suas Informações</div>
+        <div class="tut-desc">Os dados ficam salvos no dispositivo. Para transferir entre dispositivos ou fazer backup, use as funções de exportar e importar no final do menu lateral.<br><br>
+        <strong>Exportar Dados:</strong><br>
+        1. Clique em <strong>Exportar Dados</strong> no menu lateral<br>
+        2. Um arquivo .json é baixado automaticamente com a data no nome<br>
+        3. Envie pelo WhatsApp, e-mail ou Google Drive para o outro dispositivo<br><br>
+        <strong>Importar Dados:</strong><br>
+        1. No dispositivo de destino, clique em <strong>Importar Dados</strong><br>
+        2. Selecione o arquivo .json baixado anteriormente<br>
+        3. O sistema recarrega com todos os dados importados<br><br>
+        <strong>Importante:</strong> Exporte sempre antes de atualizar o sistema. Os dados não são afetados pela atualização do arquivo HTML, mas é uma boa prática manter backups regulares.</div>
+        <div class="tut-dica">💡 Exporte os dados toda sexta-feira como backup semanal. Salve no Google Drive com a data no nome. Se algo der errado, você nunca perde mais de uma semana de trabalho.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">19</div>
+        <div class="tut-titulo">Rotina Semanal Recomendada</div>
+        <div class="tut-desc">Para extrair o máximo do GERENCION, siga esta rotina:<br><br>
+        <strong>☀️ Toda manhã (5 minutos):</strong><br>
+        → Abra o Dashboard · Verifique os alertas · Planeje o dia<br><br>
+        <strong>📊 Após atualização do BI (30 minutos):</strong><br>
+        → Lance os dados em Lançar BI · Salve regional e vendedores · Salve positivação e churn · Verifique o Dashboard atualizado<br><br>
+        <strong>🚗 Antes de ir a campo:</strong><br>
+        → Consulte a Análise da Equipe · Saiba o que conversar com cada vendedor · Verifique o Plano de Ação do vendedor que vai visitar<br><br>
+        <strong>📝 Após cada visita:</strong><br>
+        → Registre em Campo · Atualize o Plano de Ação se necessário · Nunca deixe para depois<br><br>
+        <strong>📅 Toda sexta-feira (15 minutos):</strong><br>
+        → Gere o Relatório Executivo · Revise os Planos de Ação · Exporte os dados como backup<br><br>
+        <strong>🎯 Antes de reuniões com a diretoria:</strong><br>
+        → Gere o Relatório · Prepare a Apresentação · Imprima ou leve no tablet</div>
+        <div class="tut-dica">💡 Consistência é tudo. Um sistema só é poderoso se for alimentado regularmente. 30 minutos por semana no lançamento do BI transformam completamente a qualidade das suas decisões.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">20</div>
+        <div class="tut-titulo">Dúvidas Frequentes</div>
+        <div class="tut-desc"><strong>Os dados somem quando atualizo o sistema?</strong><br>
+        Não. Os dados ficam no localStorage do navegador, separado do arquivo HTML. Mas exporte antes de qualquer atualização por precaução.<br><br>
+        <strong>Posso usar em dispositivos diferentes?</strong><br>
+        Sim, mas os dados são independentes em cada dispositivo. Use Exportar/Importar para sincronizar.<br><br>
+        <strong>O Comparativo Mensal não aparece. Por quê?</strong><br>
+        Ele só funciona após o segundo lançamento de BI. O primeiro lançamento cria a base, o segundo cria a comparação.<br><br>
+        <strong>O relatório não gera. O que fazer?</strong><br>
+        Verifique se lançou o BI. O relatório precisa de dados para gerar. Se lançou e ainda não funciona, exporte os dados, atualize o sistema e importe novamente.<br><br>
+        <strong>A apresentação não abre. O que fazer?</strong><br>
+        Permita popups no navegador para o site do GERENCION. A apresentação abre em uma nova janela.<br><br>
+        <strong>O botão ✨ Msg IA não funciona. O que fazer?</strong><br>
+        Verifique sua conexão com a internet. A geração de mensagens por IA requer conexão ativa.<br><br>
+        <strong>Posso instalar como aplicativo no celular/tablet?</strong><br>
+        Sim! Abra no Chrome, toque nos 3 pontos e escolha "Adicionar à tela inicial". O GERENCION vira um app com ícone próprio.</div>
+        <div class="tut-dica">💡 Em caso de dúvida não resolvida aqui, consulte o suporte. O GERENCION é atualizado regularmente com novas funcionalidades.</div>
+      </div>
+
+    </div>
+    <div id="apresentacao" class="pg">
+      <div class="ph">
+        <div><div class="pt">Modo Apresentação</div><div class="ps">Para reuniões com a diretoria — tela cheia, slide por slide, 100% responsivo</div></div>
+        <div style="display:flex;gap:8px;margin-top:10px" class="no-print">
+          <button class="btn bp" onclick="iniciarApresentacao()">▶ Iniciar Apresentação</button>
+        </div>
+      </div>
+      <div class="bn bn-cy"><span>📺</span><div>A apresentação abre em uma nova janela. Conecte no <strong>data show</strong> e pressione <strong>F11</strong> para tela cheia. Use as setas do teclado para navegar entre os slides. Funciona em tablet, notebook e telão.</div></div>
+      <div id="apresArea"><div class="empty">Lance os dados do BI e clique em Iniciar Apresentação.</div></div>
+    </div>
+
+    <!-- NEGOCIAÇÃO -->
+        <div id="negociacao" class="pg">
+      <div class="ph">
+        <div><div class="pt">Negociação Comercial</div><div class="ps">Preencha os dados — a IA gera a proposta profissional pronta para aprovação</div></div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap" class="no-print">
+          <button class="btn bp" onclick="gerarNegociacao()">✨ Gerar Proposta com IA</button>
+          <button class="btn bs" onclick="abrirPdfNegociacao()">📄 Abrir PDF</button>
+          <button class="btn bs" onclick="limparNegociacao()">🗑 Limpar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Dados da Negociação</div>
+        <div class="g2">
+          <div class="fg"><label class="fl">Cliente (Código + Nome)</label><input id="negCli" class="inp" placeholder="ex: 98728 – Roots Supermercado"></div>
+          <div class="fg"><label class="fl">Vendedor Responsável</label><input id="negVend" class="inp" placeholder="Nome do vendedor"></div>
+          <div class="fg"><label class="fl">Concorrente</label><input id="negConc" class="inp" placeholder="ex: Nutimax"></div>
+          <div class="fg"><label class="fl">Total de SKUs do Pedido</label><input id="negSkus" class="inp" placeholder="ex: 12 SKUs"></div>
+        </div>
+        <div class="fg"><label class="fl">Contexto para a IA (escreva em linguagem simples — a IA transforma em texto profissional)</label>
+          <textarea id="negCtx" class="inp" style="min-height:80px" placeholder="ex: cliente importante, concorrente está oferecendo preço menor nos produtos abaixo, se não negociar perdemos o pedido inteiro, precisamos fechar essa venda..."></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Produtos em Negociação</div>
+        <div id="negProdutos"><div class="empty">Clique em "+ Adicionar Produto" para incluir itens.</div></div>
+        <button class="btn bs no-print" style="margin-top:12px" onclick="addProduto()">+ Adicionar Produto</button>
+      </div>
+
+      <div id="negResultado"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var VENDS=[
+  {cod:'017',nome:'Edimar Barbosa'},
+  {cod:'081',nome:'Adson Bruno'},
+  {cod:'118',nome:'Eduardo Rezende'},
+  {cod:'122',nome:'Matheus Paiotti'},
+  {cod:'167',nome:'Eduardo Britto'},
+  {cod:'249',nome:'Vinicius Barao'},
+  {cod:'295',nome:'Cristian Vianna'},
+  {cod:'429',nome:'Victor Hugo'},
+  {cod:'459',nome:'Carlos Bordignon'},
+  {cod:'465',nome:'Ingryd Vieira'}
+];
+var KEY='GRC_V2';
+var DEV_LIM=0.65;
+var DB={
+  perfil:{empresa:'Arcofoods',regional:'Norte Fluminense',supervisor:'Leandro Felipe',
+    cargo:'Supervisor de Vendas - Arcofoods',
+    assinatura:'Leandro Felipe\nSupervisor de Vendas - Arcofoods',
+    contexto:'Região dos Lagos (RJ) — alta sazonalidade de setembro a abril. Na baixa temporada (maio a agosto) os clientes reduzem volume significativamente enquanto as metas permanecem. O principal desafio é manter a base ativa, reduzir churn e preparar a equipe para a explosão da alta temporada.'},
+  biAtual:{regional:{},vendedores:[]},
+  biAnterior:{regional:{},vendedores:[]},
+  posChurn:[],campos:[],planos:[],clientes:[],aniversarios:[]
+};
+
+function salvar(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
+function carregar(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);}}catch(e){}}
+function n(v){return parseFloat((v||'0').toString().replace(',','.'))||0;}
+function fmt(v){return(v!==undefined&&v!==null&&v!=='')?v:'—';}
+function fP(v){if(v===undefined||v===null||v==='')return'—';var x=n(v);return x.toFixed(2)+'%';}
+
+function calcScore(v,pc){
+  var score=0;
+  var proj=n(v.proj),objMarg=n(v.objMarg)||17.5,marg=n(v.marg);
+  var devPct=Math.abs(n(v.devPct)),churn=pc?n(pc.churnRate):0;
+  var totPos=pc?(n(pc.positivados)+n(pc.naoPositivados)):0;
+  var txPos=totPos>0?(n(pc.positivados)/totPos)*100:0;
+  // PROJEÇÃO: 40pts — maior peso (define premiação do supervisor)
+  if(proj>=110)score+=40;else if(proj>=100)score+=35;else if(proj>=90)score+=20;else if(proj>=80)score+=8;else score+=0;
+  // POSITIVAÇÃO: 25pts — segundo maior peso
+  if(txPos>=90)score+=25;else if(txPos>=75)score+=18;else if(txPos>=60)score+=10;else if(txPos>=45)score+=4;else score+=0;
+  // CHURN: 20pts — terceiro maior peso
+  if(churn===0||churn<=9)score+=20;else if(churn<=15)score+=10;else if(churn<=20)score+=4;else score+=0;
+  // MARGEM: 10pts
+  if(marg>=objMarg)score+=10;else if(marg>=15.5)score+=7;else if(marg>=objMarg*0.85)score+=3;else score+=0;
+  // DEVOLUÇÃO: 5pts
+  if(devPct===0||devPct<=DEV_LIM)score+=5;else if(devPct<=DEV_LIM*2)score+=2;else score+=0;
+  return Math.min(100,Math.round(score));
+}
+
+function scoreCor(s){if(s>=70)return'var(--cy)';if(s>=50)return'var(--ye)';return'var(--rd)';}
+function scoreLbl(s){if(s>=70)return'SAUDÁVEL';if(s>=50)return'ATENÇÃO';return'CRÍTICO';}
+function scoreBadge(s){if(s>=70)return'<span class="badge bok">SAUDÁVEL</span>';if(s>=50)return'<span class="badge bwn">ATENÇÃO</span>';return'<span class="badge bdg">CRÍTICO</span>';}
+function st(proj,devPct){var p=n(proj),d=Math.abs(n(devPct));if(p<70||d>DEV_LIM*3)return'dg';if(p<85||d>DEV_LIM)return'wn';return'ok';}
+function badgeSt(proj,devPct){var s=st(proj,devPct);if(s==='ok')return'<span class="badge bok">SAUDÁVEL</span>';if(s==='wn')return'<span class="badge bwn">ATENÇÃO</span>';return'<span class="badge bdg">CRÍTICO</span>';}
+
+function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('on');setTimeout(function(){el.classList.remove('on');},2800);}
+function remover(lista,idx){DB[lista].splice(idx,1);salvar();renderTudo();toast('Removido.');}
+
+function ir(id,btn){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
+  var pg=document.getElementById(id);if(pg)pg.classList.add('on');
+  document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  fecharMenu();window.scrollTo(0,0);
+}
+function abrirMenu(){document.getElementById('sidebar').classList.add('aberto');document.getElementById('overlay').classList.add('on');}
+function fecharMenu(){document.getElementById('sidebar').classList.remove('aberto');document.getElementById('overlay').classList.remove('on');}
+
+window.onload=function(){carregar();init();};
+
+function init(){
+  var p=DB.perfil;
+  document.getElementById('pvEmp').textContent=p.empresa||'Arcofoods';
+  document.getElementById('pvReg').textContent=p.regional||'Norte Fluminense';
+  document.getElementById('pvSup').textContent=p.supervisor||'Leandro Felipe';
+  document.getElementById('pfEmp').value=p.empresa||'';
+  document.getElementById('pfReg').value=p.regional||'';
+  document.getElementById('pfSup').value=p.supervisor||'';
+  document.getElementById('pfCargo').value=p.cargo||'';
+  document.getElementById('pfAss').value=p.assinatura||'';
+  document.getElementById('pfCtx').value=p.contexto||'';
+  document.getElementById('dashData').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  buildForms();renderTudo();renderProdutos();
+}
+
+function buildForms(){
+  var fv=document.getElementById('fVendedores'),fp=document.getElementById('fPosChurn');
+  if(!fv||!fp)return;
+  var r=DB.biAtual.regional;
+  [['rObjFat','objFat'],['rFat','fat'],['rProj','proj'],['rObjMarg','objMarg'],['rMarg','marg'],['rObjPos','objPos'],['rRealPos','realPos'],['rSaldoPos','saldoPos'],['rDevR','devR'],['rDevPct','devPct'],['rSku','sku'],['rVendaMedia','vendaMedia'],['rPrecoKg','precoKg']].forEach(function(c){var el=document.getElementById(c[0]);if(el&&r[c[1]])el.value=r[c[1]];});
+  fv.innerHTML=VENDS.map(function(v,i){var cur=DB.biAtual.vendedores[i]||{};return'<div class="biv"><div class="biv-t">'+v.cod+' — '+v.nome+'</div><div class="g4">'+bf('v'+i+'objFat','% OBJ FAT',cur.objFat)+bf('v'+i+'fat','% FAT Real',cur.fat)+bf('v'+i+'proj','% PROJ',cur.proj)+bf('v'+i+'objMarg','OBJ % Margem',cur.objMarg)+bf('v'+i+'marg','% Margem Real',cur.marg)+bf('v'+i+'objPos','OBJ Posit',cur.objPos)+bf('v'+i+'realPos','Real Posit',cur.realPos)+bf('v'+i+'saldoPos','Saldo Posit',cur.saldoPos)+bf('v'+i+'devR','DEV R$',cur.devR)+bf('v'+i+'devPct','% DEV',cur.devPct)+bf('v'+i+'sku','SKU/CLI',cur.sku)+bf('v'+i+'vendaMedia','Venda Média',cur.vendaMedia)+bf('v'+i+'precoKg','Preço/KG',cur.precoKg)+'</div></div>';}).join('');
+  fp.innerHTML=VENDS.map(function(v,i){var pc=DB.posChurn[i]||{};return'<div class="biv"><div class="biv-t" style="color:var(--t)">'+v.cod+' — '+v.nome+'</div><div class="g3"><div class="fg"><label class="fl">Positivados</label><input class="inp" id="pc'+i+'pos" placeholder="0" value="'+(pc.positivados||'')+'"></div><div class="fg"><label class="fl">Não Positivados</label><input class="inp" id="pc'+i+'npos" placeholder="0" value="'+(pc.naoPositivados||'')+'"></div><div class="fg"><label class="fl">Churn Rate %</label><input class="inp" id="pc'+i+'churn" placeholder="0" value="'+(pc.churnRate||'')+'"></div></div></div>';}).join('');
+}
+
+function bf(id,lbl,val){return'<div class="fg"><label class="fl">'+lbl+'</label><input class="inp" id="'+id+'" placeholder="0" value="'+(val||'')+'"></div>';}
+
+function salvarBI(){
+  if(DB.biAtual.vendedores.length>0)DB.biAnterior=JSON.parse(JSON.stringify(DB.biAtual));
+  DB.biAtual.regional={objFat:document.getElementById('rObjFat').value,fat:document.getElementById('rFat').value,proj:document.getElementById('rProj').value,objMarg:document.getElementById('rObjMarg').value,marg:document.getElementById('rMarg').value,objPos:document.getElementById('rObjPos').value,realPos:document.getElementById('rRealPos').value,saldoPos:document.getElementById('rSaldoPos').value,devR:document.getElementById('rDevR').value,devPct:document.getElementById('rDevPct').value,sku:document.getElementById('rSku').value,vendaMedia:document.getElementById('rVendaMedia').value,precoKg:document.getElementById('rPrecoKg').value,data:new Date().toISOString()};
+  DB.biAtual.vendedores=VENDS.map(function(v,i){return{cod:v.cod,nome:v.nome,objFat:document.getElementById('v'+i+'objFat').value,fat:document.getElementById('v'+i+'fat').value,proj:document.getElementById('v'+i+'proj').value,objMarg:document.getElementById('v'+i+'objMarg').value,marg:document.getElementById('v'+i+'marg').value,objPos:document.getElementById('v'+i+'objPos').value,realPos:document.getElementById('v'+i+'realPos').value,saldoPos:document.getElementById('v'+i+'saldoPos').value,devR:document.getElementById('v'+i+'devR').value,devPct:document.getElementById('v'+i+'devPct').value,sku:document.getElementById('v'+i+'sku').value,vendaMedia:document.getElementById('v'+i+'vendaMedia').value,precoKg:document.getElementById('v'+i+'precoKg').value};});
+  salvar();renderTudo();toast('BI salvo com sucesso!');ir('dashboard',document.querySelector('.nb'));
+}
+
+function salvarPosChurn(){
+  DB.posChurn=VENDS.map(function(v,i){return{cod:v.cod,nome:v.nome,positivados:document.getElementById('pc'+i+'pos').value,naoPositivados:document.getElementById('pc'+i+'npos').value,churnRate:document.getElementById('pc'+i+'churn').value};});
+  salvar();renderTudo();toast('Positivação e Churn salvos!');
+}
+
+function renderTudo(){renderDash();renderSaude();renderEquipe();renderScores();renderComp();renderPos();renderChurn();renderCampoLista();renderPlanos();renderClientes();renderAniv();}
+
+function renderDash(){
+  var r=DB.biAtual.regional,vs=DB.biAtual.vendedores;
+  var mes=new Date().getMonth(),baixa=(mes>=4&&mes<=7);
+  document.getElementById('sazBanner').innerHTML=baixa?'<div class="bn bn-ye"><span>⚠</span><div><strong>Baixa Temporada — Região dos Lagos (maio a agosto).</strong> Período de menor volume. Foco em manter base ativa, reduzir churn e preparar equipe para a alta temporada em setembro.</div></div>':'<div class="bn bn-cy"><span>★</span><div><strong>Alta Temporada — Região dos Lagos (setembro a abril).</strong> Momento de máxima performance. Pressione positivação, mix rentável e novos clientes.</div></div>';
+  if(r&&r.proj){
+    var p=n(r.proj);
+    document.getElementById('stProj').className='stat'+(p>=85?'':p>=70?' wn':' dg');
+    document.getElementById('dProj').textContent=fP(r.proj);
+    var saldo=r.saldoPos?n(r.saldoPos):(n(r.realPos)-n(r.objPos));
+    document.getElementById('stPos').className='stat'+(saldo>=0?'':saldo>-100?' wn':' dg');
+    document.getElementById('dPos').textContent=(saldo>=0?'+':'')+Math.round(saldo);
+    document.getElementById('dPosSub').textContent='Real: '+fmt(r.realPos)+' / Obj: '+fmt(r.objPos);
+    var d=Math.abs(n(r.devPct));
+    document.getElementById('stDev').className='stat'+(d>DEV_LIM?' dg':'');
+    document.getElementById('dDev').textContent=fP(r.devPct);
+  }
+  if(vs&&vs.length>0){
+    var scores=vs.map(function(v,i){return calcScore(v,DB.posChurn[i]||{});});
+    var scoreMedio=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
+    document.getElementById('stSaude').className='stat'+(scoreMedio>=70?'':scoreMedio>=50?' wn':' dg');
+    document.getElementById('dSaude').textContent=scoreMedio;
+    document.getElementById('dSaudeLbl').textContent=scoreLbl(scoreMedio)+' (0-100)';
+    // Calcula premiação do supervisor baseada na projeção regional
+    var projReg=r&&r.proj?n(r.proj):0;
+    var premioEl=document.getElementById('stPremio');
+    var premioVal=document.getElementById('stPremioVal');
+    var premioSub=document.getElementById('stPremioSub');
+    if(premioEl&&premioVal&&premioSub){
+      if(projReg>=110){premioEl.className='stat';premioVal.textContent='R$ 1.400';premioVal.style.color='#FFB800';premioSub.textContent='🏆 Máximo! Projeção ≥110%';}
+      else if(projReg>=100){premioEl.className='stat';premioVal.textContent='R$ 1.000';premioVal.style.color='#00E5C3';premioSub.textContent='✅ Base. Falta chegar a 110% para +R$400';}
+      else if(projReg>=90){premioEl.className='stat wn';premioVal.textContent='R$ 600';premioVal.style.color='#FFB800';premioSub.textContent='⚠ Parcial. Falta '+(100-projReg).toFixed(1)+'pp para R$ 1.000';}
+      else{premioEl.className='stat dg';premioVal.textContent='R$ 0';premioVal.style.color='#FF4560';premioSub.textContent='❌ Abaixo de 90% — sem premiação. Falta '+(90-projReg).toFixed(1)+'pp';}
+    }
+  }
+  var diag=document.getElementById('diagBox'),alrt=document.getElementById('alertBox'),rank=document.getElementById('rankBox');
+  if(!vs||vs.length===0){diag.innerHTML='<div class="empty">Lance os dados do BI.</div>';alrt.innerHTML='<div class="empty">Nenhum alerta.</div>';rank.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
+  var scores2=vs.map(function(v,i){return{v:v,pc:DB.posChurn[i]||{},sc:calcScore(v,DB.posChurn[i]||{})};});
+  var crit=scores2.filter(function(x){return x.sc<50;});
+  var atenc=scores2.filter(function(x){return x.sc>=50&&x.sc<70;});
+  var ok=scores2.length-crit.length-atenc.length;
+  diag.innerHTML='<div class="dr"><div class="dot" style="background:var(--cy)"></div><span><strong>'+ok+'</strong> vendedor(es) SAUDÁVEL</span></div><div class="dr"><div class="dot" style="background:var(--ye)"></div><span><strong>'+atenc.length+'</strong> em ATENÇÃO</span></div><div class="dr"><div class="dot" style="background:var(--rd)"></div><span><strong>'+crit.length+'</strong> CRÍTICO — intervenção urgente</span></div>'+(r.saldoPos?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Saldo positivação: <strong style="color:'+(n(r.saldoPos)<0?'var(--rd)':'var(--cy)')+'">'+r.saldoPos+'</strong> clientes</span></div>':'')+(r.devR?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Devolução total: <strong style="color:var(--rd)">'+r.devR+'</strong> ('+fP(r.devPct)+')</span></div>':'')+(r.vendaMedia?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Venda Média Regional: <strong>R$ '+r.vendaMedia+'</strong></span></div>':'');
+  // Atualiza cards preditivos
+  var vmEl=document.getElementById('dVendMedia');
+  var skuEl=document.getElementById('dSku');
+  var margEl=document.getElementById('dMargem');
+  if(vmEl)vmEl.textContent=r&&r.vendaMedia?'R$'+r.vendaMedia:'—';
+  if(skuEl)skuEl.textContent=r&&r.sku?r.sku:'—';
+  if(margEl){
+    var mg=r&&r.marg?n(r.marg):0;
+    margEl.textContent=mg?fP(r.marg):'—';
+    margEl.style.color=mg>=17.5?'var(--cy)':mg>=15.5?'var(--ye)':'var(--rd)';
+    document.getElementById('stMargem').className='stat'+(mg>=17.5?'':mg>=15.5?' wn':' dg');
+  }
+  var alertas=[];
+  scores2.forEach(function(x){
+    var v=x.v,pc=x.pc;
+    var proj=n(v.proj),churn=n(pc.churnRate),dev=Math.abs(n(v.devPct));
+    var totPos=n(pc.positivados)+n(pc.naoPositivados),txPos=totPos>0?(n(pc.positivados)/totPos)*100:0;
+    // Projeção — impacta premiação do supervisor
+    if(proj<90)alertas.push({t:'dg',m:v.nome+' — Projeção '+fP(v.proj)+' ABAIXO DE 90%. Impacta sua premiação. Intervenção urgente.'});
+    else if(proj<100)alertas.push({t:'wn',m:v.nome+' — Projeção '+fP(v.proj)+'. Falta '+(100-proj).toFixed(1)+'pp para bater a meta de 100%.'});
+    // Churn
+    if(churn>15)alertas.push({t:'dg',m:v.nome+' — Churn crítico: '+fP(pc.churnRate)+' (limite 9%). '+Math.round(churn/100*totPos)+' clientes perdidos. Ação imediata.'});
+    else if(churn>9)alertas.push({t:'wn',m:v.nome+' — Churn em atenção: '+fP(pc.churnRate)+'. Monitorar clientes em risco de saída.'});
+    // Positivação
+    if(n(pc.naoPositivados)>20)alertas.push({t:'wn',m:v.nome+' — '+pc.naoPositivados+' clientes não positivados. Impacta seu KPI de positivação.'});
+    // Devolução
+    if(dev>DEV_LIM)alertas.push({t:'dg',m:v.nome+' — DEV '+fP(v.devPct)+' acima do limite de 0,65%. Investigar causa raiz.'});
+    // Margem
+    if(n(v.marg)<15.5)alertas.push({t:'dg',m:v.nome+' — Margem '+fP(v.marg)+' abaixo do mínimo aceitável (15,5%). Focar Mix Rentável.'});
+    else if(n(v.marg)<n(v.objMarg||17.5))alertas.push({t:'wn',m:v.nome+' — Margem '+fP(v.marg)+' abaixo do objetivo. Orientar sobre SKU de maior rentabilidade.'});
+    // Alerta preditivo combo
+    if(churn>9&&proj<90)alertas.push({t:'dg',m:v.nome+' — ALERTA PREDITIVO: churn+projeção baixos indicam risco de queda acelerada. Visita de campo prioritária.'});
+    // Venda média e SKU como preditivos
+    if(n(v.sku)>0&&n(v.sku)<10)alertas.push({t:'wn',m:v.nome+' — SKU/Cliente '+v.sku+' baixo. Mix limitado — potencial de crescimento não explorado.'});
+  });
+  alrt.innerHTML=alertas.length===0?'<div class="empty">Nenhum alerta. Regional saudável!</div>':alertas.slice(0,7).map(function(a){return'<div class="dr"><span class="badge '+(a.t==='dg'?'bdg':'bwn')+'" style="margin-right:6px;flex-shrink:0">'+(a.t==='dg'?'URGENTE':'ATENÇÃO')+'</span><span style="font-size:12px">'+a.m+'</span></div>';}).join('');
+  var sorted=scores2.slice().sort(function(a,b){return b.sc-a.sc;});
+  rank.innerHTML='<div class="tw"><table><thead><tr><th>#</th><th>Vendedor</th><th>Score</th><th>Status</th><th>%PROJ</th><th>%Marg</th><th>Posit</th><th>%DEV</th><th>Churn</th></tr></thead><tbody>'+sorted.map(function(x,i){var v=x.v,pc=x.pc,sc=x.sc;return'<tr><td style="color:var(--t2)">'+(i+1)+'</td><td style="font-weight:600">'+v.nome+'</td><td><strong style="color:'+scoreCor(sc)+';font-size:15px">'+sc+'</strong></td><td>'+scoreBadge(sc)+'</td><td style="color:'+(n(v.proj)>=85?'var(--cy)':n(v.proj)>=70?'var(--ye)':'var(--rd)')+'">'+fP(v.proj)+'</td><td style="color:'+(n(v.marg)>=n(v.objMarg||17.5)?'var(--cy)':'var(--ye)')+'">'+fP(v.marg)+'</td><td>'+fmt(v.realPos)+'/'+fmt(v.objPos)+'</td><td style="color:'+(Math.abs(n(v.devPct))>DEV_LIM?'var(--rd)':'var(--t2)')+'">'+fP(v.devPct)+'</td><td style="color:'+(n(pc.churnRate)>15?'var(--rd)':n(pc.churnRate)>9?'var(--ye)':'var(--t2)')+'">'+fmt(pc.churnRate)+'%</td></tr>';}).join('')+'</tbody></table></div>';
+}
+
+function renderSaude(){
+  var el=document.getElementById('saudeBox'),vs=DB.biAtual.vendedores;
+  if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
+  var scores=vs.map(function(v,i){return calcScore(v,DB.posChurn[i]||{});});
+  var scoreM=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
+  var cor=scoreCor(scoreM),lbl=scoreLbl(scoreM);
+  var desc=scoreM>=70?'A regional está performando bem. Continue monitorando e mantendo os padrões.':scoreM>=50?'A regional precisa de atenção. Identifique os vendedores em queda e acione os planos de ação.':'Situação crítica. Intervenção imediata necessária em toda a equipe.';
+  var html='<div class="saude-box" style="background:linear-gradient(135deg,rgba('+(scoreM>=70?'0,229,195':scoreM>=50?'255,184,0':'255,69,96')+',0.08),var(--s1));border:2px solid '+cor+'"><div class="saude-titulo" style="color:'+cor+'">ÍNDICE DE SAÚDE — NORTE FLUMINENSE</div><div class="saude-valor" style="color:'+cor+'">'+scoreM+'</div><div style="font-size:13px;color:var(--t2);margin-top:4px">de 100 pontos · '+lbl+'</div><div class="saude-desc" style="color:var(--t2)">'+desc+'</div></div>'+
+    '<div class="g2" style="margin-bottom:14px"><div class="card"><div class="ct">Score por Indicador</div>'+renderScoreIndicadores(vs)+'</div><div class="card"><div class="ct">Distribuição da Equipe</div>'+renderDistribuicao(scores)+'</div></div>'+
+    '<div class="card"><div class="ct">Score Individual</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">'+vs.map(function(v,i){var sc=scores[i];return'<div style="text-align:center;background:var(--s2);border-radius:10px;padding:12px 8px;border:1px solid var(--b)"><div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:8px">'+v.nome.split(' ')[0]+'</div><div style="font-size:28px;font-weight:700;color:'+scoreCor(sc)+'">'+sc+'</div><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:'+scoreCor(sc)+';margin-top:4px">'+scoreLbl(sc)+'</div></div>';}).join('')+'</div></div>';
+  el.innerHTML=html;
+}
+
+function renderScoreIndicadores(vs){
+  var projMedia=vs.reduce(function(s,v){return s+n(v.proj);},0)/vs.length;
+  var projAtual=n(r.proj);
+  var premTxt=projAtual>=110?'🏆 PREMIAÇÃO MÁXIMA':projAtual>=100?'✅ PREMIAÇÃO BASE':projAtual>=90?'⚠️ PREMIAÇÃO PARCIAL':'❌ SEM PREMIAÇÃO NESTE KPI';
+  var premCor=projAtual>=110?'var(--ye)':projAtual>=100?'var(--cy)':projAtual>=90?'var(--ye)':'var(--rd)';
+  var premDesc=projAtual>=110?'Equipe acima de 110%. Premiação máxima garantida!':projAtual>=100?'Equipe na meta. Premiação base. Buscar 110% para maximizar.':projAtual>=90?'Premiação parcial. Faltam '+(100-projAtual).toFixed(1)+'pp para 100%.':'Abaixo de 90% — sem premiação neste KPI. Ação urgente!';
+  var margMedia=vs.reduce(function(s,v){return s+n(v.marg);},0)/vs.length;
+  var devMedia=vs.reduce(function(s,v){return s+Math.abs(n(v.devPct));},0)/vs.length;
+  var churnMedia=DB.posChurn.length?DB.posChurn.reduce(function(s,p){return s+n(p.churnRate);},0)/DB.posChurn.length:0;
+  var posMedia=0;
+  if(DB.posChurn.length){var totP=0,totN=0;DB.posChurn.forEach(function(p){totP+=n(p.positivados);totN+=n(p.naoPositivados);});posMedia=totP+totN>0?(totP/(totP+totN))*100:0;}
+  function bar(val,max,cor){var pct=Math.min(100,Math.round((val/max)*100));return'<div style="background:var(--s2);border-radius:4px;height:6px;margin-top:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+cor+';border-radius:4px;transition:width .5s"></div></div>';}
+  return[{l:'Projeção Média',v:projMedia.toFixed(1)+'%',max:100,cor:projMedia>=85?'var(--cy)':projMedia>=70?'var(--ye)':'var(--rd)'},{l:'Margem Média',v:margMedia.toFixed(2)+'%',max:20,cor:margMedia>=17?'var(--cy)':'var(--ye)'},{l:'Taxa de Positivação',v:posMedia.toFixed(1)+'%',max:100,cor:posMedia>=75?'var(--cy)':posMedia>=60?'var(--ye)':'var(--rd)'},{l:'Devolução Média',v:devMedia.toFixed(2)+'%',max:3,cor:devMedia<=DEV_LIM?'var(--cy)':'var(--rd)'},{l:'Churn Médio',v:churnMedia.toFixed(1)+'%',max:50,cor:churnMedia<=9?'var(--cy)':churnMedia<=15?'var(--ye)':'var(--rd)'}].map(function(x){return'<div class="dr"><div style="flex:1"><div style="font-size:12px">'+x.l+'</div>'+bar(parseFloat(x.v),x.max,x.cor)+'</div><div style="font-size:13px;font-weight:700;color:'+x.cor+';margin-left:12px;white-space:nowrap">'+x.v+'</div></div>';}).join('');
+}
+
+function renderDistribuicao(scores){
+  var ok=scores.filter(function(s){return s>=70;}).length,at=scores.filter(function(s){return s>=50&&s<70;}).length,cr=scores.filter(function(s){return s<50;}).length;
+  return'<div class="dr"><div class="dot" style="background:var(--cy)"></div><span style="flex:1">SAUDÁVEL (score ≥70)</span><strong style="color:var(--cy)">'+ok+' vendedor(es)</strong></div><div class="dr"><div class="dot" style="background:var(--ye)"></div><span style="flex:1">ATENÇÃO (50-69)</span><strong style="color:var(--ye)">'+at+' vendedor(es)</strong></div><div class="dr"><div class="dot" style="background:var(--rd)"></div><span style="flex:1">CRÍTICO (abaixo de 50)</span><strong style="color:var(--rd)">'+cr+' vendedor(es)</strong></div><div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--b);font-size:12px;color:var(--t2)">'+(cr>0?'⚠ Ação imediata: agende visita de campo com os vendedores em situação crítica.':at>0?'Monitore de perto os vendedores em atenção. Suporte e plano de ação.':'✅ Equipe saudável. Mantenha o acompanhamento semanal.')+'</div>';
+}
+
+function renderScores(){
+  var el=document.getElementById('scoresBox'),vs=DB.biAtual.vendedores;
+  if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
+  var dados=vs.map(function(v,i){var pc=DB.posChurn[i]||{};return{v:v,pc:pc,sc:calcScore(v,pc)};}).sort(function(a,b){return b.sc-a.sc;});
+  el.innerHTML=dados.map(function(x){
+    var v=x.v,pc=x.pc,sc=x.sc,cor=scoreCor(sc),objMarg=n(v.objMarg)||17.5;
+    var totPos=(n(pc.positivados)+n(pc.naoPositivados)),txPos=totPos>0?((n(pc.positivados)/totPos)*100).toFixed(1):0;
+    return'<div class="vc"><div class="vc-top"><div style="display:flex;align-items:center;gap:14px"><div style="width:60px;height:60px;border-radius:50%;border:3px solid '+cor+';display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0"><div style="font-size:20px;font-weight:700;color:'+cor+';line-height:1">'+sc+'</div><div style="font-size:8px;color:'+cor+';letter-spacing:1px">pts</div></div><div><div class="vc-nome">'+v.nome+'</div><div class="vc-cod">COD '+v.cod+'</div></div></div>'+scoreBadge(sc)+'</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px">'+scoreItem('Projeção','40pts',v.proj,'%',n(v.proj)>=110?40:n(v.proj)>=100?35:n(v.proj)>=90?20:n(v.proj)>=80?8:0)+scoreItem('Margem','10pts',v.marg,'%',n(v.marg)>=objMarg?10:n(v.marg)>=15.5?7:n(v.marg)>=objMarg*0.85?3:0)+scoreItem('Positivação','25pts',txPos,'%',txPos>=90?25:txPos>=75?18:txPos>=60?10:txPos>=45?4:0)+scoreItem('Devolução','5pts',v.devPct,'%',Math.abs(n(v.devPct))<=DEV_LIM?5:Math.abs(n(v.devPct))<=DEV_LIM*2?2:0)+scoreItem('Churn','20pts',pc.churnRate,'%',n(pc.churnRate)<=9?20:n(pc.churnRate)<=15?10:n(pc.churnRate)<=20?4:0)+'</div></div>';
+  }).join('');
+}
+
+function scoreItem(lbl,max,val,suf,pts){var v=fmt(val)+(val!==undefined&&val!==''?suf:''),ok=pts>0;return'<div class="vm"><div class="vm-l">'+lbl+'</div><div style="font-size:13px;font-weight:700;color:'+(ok?'var(--cy)':'var(--rd)')+'">'+v+'</div><div style="font-size:10px;color:'+(ok?'var(--cy)':'var(--rd)')+';margin-top:2px">'+pts+'/'+max+'</div></div>';}
+
+function renderEquipe(){
+  var el=document.getElementById('equipeBox'),vs=DB.biAtual.vendedores;
+  if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
+  el.innerHTML=vs.map(function(v,i){
+    var pc=DB.posChurn[i]||{},sc=calcScore(v,pc),objMarg=n(v.objMarg)||17.5,dabs=Math.abs(n(v.devPct));
+    var totPos=n(pc.positivados)+n(pc.naoPositivados),txPos=totPos>0?((n(pc.positivados)/totPos)*100).toFixed(1):0;
+    var ins=[];
+    if(n(v.proj)<90)ins.push({c:'dg',t:'Projeção '+fP(v.proj)+' ABAIXO DE 90% — impacta sua premiação. Visita de campo urgente. Identificar bloqueios e clientes inativos.'});
+    else if(n(v.proj)<100)ins.push({c:'wn',t:'Projeção '+fP(v.proj)+'. Falta '+(100-n(v.proj)).toFixed(1)+'pp para a meta. Pressionar positivação e pedidos pendentes.'});
+    else if(n(v.proj)>=110)ins.push({c:'ok',t:'🏆 Projeção '+fP(v.proj)+' — acima de 110%! Vendedor contribuindo para sua premiação máxima. Reconhecer e manter.'});
+    if(dabs>DEV_LIM)ins.push({c:'dg',t:'Devolução acima do limite ('+fP(v.devPct)+'). Limite: '+DEV_LIM+'%. Investigar causas com o cliente.'});
+    if(n(v.marg)<objMarg*0.9)ins.push({c:'wn',t:'Margem abaixo do objetivo ('+fP(v.marg)+' vs obj: '+objMarg+'%). Focar no Mix Rentável Arcofoods.'});
+    if(n(pc.churnRate)>15)ins.push({c:'dg',t:'Churn crítico: '+pc.churnRate+'% (limite: 9%). '+Math.round(n(pc.churnRate)/100*(n(pc.positivados)+n(pc.naoPositivados)))+' clientes perdidos. Plano de retenção imediato.'});
+    else if(n(pc.churnRate)>9)ins.push({c:'wn',t:'Churn em atenção: '+pc.churnRate+'% (acima do limite de 9%). Identificar clientes em risco de saída antes que aumentem.'});
+    if(n(pc.naoPositivados)>20)ins.push({c:'wn',t:pc.naoPositivados+' clientes não positivados este mês. Reativar carteira inativa.'});
+    if(n(pc.churnRate)>20&&n(v.proj)<80)ins.push({c:'dg',t:'ALERTA PREDITIVO: combinação de churn alto e projeção baixa indica risco de queda no próximo mês.'});
+    return'<div class="vc"><div class="vc-top"><div><div class="vc-nome">'+v.nome+'</div><div class="vc-cod">COD '+v.cod+' · Score: '+sc+'/100</div></div><div style="display:flex;gap:8px">'+scoreBadge(sc)+'<button class="btn bd bsm no-print" onclick="abrirPlanoVend(\''+v.nome+'\')">+ Plano</button></div></div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px">'+vmBox('PROJ%',fP(v.proj),n(v.proj)>=85?'ok':n(v.proj)>=70?'wn':'dg')+vmBox('FAT%',fP(v.fat),'')+vmBox('MARG%',fP(v.marg),n(v.marg)>=objMarg?'ok':'wn')+vmBox('POSIT',fmt(v.realPos)+'/'+fmt(v.objPos),n(v.saldoPos)>=0?'ok':'dg')+vmBox('SALDO',fmt(v.saldoPos),n(v.saldoPos)>=0?'ok':'dg')+vmBox('%DEV',fP(v.devPct),dabs>DEV_LIM?'dg':'ok')+'</div><div class="im">'+(v.sku?'<div class="mp">SKU/CLI: '+v.sku+'</div>':'')+(v.vendaMedia?'<div class="mp">Venda Média: R$'+v.vendaMedia+'</div>':'')+(v.precoKg?'<div class="mp">Preço/KG: R$'+v.precoKg+'</div>':'')+(pc.positivados?'<div class="mp">Positivados: '+pc.positivados+'</div>':'')+(pc.naoPositivados?'<div class="mp">Não Posit: '+pc.naoPositivados+'</div>':'')+(pc.churnRate?'<div class="mp">Churn: '+pc.churnRate+'%</div>':'')+(txPos?'<div class="mp">Taxa Posit: '+txPos+'%</div>':'')+'</div>'+(ins.length?'<div style="margin-top:10px;border-top:1px solid var(--b);padding-top:10px">'+ins.map(function(x){return'<div class="dr"><span class="badge '+(x.c==='dg'?'bdg':'bwn')+'" style="margin-right:6px;flex-shrink:0">'+(x.c==='dg'?'ALERTA':'ATENÇÃO')+'</span><span style="font-size:12px;color:var(--t2)">'+x.t+'</span></div>';}).join('')+'</div>':'<div style="margin-top:10px;border-top:1px solid var(--b);padding-top:10px"><div class="dr"><span class="badge bok" style="margin-right:6px">OK</span><span style="font-size:12px;color:var(--t2)">Vendedor dentro dos parâmetros esperados. Manter acompanhamento regular.</span></div></div>')+'</div>';
+  }).join('');
+}
+
+function vmBox(lbl,val,cls){return'<div class="vm"><div class="vm-l">'+lbl+'</div><div class="vm-v '+cls+'">'+val+'</div></div>';}
+function abrirPlanoVend(nome){document.getElementById('plResp').value=nome;var btns=document.querySelectorAll('.nb');for(var i=0;i<btns.length;i++){if(btns[i].textContent.indexOf('Plano')>-1){ir('plano',btns[i]);break;}}toast('Responsável: '+nome);}
+
+function renderComp(){
+  var el=document.getElementById('compBox'),va=DB.biAtual.vendedores,vb=DB.biAnterior.vendedores;
+  if(!va||va.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
+  if(!vb||vb.length===0){el.innerHTML='<div class="bn bn-ye"><span>i</span><div>Lance o BI pelo menos duas vezes para ver o comparativo.</div></div>';return;}
+  function evo(curr,prev){var d=n(curr)-n(prev);if(Math.abs(d)<0.1)return'<span style="color:var(--t3)">igual</span>';return d>0?'<span style="color:var(--cy)">subiu '+d.toFixed(1)+'pp</span>':'<span style="color:var(--rd)">caiu '+Math.abs(d).toFixed(1)+'pp</span>';}
+  function evoScore(curr,prev){var d=curr-prev;if(Math.abs(d)<1)return'<span style="color:var(--t3)">igual</span>';return d>0?'<span style="color:var(--cy)">+'+d+'pts</span>':'<span style="color:var(--rd)">'+d+'pts</span>';}
+  var html='<div class="bn bn-cy"><span>i</span><div>Setas indicam evolucao: subiu (verde) / caiu (vermelho) / igual (cinza)</div></div>';
+  html+='<div class="tw"><table><thead><tr><th>Vendedor</th><th>Score Ant</th><th>Score Atual</th><th>Evolucao Score</th><th>Proj Ant</th><th>Proj Atual</th><th>Delta Proj</th><th>Marg Ant</th><th>Marg Atual</th><th>DEV Ant</th><th>DEV Atual</th><th>Saldo Posit</th></tr></thead><tbody>'+va.map(function(v,i){var ant=vb[i]||{},scAtual=calcScore(v,DB.posChurn[i]||{}),scAnt=calcScore(ant,{});return'<tr><td style="font-weight:600">'+v.nome+'</td><td><strong style="color:'+scoreCor(scAnt)+'">'+scAnt+'</strong></td><td><strong style="color:'+scoreCor(scAtual)+'">'+scAtual+'</strong></td><td>'+evoScore(scAtual,scAnt)+'</td><td>'+fP(ant.proj)+'</td><td style="font-weight:600">'+fP(v.proj)+'</td><td>'+evo(v.proj,ant.proj)+'</td><td>'+fP(ant.marg)+'</td><td style="font-weight:600">'+fP(v.marg)+'</td><td>'+fP(ant.devPct)+'</td><td style="font-weight:600">'+fP(v.devPct)+'</td><td style="color:'+(n(v.saldoPos)<0?'var(--rd)':'var(--cy)')+'">'+fmt(v.saldoPos)+'</td></tr>';}).join('')+'</tbody></table></div>';
+  el.innerHTML=html;
+}
+
+function salvarCampo(){var vend=document.getElementById('caVend').value.trim();if(!vend){toast('Informe o vendedor.');return;}DB.campos.push({vendedor:vend,data:document.getElementById('caData').value,cidade:document.getElementById('caCidade').value,cliente:document.getElementById('caCliente').value,obs:document.getElementById('caObs').value});salvar();['caVend','caData','caCidade','caCliente','caObs'].forEach(function(id){document.getElementById(id).value='';});renderCampoLista();toast('Registro salvo!');}
+function renderCampoLista(){var el=document.getElementById('listaCampo');if(!DB.campos.length){el.innerHTML='<div class="empty">Nenhum registro ainda.</div>';return;}el.innerHTML=DB.campos.slice().reverse().map(function(c,ri){var i=DB.campos.length-1-ri,df=c.data?new Date(c.data+'T12:00').toLocaleDateString('pt-BR'):'—';return'<div class="ic"><div class="ih"><div><div class="in">'+(c.cliente||'Visita')+'</div><div style="font-size:11px;color:var(--t2);margin-top:2px">'+c.vendedor+' · '+c.cidade+' · '+df+'</div></div><button class="btn bd bsm" onclick="remover(\'campos\','+i+')">×</button></div>'+(c.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.7;border-top:1px solid var(--b);padding-top:10px">'+c.obs+'</div>':'')+'</div>';}).join('');}
+function salvarPlano(){var prob=document.getElementById('plProb').value.trim();if(!prob){toast('Informe o problema.');return;}DB.planos.push({problema:prob,solucao:document.getElementById('plSol').value,responsavel:document.getElementById('plResp').value,prazo:document.getElementById('plPrazo').value,prioridade:document.getElementById('plPrio').value,status:document.getElementById('plStatus').value,obs:document.getElementById('plObs').value});salvar();['plProb','plSol','plResp','plPrazo','plObs'].forEach(function(id){document.getElementById(id).value='';});renderPlanos();toast('Plano salvo!');}
+function renderPlanos(){var el=document.getElementById('listaPlanos');if(!DB.planos.length){el.innerHTML='<div class="empty">Nenhum plano cadastrado.</div>';return;}el.innerHTML=DB.planos.map(function(p,i){var pf=p.prazo?new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR'):null;return'<div class="ic"><div class="ih"><div><div class="in">'+p.problema+'</div>'+(p.solucao?'<div style="font-size:12px;color:var(--cy);margin-top:3px">→ '+p.solucao+'</div>':'')+'</div><div style="display:flex;gap:6px;align-items:center"><span class="badge '+(p.prioridade==='Alta'?'bdg':p.prioridade==='Média'?'bwn':'bnt')+'">'+p.prioridade+'</span><span class="badge '+(p.status==='Concluído'?'bok':p.status==='Em andamento'?'bwn':'bnt')+'">'+p.status+'</span><button class="btn bd bsm" onclick="remover(\'planos\','+i+')">×</button></div></div><div class="im">'+(p.responsavel?'<div class="mp">'+p.responsavel+'</div>':'')+(pf?'<div class="mp">Prazo: '+pf+'</div>':'')+'</div>'+(p.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6">'+p.obs+'</div>':'')+'</div>';}).join('');}
+function salvarCliente(){var nome=document.getElementById('cliNome').value.trim();if(!nome){toast('Informe o nome do cliente.');return;}DB.clientes.push({nome:nome,cidade:document.getElementById('cliCidade').value,vendedor:document.getElementById('cliVend').value,status:document.getElementById('cliStatus').value,obs:document.getElementById('cliObs').value});salvar();['cliNome','cliCidade','cliVend','cliObs'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('cliStatus').selectedIndex=0;renderClientes();toast('Cliente salvo!');}
+function renderClientes(){var el=document.getElementById('listaClientes');if(!DB.clientes.length){el.innerHTML='<div class="empty">Nenhum cliente cadastrado.</div>';return;}el.innerHTML=DB.clientes.map(function(c,i){var sc=c.status==='Em risco'?'bdg':c.status==='Estratégico'||c.status==='Expansão'?'bok':c.status==='Oportunidade'?'bwn':'bnt';return'<div class="ic"><div class="ih"><div><div class="in">'+c.nome+'</div>'+(c.cidade?'<div style="font-size:11px;color:var(--t2);margin-top:2px">'+c.cidade+(c.vendedor?' · '+c.vendedor:'')+'</div>':'')+'</div><div style="display:flex;gap:6px;align-items:center">'+(c.status?'<span class="badge '+sc+'">'+c.status+'</span>':'')+'<button class="btn bd bsm" onclick="remover(\'clientes\','+i+')">×</button></div></div>'+(c.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6">'+c.obs+'</div>':'')+'</div>';}).join('');}
+
+var MSGS=['🎂 Feliz aniversário, {nome}! Que seu novo ciclo seja repleto de saúde, prosperidade e muitas conquistas. Grande abraço! 🙏\n\n{ass}','🎉 Parabéns pelo seu dia, {nome}! Desejo muita saúde, paz e felicidade. Que este novo ciclo seja extraordinário! 💪\n\n{ass}','🎊 Feliz aniversário, {nome}! Que Deus abençoe sua vida com saúde e muitas realizações. Conte sempre conosco! 🌟\n\n{ass}'];
+function buildMsg(a,idx){var ass=DB.perfil.assinatura||'Leandro Felipe\nSupervisor de Vendas - Arcofoods',base=a.msg&&a.msg.trim()?a.msg:MSGS[idx%MSGS.length];return base.replace('{nome}',a.nome).replace('{ass}',ass);}
+function salvarAniv(){var nome=document.getElementById('aNome').value.trim();if(!nome){toast('Informe o nome.');return;}DB.aniversarios.push({nome:nome,data:document.getElementById('aData').value,tel:document.getElementById('aTel').value,email:document.getElementById('aEmail').value,tipo:document.getElementById('aTipo').value,msg:document.getElementById('aMsg').value});salvar();['aNome','aData','aTel','aEmail','aMsg'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('aTipo').selectedIndex=0;renderAniv();toast('Aniversariante salvo!');}
+function renderAniv(){
+  var hoje=new Date(),hd=hoje.getFullYear(),hm=hoje.getMonth(),hdia=hoje.getDate();
+  var hojeA=DB.aniversarios.filter(function(a){if(!a.data)return false;var d=new Date(a.data+'T12:00');return d.getMonth()===hm&&d.getDate()===hdia;});
+  document.getElementById('anivHoje').innerHTML=hojeA.length>0?'<div class="bn bn-cy" style="margin-bottom:14px"><span>🎂</span><div><strong>Aniversário Hoje!</strong> '+hojeA.map(function(a){return a.nome+' ('+a.tipo+')';}).join(', ')+'</div></div>':'';
+  var el=document.getElementById('listaAniv');
+  if(!DB.aniversarios.length){el.innerHTML='<div class="empty">Nenhum aniversariante cadastrado.</div>';return;}
+  var sorted=DB.aniversarios.map(function(a,i){return{a:a,i:i};}).sort(function(x,y){if(!x.a.data)return 1;if(!y.a.data)return -1;var dx=new Date(x.a.data+'T12:00'),dy=new Date(y.a.data+'T12:00'),nx=new Date(hd,dx.getMonth(),dx.getDate()),ny=new Date(hd,dy.getMonth(),dy.getDate());if(nx<new Date(hd,hm,hdia))nx.setFullYear(hd+1);if(ny<new Date(hd,hm,hdia))ny.setFullYear(hd+1);return nx-ny;});
+  el.innerHTML=sorted.map(function(obj,idx){var a=obj.a,i=obj.i,msg=buildMsg(a,idx),tel=a.tel?a.tel.replace(/\D/g,''):'',whats=tel?'https://wa.me/55'+tel+'?text='+encodeURIComponent(msg):null,df=a.data?new Date(a.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}):'—',dO=a.data?new Date(a.data+'T12:00'):null,diff=dO?Math.round((new Date(hd,dO.getMonth(),dO.getDate())-new Date(hd,hm,hdia))/86400000):null;if(diff!==null&&diff<0)diff+=365;return'<div class="ic"><div class="ih"><div><div class="in">'+a.nome+'</div><div style="font-size:11px;color:var(--t2);margin-top:2px">'+a.tipo+' · '+df+'</div></div><div style="display:flex;align-items:center;gap:6px">'+(diff!==null?'<span class="badge '+(diff===0?'bok':'bnt')+'">'+(diff===0?'Hoje!':'em '+diff+' dia(s)')+'</span>':'')+'<button class="btn bd bsm" onclick="remover(\'aniversarios\','+i+')">×</button></div></div>'+(a.tel||a.email?'<div class="ia">'+(whats?'<a href="'+whats+'" target="_blank" class="btn bp bsm">WhatsApp</a><button class="btn bs bsm" onclick="msgIABtn('+i+')">✨ Msg IA</button>':'')+(a.email?'<a href="mailto:'+a.email+'?subject=Feliz+Aniversário&body='+encodeURIComponent(msg)+'" class="btn bs bsm">E-mail</a>':'')+'</div>':'')+'</div>';}).join('');
+}
+
+function gerarRelatorio(){
+  var p=DB.perfil,r=DB.biAtual.regional,vs=DB.biAtual.vendedores;
+  if(!vs||vs.length===0){toast('Lance os dados do BI primeiro.');return;}
+  var hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  var baixa=(new Date().getMonth()>=4&&new Date().getMonth()<=7);
+  var crit=vs.filter(function(v){return st(v.proj,v.devPct)==='dg';});
+  var atenc=vs.filter(function(v){return st(v.proj,v.devPct)==='wn';});
+  var ok=vs.length-crit.length-atenc.length;
+  var totalPos=0,totalNPos=0;
+  DB.posChurn.forEach(function(p){totalPos+=parseInt(p.positivados||0);totalNPos+=parseInt(p.naoPositivados||0);});
+  var txPos=totalPos+totalNPos>0?((totalPos/(totalPos+totalNPos))*100).toFixed(1):0;
+  var churnAltos=DB.posChurn.filter(function(p){return n(p.churnRate)>9;});
+  var planosAtivos=DB.planos.filter(function(p){return p.status!=='Concluído';});
+  var projMedia=vs.reduce(function(s,v){return s+n(v.proj);},0)/vs.length;
+  var situacao=projMedia>=85?'SAUDÁVEL':projMedia>=70?'ATENÇÃO':'CRÍTICA';
+  var situacaoCor=projMedia>=85?'var(--cy)':projMedia>=70?'var(--ye)':'var(--rd)';
+  var projAtual=n(r.proj);
+  var premTxt=projAtual>=110?'🏆 PREMIAÇÃO MÁXIMA':projAtual>=100?'✅ PREMIAÇÃO BASE':projAtual>=90?'⚠️ PREMIAÇÃO PARCIAL':'❌ SEM PREMIAÇÃO NESTE KPI';
+  var premCor=projAtual>=110?'var(--ye)':projAtual>=100?'var(--cy)':projAtual>=90?'var(--ye)':'var(--rd)';
+  var premDesc=projAtual>=110?'Equipe acima de 110%. Premiação máxima garantida!':projAtual>=100?'Equipe na meta. Premiação base. Buscar 110% para maximizar.':projAtual>=90?'Premiação parcial. Faltam '+(100-projAtual).toFixed(1)+'pp para 100%.':'Abaixo de 90% — sem premiação neste KPI. Ação urgente!';
+  var html='<div style="max-width:760px;font-size:13px;line-height:1.7">';
+  html+='<div class="rb" style="border-left:4px solid var(--cy);padding-left:20px"><div style="font-size:22px;font-weight:700;color:var(--cy);margin-bottom:6px">RELATÓRIO EXECUTIVO DE SUPERVISÃO</div><div style="color:var(--t2)">'+hoje+' · '+p.empresa+' · Regional '+(p.regional||'Norte Fluminense')+'</div><div style="color:var(--t2)">Supervisor: <strong style="color:var(--t)">'+p.supervisor+'</strong></div><div style="margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border-radius:8px"><strong style="color:var(--t)">Situação da Regional: </strong><span style="color:'+situacaoCor+';font-weight:700">'+situacao+'</span> · Projeção média da equipe: <strong style="color:'+situacaoCor+'">'+projMedia.toFixed(1)+'%</strong>'+(baixa?' · <span style="color:var(--ye)">⚠ Baixa Temporada — Região dos Lagos</span>':'')+'</div></div>';
+  html+='<div class="rb" style="border-left:4px solid '+premCor+';padding:14px 20px;margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><div><div style="font-size:16px;font-weight:700;color:'+premCor+'">'+premTxt+'</div><div style="font-size:12px;color:var(--t2);margin-top:4px">'+premDesc+'</div></div><div style="text-align:center;background:'+premCor+'18;border:2px solid '+premCor+';border-radius:10px;padding:8px 16px"><div style="font-size:24px;font-weight:700;color:'+premCor+'">'+fP(r.proj)+'</div><div style="font-size:10px;color:var(--t2)">PROJEÇÃO ATUAL</div></div></div></div>';
+  html+='<div class="rb"><div class="rs">Contexto Regional</div><div style="color:var(--t2);line-height:1.8">'+(p.contexto||'Região dos Lagos — sazonalidade impacta resultados na baixa temporada.')+'</div>'+(baixa&&!p.contexto?'<div style="margin-top:10px;padding:10px 14px;background:var(--ye2);border-radius:8px;color:var(--ye)"><strong>Baixa Temporada:</strong> Clientes reduzem volume. Metas mantidas. Foco em base ativa e Mix Rentável.</div>':'')+'</div>';
+  html+='<div class="rb"><div class="rs">Termômetro da Regional</div>';
+  html+=termRow('Projeção do Mês',fP(r.proj),'Meta: 100%',n(r.proj)>=85?'ok':n(r.proj)>=70?'wn':'dg',n(r.proj)>=85?'Regional dentro da meta.':n(r.proj)>=70?'Atenção — abaixo da meta. Necessita aceleração.':'Situação crítica. Ação imediata necessária.');
+  html+=termRow('Faturamento Real',fP(r.fat),'',n(r.fat)>=69?'ok':'wn','');
+  html+=termRow('Margem Real',fP(r.marg),'Obj: '+fmt(r.objMarg||'17,32')+'%',n(r.marg)>=(n(r.objMarg||17.32))?'ok':'wn',n(r.marg)<n(r.objMarg||17.32)?'Margem abaixo do objetivo. Orientar equipe sobre Mix Rentável.':'Margem dentro do objetivo.');
+  html+=termRow('Positivação',fmt(r.realPos)+' / '+fmt(r.objPos),'Saldo: '+fmt(r.saldoPos),parseInt(r.saldoPos||0)>=0?'ok':'dg',parseInt(r.saldoPos||0)<0?Math.abs(parseInt(r.saldoPos||0))+' clientes a mais precisam comprar para bater o objetivo.':'Positivação dentro do objetivo.');
+  html+=termRow('Taxa de Positivação',txPos+'%','da base ativa',parseFloat(txPos)>=70?'ok':'dg',parseFloat(txPos)<70?'Mais de 30% da base não comprou no mês. Foco em reativação urgente.':'Boa taxa de positivação.');
+  html+=termRow('Devolução',fP(r.devPct),'Limite: 0,65%',Math.abs(n(r.devPct))>DEV_LIM?'dg':'ok',Math.abs(n(r.devPct))>DEV_LIM?'Devolução acima do limite. Investigar causas por vendedor.':'Devolução dentro do limite aceitável.');
+  html+=termRow('Venda Média Regional','R$ '+fmt(r.vendaMedia),'por cliente','ok','');
+  html+='</div>';
+  html+='<div class="rb"><div class="rs">Diagnóstico Individual da Equipe</div><div style="color:var(--t2);margin-bottom:14px">Análise de cada vendedor com indicadores e ações recomendadas:</div>';
+  vs.forEach(function(v,i){
+    var pc=DB.posChurn[i]||{},s=st(v.proj,v.devPct),cor=s==='ok'?'var(--cy)':s==='wn'?'var(--ye)':'var(--rd)';
+    var acoes=[];
+    if(n(v.proj)<90)acoes.push('URGENTE: projeção abaixo de 90% impacta sua premiação. Acompanhamento de campo imediato. Mapear clientes que podem comprar ainda este mês.');
+    else if(n(v.proj)<100)acoes.push('Projeção a '+(100-n(v.proj)).toFixed(1)+'pp da meta. Acionar clientes não positivados e pedidos em aberto. Cada ponto percentual conta.');
+    else if(n(v.proj)>=110)acoes.push('Excelente! Projeção acima de 110%. Reconhecer publicamente e usar como referência positiva para a equipe.');
+    if(Math.abs(n(v.devPct))>DEV_LIM)acoes.push('Devolução acima do limite ('+fP(v.devPct)+'). Conversar com o vendedor para identificar causa raiz.');
+    if(v.marg&&n(v.marg)<n(v.objMarg||17.5))acoes.push('Margem abaixo do objetivo. Orientar sobre Mix Rentável e produtos com maior margem.');
+    if(pc.churnRate&&n(pc.churnRate)>9){var perdidos=Math.round(n(pc.churnRate)/100*(parseInt(pc.positivados||0)+parseInt(pc.naoPositivados||0)));acoes.push('Churn '+pc.churnRate+'% acima do limite de 9%. '+perdidos+' clientes perdidos. Ligar para cada um, entender o motivo e apresentar proposta de retorno.');}
+    if(parseInt(pc.naoPositivados||0)>15)acoes.push(pc.naoPositivados+' clientes não compraram no mês. Prioridade: visitar e reativar esses clientes.');
+    if(acoes.length===0)acoes.push('Manter o ritmo. Reconhecer o bom desempenho e usar como referência para a equipe.');
+    html+='<div style="border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;border-left:3px solid '+cor+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong style="color:var(--t);font-size:14px">'+v.nome+'</strong>'+badgeSt(v.proj,v.devPct)+'</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">'+miniStat('PROJ',fP(v.proj),s)+miniStat('MARGEM',fP(v.marg),n(v.marg)>=(n(v.objMarg||17.5))?'ok':'wn')+miniStat('DEV',fP(v.devPct),Math.abs(n(v.devPct))>DEV_LIM?'dg':'ok')+miniStat('POSIT',fmt(v.realPos)+'/'+fmt(v.objPos),parseInt(v.saldoPos||0)>=0?'ok':'dg')+'</div>'+(pc.positivados||pc.churnRate?'<div style="font-size:11px;color:var(--t2);margin-bottom:8px">'+(pc.positivados?'Positivados: <strong style="color:var(--cy)">'+pc.positivados+'</strong> · ':'')+( pc.naoPositivados?'Não positivados: <strong style="color:var(--rd)">'+pc.naoPositivados+'</strong> · ':'')+( pc.churnRate?'Churn: <strong style="color:'+(n(pc.churnRate)>9?'var(--rd)':'var(--ye)')+'">'+pc.churnRate+'%</strong>':'')+'</div>':'')+'<div style="font-size:11px;font-weight:600;color:var(--cy);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">Ações Recomendadas:</div><ul style="padding-left:16px;color:var(--t2);font-size:12px">'+acoes.map(function(a){return'<li style="margin-bottom:3px">'+a+'</li>';}).join('')+'</ul></div>';
+  });
+  html+='</div>';
+  if(DB.posChurn&&DB.posChurn.length>0){
+    html+='<div class="rb"><div class="rs">Análise de Positivação e Churn</div><div style="color:var(--t2);margin-bottom:12px">De <strong style="color:var(--t)">'+(totalPos+totalNPos)+'</strong> clientes na base: <strong style="color:var(--cy)">'+totalPos+' compraram</strong> e <strong style="color:var(--rd)">'+totalNPos+' não compraram</strong> no mês. Taxa de positivação: <strong style="color:'+(parseFloat(txPos)>=70?'var(--cy)':'var(--rd)')+'">'+txPos+'%</strong>.</div>';
+    if(churnAltos.length>0)html+='<div style="padding:10px 14px;background:var(--rd2);border-radius:8px;margin-bottom:10px;font-size:12px;color:var(--t2)"><strong style="color:var(--rd)">Atenção — Churn elevado:</strong> '+churnAltos.map(function(p){return p.nome+' ('+p.churnRate+'%)';}).join(', ')+'. Clientes estão parando de comprar. Investigar motivo e acionar plano de retenção.</div>';
+    html+='</div>';
+  }
+  if(planosAtivos.length>0){
+    html+='<div class="rb"><div class="rs">Planos de Ação em Andamento</div>';
+    planosAtivos.forEach(function(p){var pf=p.prazo?new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR'):null;html+='<div style="border-bottom:1px solid var(--b);padding:10px 0"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><strong style="color:var(--t)">'+p.problema+'</strong><span class="badge '+(p.prioridade==='Alta'?'bdg':p.prioridade==='Média'?'bwn':'bnt')+'">'+p.prioridade+'</span></div>'+(p.solucao?'<div style="font-size:12px;color:var(--cy)">→ Estratégia: '+p.solucao+'</div>':'')+(p.responsavel||pf?'<div style="font-size:11px;color:var(--t2);margin-top:4px">'+(p.responsavel?'Responsável: '+p.responsavel+' ':'')+( pf?'· Prazo: '+pf:'')+'</div>':'')+'</div>';});
+    html+='</div>';
+  }
+  html+='<div class="rb" style="border-left:4px solid var(--cy);padding-left:20px"><div class="rs">Diretriz do Mês — O Que Fazer Agora</div>';
+  var diretrizes=[];
+  if(crit.length>0)diretrizes.push({p:'URGENTE',t:'Acompanhamento de campo com '+crit.map(function(v){return v.nome;}).join(', ')+'. Situação crítica — presença do supervisor é necessária.',c:'var(--rd)'});
+  if(totalNPos>20)diretrizes.push({p:'ALTA',t:'Reativar '+totalNPos+' clientes não positivados. Criar lista por vendedor e definir rota de reativação.',c:'var(--ye)'});
+  if(churnAltos.length>0)diretrizes.push({p:'ALTA',t:'Plano de retenção para clientes com churn elevado: '+churnAltos.map(function(p){return p.nome;}).join(', ')+'. Visita ao cliente para entender o motivo da saída.',c:'var(--ye)'});
+  diretrizes.push({p:'CONTÍNUO',t:'Orientar toda a equipe sobre o Mix Rentável. Incluir pelo menos 2 itens de alta margem em cada pedido.',c:'var(--cy)'});
+  if(baixa)diretrizes.push({p:'ESTRATÉGICO',t:'Preparar equipe para a alta temporada. Mapear clientes que irão expandir volume a partir de setembro e iniciar relacionamento agora.',c:'var(--cy)'});
+  diretrizes.forEach(function(d,i){html+='<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--b)"><div style="min-width:80px;text-align:center"><span style="background:rgba(0,0,0,0.3);color:'+d.c+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px">'+d.p+'</span></div><div style="font-size:13px;color:var(--t2)">'+(i+1)+'. '+d.t+'</div></div>';});
+  html+='</div>';
+  html+='<div class="rb"><div class="rs">Conclusão Executiva</div><div style="color:var(--t2);line-height:1.9">A Regional Norte Fluminense encerra o período com projeção de <strong style="color:'+situacaoCor+'">'+fP(r.proj)+'</strong>, '+(baixa?'resultado esperado dado o período de baixa temporada característico da Região dos Lagos. ':'')+'com <strong style="color:var(--cy)">'+ok+' vendedor(es) saudáveis</strong>'+(atenc.length>0?', <strong style="color:var(--ye)">'+atenc.length+' em atenção</strong>':'')+(crit.length>0?', <strong style="color:var(--rd)">'+crit.length+' em situação crítica</strong>':'')+'. A taxa de positivação de <strong style="color:'+(parseFloat(txPos)>=70?'var(--cy)':'var(--rd)')+'">'+txPos+'%</strong> '+(parseFloat(txPos)<70?'indica que uma parte relevante da base não está sendo atendida — oportunidade imediata de crescimento. ':'demonstra boa cobertura da base de clientes. ')+'O foco imediato da supervisão está em ';
+  var focos=[];
+  if(crit.length>0)focos.push('reverter os casos críticos com acompanhamento direto em campo');
+  if(totalNPos>10)focos.push('reativar clientes não positivados');
+  if(churnAltos.length>0)focos.push('conter o churn elevado');
+  focos.push('elevar o mix de produtos rentáveis em toda a equipe');
+  html+=focos.join(', ')+'.';
+  html+='</div></div>';
+  html+='<div style="font-size:10px;color:var(--t3);text-align:center;padding:16px;letter-spacing:1px">GERENCION · Sistema de Supervisão Comercial · '+p.empresa+' · '+hoje+'</div></div>';
+  document.getElementById('relArea').innerHTML=html;
+  toast('Relatório executivo gerado!');
+}
+
+function termRow(lbl,val,sub,status,desc){var cor=status==='ok'?'var(--cy)':status==='wn'?'var(--ye)':'var(--rd)';return'<div style="display:flex;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--b);gap:12px"><div style="min-width:160px;font-size:12px;color:var(--t2)">'+lbl+'</div><div style="min-width:100px"><strong style="color:'+cor+'">'+val+'</strong>'+(sub?'<div style="font-size:10px;color:var(--t3)">'+sub+'</div>':'')+'</div>'+(desc?'<div style="font-size:12px;color:var(--t2);flex:1">'+desc+'</div>':'')+'</div>';}
+function miniStat(lbl,val,status){var cor=status==='ok'?'var(--cy)':status==='wn'?'var(--ye)':'var(--rd)';return'<div style="background:var(--s2);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">'+lbl+'</div><div style="font-size:14px;font-weight:700;color:'+cor+'">'+val+'</div></div>';}
+
+function imprimirRelatorio(){var rel=document.getElementById('relArea');if(!rel||rel.querySelector('.empty')){toast('Gere o relatório primeiro.');return;}window.print();}
+
+// ============================================================
+// NOVA FUNÇÃO enviarWhatsApp — abre relatório completo + PDF
+// ============================================================
+function enviarWhatsApp(){
+  var el=document.getElementById('relArea');
+  if(!el||el.querySelector('.empty')){toast('Gere o relatório primeiro.');return;}
+  var relHtml=el.innerHTML;
+  var p=DB.perfil;
+  var titulo='Relatório Executivo · '+p.empresa+' · '+(p.regional||'Norte Fluminense')+' · '+new Date().toLocaleDateString('pt-BR');
+  var win=window.open('','_blank');
+  if(!win){toast('Permita popups no navegador e tente novamente.');return;}
+  var css='*{margin:0;padding:0;box-sizing:border-box;}:root{--bg:#060C18;--s1:#0A1020;--s2:#0F1628;--b:rgba(255,255,255,0.09);--cy:#00E5C3;--rd:#FF4560;--rd2:rgba(255,69,96,0.12);--ye:#FFB800;--ye2:rgba(255,184,0,0.12);--t:#F0F4FF;--t2:#B0BBC8;--t3:#6A7A8E;}body{font-family:Inter,sans-serif;background:var(--bg);color:var(--t);font-size:14px;line-height:1.5;padding:20px 20px 90px;}.rb{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:20px 22px;margin-bottom:14px;page-break-inside:avoid;break-inside:avoid;}.rs{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cy);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--b);}.rv{font-weight:600;}.rv.ok{color:var(--cy);}.rv.wn{color:var(--ye);}.rv.dg{color:var(--rd);}.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}.bok{background:rgba(0,229,195,.12);color:var(--cy);border:1px solid rgba(0,229,195,.2);}.bwn{background:var(--ye2);color:var(--ye);border:1px solid rgba(255,184,0,.2);}.bdg{background:var(--rd2);color:var(--rd);border:1px solid rgba(255,69,96,.2);}.bnt{background:var(--s2);color:var(--t2);border:1px solid var(--b);}.toolbar{display:flex;gap:10px;justify-content:center;align-items:center;padding:14px 20px;position:fixed;bottom:0;left:0;right:0;background:rgba(6,12,24,0.97);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,0.08);flex-wrap:wrap;z-index:999;}@media print{.toolbar{display:none!important;}body{background:white!important;color:black!important;padding:10px;}.rb{background:white!important;border:1px solid #ddd!important;}.rs{color:#007a6a!important;border-color:#ddd!important;}.rv.ok{color:#007a6a!important;}.rv.wn{color:#aa6600!important;}.rv.dg{color:#cc0033!important;}.bok{background:#e0fff8!important;color:#007a6a!important;border-color:#007a6a!important;}.bwn{background:#fff8e0!important;color:#aa6600!important;border-color:#aa6600!important;}.bdg{background:#ffe0e5!important;color:#cc0033!important;border-color:#cc0033!important;}}';
+  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>'+titulo+'</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>'+css+'</style></head><body><div style="max-width:760px;margin:0 auto">'+relHtml+'</div><div class="toolbar"><button onclick="window.print()" style="padding:11px 24px;background:#00E5C3;border:none;color:#04080F;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;font-family:Inter,sans-serif">🖨 Imprimir / Salvar PDF</button><button onclick="window.close()" style="padding:11px 20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#B0BBC8;border-radius:8px;cursor:pointer;font-size:14px;font-family:Inter,sans-serif">✕ Fechar</button></div></body></html>');
+  win.document.close();
+  toast('Relatório aberto! Clique em Imprimir → Salvar PDF → envie pelo WhatsApp.');
+}
+
+// ============================================================
+// NOVA FUNÇÃO enviarEmail — relatório completo + PDF + Copiar
+// ============================================================
+function enviarEmail(){
+  var el=document.getElementById('relArea');
+  if(!el||el.querySelector('.empty')){toast('Gere o relatório primeiro.');return;}
+  var relHtml=el.innerHTML;
+  var p=DB.perfil;
+  var titulo='Relatório Executivo · '+p.empresa+' · '+(p.regional||'Norte Fluminense')+' · '+new Date().toLocaleDateString('pt-BR');
+  var win=window.open('','_blank');
+  if(!win){toast('Permita popups no navegador e tente novamente.');return;}
+  var css='*{margin:0;padding:0;box-sizing:border-box;}:root{--bg:#060C18;--s1:#0A1020;--s2:#0F1628;--b:rgba(255,255,255,0.09);--cy:#00E5C3;--rd:#FF4560;--rd2:rgba(255,69,96,0.12);--ye:#FFB800;--ye2:rgba(255,184,0,0.12);--t:#F0F4FF;--t2:#B0BBC8;--t3:#6A7A8E;}body{font-family:Inter,sans-serif;background:var(--bg);color:var(--t);font-size:14px;line-height:1.5;padding:20px 20px 90px;}.rb{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:20px 22px;margin-bottom:14px;page-break-inside:avoid;break-inside:avoid;}.rs{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cy);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--b);}.rv{font-weight:600;}.rv.ok{color:var(--cy);}.rv.wn{color:var(--ye);}.rv.dg{color:var(--rd);}.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}.bok{background:rgba(0,229,195,.12);color:var(--cy);border:1px solid rgba(0,229,195,.2);}.bwn{background:var(--ye2);color:var(--ye);border:1px solid rgba(255,184,0,.2);}.bdg{background:var(--rd2);color:var(--rd);border:1px solid rgba(255,69,96,.2);}.bnt{background:var(--s2);color:var(--t2);border:1px solid var(--b);}.toolbar{display:flex;gap:10px;justify-content:center;align-items:center;padding:14px 20px;position:fixed;bottom:0;left:0;right:0;background:rgba(6,12,24,0.97);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,0.08);flex-wrap:wrap;z-index:999;}@media print{.toolbar{display:none!important;}body{background:white!important;color:black!important;padding:10px;}.rb{background:white!important;border:1px solid #ddd!important;}.rs{color:#007a6a!important;border-color:#ddd!important;}.rv.ok{color:#007a6a!important;}.rv.wn{color:#aa6600!important;}.rv.dg{color:#cc0033!important;}.bok{background:#e0fff8!important;color:#007a6a!important;border-color:#007a6a!important;}.bwn{background:#fff8e0!important;color:#aa6600!important;border-color:#aa6600!important;}.bdg{background:#ffe0e5!important;color:#cc0033!important;border-color:#cc0033!important;}}';
+  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>'+titulo+'</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>'+css+'</style></head><body><div style="max-width:760px;margin:0 auto">'+relHtml+'</div><div class="toolbar"><button onclick="window.print()" style="padding:11px 24px;background:#00E5C3;border:none;color:#04080F;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;font-family:Inter,sans-serif">🖨 Imprimir / Salvar PDF</button><button id="btnCp" onclick="copTxt()" style="padding:11px 20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#B0BBC8;border-radius:8px;cursor:pointer;font-size:14px;font-family:Inter,sans-serif">📋 Copiar Texto</button><button onclick="window.close()" style="padding:11px 20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#B0BBC8;border-radius:8px;cursor:pointer;font-size:14px;font-family:Inter,sans-serif">✕ Fechar</button></div><script>function copTxt(){var t=document.body.innerText||"";if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){var b=document.getElementById("btnCp");b.textContent="✓ Copiado!";b.style.color="#00E5C3";setTimeout(function(){b.textContent="📋 Copiar Texto";b.style.color="#B0BBC8";},2500);});}}<\/script></body></html>');
+  win.document.close();
+  toast('Relatório aberto! Salve como PDF ou copie o texto para o e-mail.');
+}
+
+function copiarRelatorio(){var el=document.getElementById('relArea');if(!el){toast('Área do relatório não encontrada.');return;}if(el.querySelector('.empty')){toast('Clique em Gerar Relatório primeiro.');return;}var text=el.innerText||el.textContent||'';if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){toast('Relatório copiado!');}).catch(function(){toast('Não foi possível copiar. Use Imprimir.');});}else{toast('Selecione o texto do relatório e copie manualmente.');}}
+
+function salvarPerfil(){DB.perfil={empresa:document.getElementById('pfEmp').value,regional:document.getElementById('pfReg').value,supervisor:document.getElementById('pfSup').value,cargo:document.getElementById('pfCargo').value,assinatura:document.getElementById('pfAss').value,contexto:document.getElementById('pfCtx').value};salvar();document.getElementById('pvEmp').textContent=DB.perfil.empresa||'—';document.getElementById('pvReg').textContent=DB.perfil.regional||'—';document.getElementById('pvSup').textContent=DB.perfil.supervisor||'—';toast('Perfil salvo!');}
+function resetar(){if(confirm('Resetar todos os dados? Esta ação não pode ser desfeita.')){localStorage.removeItem(KEY);location.reload();}}
+function exportarDados(){try{salvar();var payload=localStorage.getItem(KEY);if(!payload){toast('Nenhum dado para exportar.');return;}var blob=new Blob([payload],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;var data=new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');a.download='gerencion-dados-'+data+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);toast('Arquivo baixado! Envie para o tablet.');}catch(e){toast('Erro ao exportar.');}}
+function importarDados(){var input=document.createElement('input');input.type='file';input.accept='.json';input.onchange=function(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(ev){try{var texto=ev.target.result;JSON.parse(texto);localStorage.setItem(KEY,texto);toast('Dados importados! Recarregando...');setTimeout(function(){location.reload();},1200);}catch(err){toast('Arquivo inválido. Use o arquivo exportado pelo GERENCION.');}};reader.readAsText(file);};input.click();}
+
+(function(){var urlParams=new URLSearchParams(window.location.search),backupQuery=urlParams.get('backup');if(backupQuery){try{var d=decodeURIComponent(backupQuery);localStorage.setItem('GRC_V2',d);window.location.href=window.location.origin+window.location.pathname;}catch(e){console.error('Erro ao importar via link');}}})();
+
+function renderPos(){
+  var el=document.getElementById('posBox');if(!el)return;
+  if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de positivação.</div>';return;}
+  var tp=0,tn=0;DB.posChurn.forEach(function(p){tp+=parseInt(p.positivados||0);tn+=parseInt(p.naoPositivados||0);});
+  var tx=tp+tn>0?((tp/(tp+tn))*100).toFixed(1):0;
+  el.innerHTML='<div class="stats s3" style="margin-bottom:14px"><div class="stat"><div class="st-l">Positivados</div><div class="st-v">'+tp+'</div></div><div class="stat dg"><div class="st-l">Não Positivados</div><div class="st-v">'+tn+'</div></div><div class="stat '+(parseFloat(tx)>=70?'':'wn')+'"><div class="st-l">Taxa</div><div class="st-v">'+tx+'%</div></div></div><div class="tw"><table><thead><tr><th>Vendedor</th><th>Positivados</th><th>Não Positivados</th><th>Taxa</th><th>Situação</th></tr></thead><tbody>'+DB.posChurn.map(function(p){var tot=(parseInt(p.positivados||0))+(parseInt(p.naoPositivados||0)),tx=tot>0?((parseInt(p.positivados||0)/tot)*100).toFixed(1):0,np=parseInt(p.naoPositivados||0);return'<tr><td style="font-weight:600">'+p.nome+'</td><td style="color:var(--cy)">'+fmt(p.positivados)+'</td><td style="color:var(--rd)">'+fmt(p.naoPositivados)+'</td><td>'+tx+'%</td><td>'+(np>20?'<span class="badge bdg">URGENTE</span>':np>10?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+'</td></tr>';}).join('')+'</tbody></table></div>';
+}
+
+function renderChurn(){
+  var el=document.getElementById('churnBox');if(!el)return;
+  if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de churn.</div>';return;}
+  var com=DB.posChurn.filter(function(p){return p.churnRate!=='';});
+  if(com.length===0){el.innerHTML='<div class="empty">Nenhum dado de churn lançado.</div>';return;}
+  el.innerHTML='<div class="g2">'+com.map(function(p){var c=n(p.churnRate);return'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-weight:700">'+p.nome+'</div>'+(c>15?'<span class="badge bdg">CRÍTICO</span>':c>9?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+'</div><div style="font-size:44px;font-weight:700;color:'+(c>15?'var(--rd)':c>9?'var(--ye)':'var(--cy)')+';line-height:1">'+c.toFixed(1)+'%</div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-top:4px">CHURN RATE</div>'+(c>9?'<div style="margin-top:10px;font-size:12px;color:var(--t2);line-height:1.6">'+(c>15?'Situação crítica. Clientes migrando para a concorrência.':'Churn acima do aceitável. Reativar clientes perdidos.')+'</div>':'')+'</div>';}).join('')+'</div>';
+}
+
+// ============================================================
+// NOVA FUNÇÃO iniciarApresentacao — slides COMPLETOS responsivos
+// ============================================================
+function iniciarApresentacao(){
+  var vs=DB.biAtual.vendedores;
+  if(!vs||vs.length===0){toast('Lance os dados do BI primeiro.');return;}
+  var p=DB.perfil,r=DB.biAtual.regional;
+  var projMedia=vs.reduce(function(s,v){return s+n(v.proj);},0)/vs.length;
+  var baixa=(new Date().getMonth()>=4&&new Date().getMonth()<=7);
+  var situacao=projMedia>=85?'SAUDÁVEL':projMedia>=70?'ATENÇÃO':'CRÍTICA';
+  var sitCor=projMedia>=85?'#00E5C3':projMedia>=70?'#FFB800':'#FF4560';
+  var scores=vs.map(function(v,i){return calcScore(v,DB.posChurn[i]||{});});
+  var scoreM=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
+  var sorted=vs.map(function(v,i){return{v:v,sc:scores[i],pc:DB.posChurn[i]||{}};}).sort(function(a,b){return b.sc-a.sc;});
+  var totalPos=0,totalNPos=0;
+  DB.posChurn.forEach(function(pc){totalPos+=parseInt(pc.positivados||0);totalNPos+=parseInt(pc.naoPositivados||0);});
+  var txPos=totalPos+totalNPos>0?((totalPos/(totalPos+totalNPos))*100).toFixed(1):0;
+  var hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  var crit=vs.filter(function(v){return st(v.proj,v.devPct)==='dg';});
+  var atenc=vs.filter(function(v){return st(v.proj,v.devPct)==='wn';});
+  var ok=vs.length-crit.length-atenc.length;
+  var churnAltos=DB.posChurn.filter(function(pc){return n(pc.churnRate)>20;});
+  var planosAtivos=DB.planos.filter(function(pl){return pl.status!=='Concluído';});
+
+  function sBox(lbl,val,sub,cor){return'<div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:clamp(8px,1.5vw,14px);padding:clamp(12px,2.5vw,24px);text-align:center"><div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:1px;text-transform:uppercase;color:#6A7A8E;margin-bottom:8px">'+lbl+'</div><div style="font-size:clamp(20px,3.5vw,38px);font-weight:700;color:'+cor+'">'+val+'</div>'+(sub?'<div style="font-size:clamp(10px,1.3vw,13px);color:#6A7A8E;margin-top:4px">'+sub+'</div>':'')+'</div>';}
+  function sAcao(em,prio,txt,cor){return'<div style="display:flex;gap:clamp(10px,2vw,16px);background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,2vw,16px);border-left:3px solid '+cor+'"><div style="font-size:clamp(18px,2.5vw,24px)">'+em+'</div><div><div style="font-size:clamp(9px,1.2vw,12px);font-weight:700;color:'+cor+';letter-spacing:1px;margin-bottom:3px">'+prio+'</div><div style="font-size:clamp(12px,1.6vw,15px);color:#B0BBC8">'+txt+'</div></div></div>';}
+  function mBox(lbl,val,cor){return'<div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:clamp(6px,1.2vw,10px);text-align:center"><div style="font-size:clamp(8px,1vw,11px);color:#6A7A8E;text-transform:uppercase;margin-bottom:3px">'+lbl+'</div><div style="font-size:clamp(11px,1.5vw,14px);font-weight:700;color:'+cor+'">'+val+'</div></div>';}
+
+  var slides=[];
+
+  // Slide 1 — Capa
+  slides.push('<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:calc(100vh - 70px);text-align:center;padding:clamp(20px,4vw,60px)">'+
+    '<div style="font-size:clamp(10px,1.5vw,14px);letter-spacing:4px;color:#00E5C3;margin-bottom:clamp(16px,3vw,28px);text-transform:uppercase">GERENCION · SUPERVISÃO COMERCIAL · ARCOFOODS</div>'+
+    '<div style="font-size:clamp(32px,7vw,72px);font-weight:700;color:white;margin-bottom:clamp(10px,2vw,16px);line-height:1.05">RELATÓRIO<br>EXECUTIVO</div>'+
+    '<div style="font-size:clamp(14px,2.2vw,22px);color:#B0BBC8;margin-bottom:clamp(6px,1vw,10px)">'+p.empresa+' · Regional '+(p.regional||'Norte Fluminense')+'</div>'+
+    '<div style="font-size:clamp(12px,1.6vw,16px);color:#6A7A8E;margin-bottom:clamp(24px,5vw,52px)">'+p.supervisor+' · '+(p.cargo||'Supervisor de Vendas')+' · '+hoje+'</div>'+
+    '<div style="display:inline-flex;flex-direction:column;align-items:center;padding:clamp(14px,3vw,24px) clamp(20px,5vw,48px);border-radius:16px;background:'+sitCor+'15;border:2px solid '+sitCor+'">'+
+    '<div style="font-size:clamp(26px,5vw,54px);font-weight:700;color:'+sitCor+'">'+situacao+'</div>'+
+    '<div style="font-size:clamp(11px,1.4vw,15px);color:#B0BBC8;margin-top:6px">Score Regional: '+scoreM+'/100'+(baixa?' · ⚠ Baixa Temporada':'')+' · Projeção: '+projMedia.toFixed(1)+'%</div>'+
+    '</div></div>');
+
+  // Slide 2 — Termômetro
+  slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
+    '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(16px,3vw,28px);text-transform:uppercase">TERMÔMETRO DA REGIONAL</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,20px);margin-bottom:clamp(10px,2vw,20px)">'+
+    sBox('Projeção do Mês',fP(r.proj),'Meta: 100%',projMedia>=85?'#00E5C3':projMedia>=70?'#FFB800':'#FF4560')+
+    sBox('Faturamento Real',fP(r.fat),'% realizado',n(r.fat)>=69?'#00E5C3':'#FFB800')+
+    sBox('Margem Real',fP(r.marg),'Obj: '+(r.objMarg||'17,32')+'%',n(r.marg)>=n(r.objMarg||17.32)?'#00E5C3':'#FFB800')+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,2vw,20px)">'+
+    sBox('Score Regional',scoreM+'/100','0-100 pontos',scoreM>=70?'#00E5C3':scoreM>=50?'#FFB800':'#FF4560')+
+    sBox('Positivação',txPos+'%',totalPos+' de '+(totalPos+totalNPos)+' clientes',parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+
+    sBox('Devolução',fP(r.devPct),'Limite: 0,65%',Math.abs(n(r.devPct))<=0.65?'#00E5C3':'#FF4560')+
+    sBox('Venda Média','R$'+(r.vendaMedia||'—'),'por cliente','#00E5C3')+
+    '</div>'+
+    (p.contexto?'<div style="margin-top:clamp(12px,2vw,20px);padding:clamp(10px,1.5vw,16px);background:rgba(255,255,255,0.04);border-radius:10px;font-size:clamp(11px,1.4vw,14px);color:#B0BBC8;border-left:3px solid #00E5C3">'+p.contexto+'</div>':'')+
+    '</div>');
+
+  // Slide 3 — Diagnóstico Geral
+  slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
+    '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">DIAGNÓSTICO DA EQUIPE</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,20px);margin-bottom:clamp(14px,2.5vw,24px)">'+
+    sBox('SAUDÁVEIS',String(ok),ok+' vendedor(es)','#00E5C3')+
+    sBox('ATENÇÃO',String(atenc.length),atenc.length+' vendedor(es)','#FFB800')+
+    sBox('CRÍTICOS',String(crit.length),crit.length+' vendedor(es)','#FF4560')+
+    '</div>'+
+    '<div style="display:flex;flex-direction:column;gap:clamp(6px,1vw,10px)">'+
+    vs.map(function(v,i){
+      var pc=DB.posChurn[i]||{},sc=scores[i],cor=sc>=70?'#00E5C3':sc>=50?'#FFB800':'#FF4560';
+      return'<div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,16px);background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(8px,1.5vw,14px) clamp(10px,2vw,18px);border-left:3px solid '+cor+'">'+
+        '<div style="font-size:clamp(13px,2vw,20px);color:#6A7A8E;min-width:26px">'+(i+1)+'</div>'+
+        '<div style="flex:1;font-size:clamp(12px,1.6vw,16px);font-weight:600;color:white">'+v.nome+'</div>'+
+        '<div style="font-size:clamp(10px,1.3vw,13px);color:#B0BBC8">PROJ: '+fP(v.proj)+' · MARG: '+fP(v.marg)+(pc.churnRate?' · Churn: '+pc.churnRate+'%':'')+'</div>'+
+        '<div style="font-size:clamp(16px,2.5vw,26px);font-weight:700;color:'+cor+';min-width:56px;text-align:right">'+sc+'<span style="font-size:clamp(9px,1vw,11px);color:#6A7A8E">pts</span></div>'+
+        '</div>';
+    }).join('')+
+    '</div></div>');
+
+  // Slide 4 — Ranking Completo
+  slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
+    '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">RANKING COMPLETO — SCORE GERAL</div>'+
+    '<div style="display:flex;flex-direction:column;gap:clamp(6px,1vw,10px)">'+
+    sorted.map(function(x,i){
+      var cor=x.sc>=70?'#00E5C3':x.sc>=50?'#FFB800':'#FF4560';
+      var badge=x.sc>=70?'SAUDÁVEL':x.sc>=50?'ATENÇÃO':'CRÍTICO';
+      return'<div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,16px);background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(8px,1.5vw,14px) clamp(10px,2vw,18px);border-left:3px solid '+cor+'">'+
+        '<div style="font-size:clamp(14px,2vw,20px);color:#6A7A8E;min-width:28px">'+(i+1)+'º</div>'+
+        '<div style="flex:1"><div style="font-size:clamp(12px,1.6vw,16px);font-weight:600;color:white">'+x.v.nome+'</div>'+
+        '<div style="font-size:clamp(9px,1.2vw,13px);color:#6A7A8E;margin-top:2px">PROJ: '+fP(x.v.proj)+' · MARG: '+fP(x.v.marg)+' · DEV: '+fP(x.v.devPct)+' · Posit: '+fmt(x.v.realPos)+'/'+fmt(x.v.objPos)+(x.pc.churnRate?' · Churn: '+x.pc.churnRate+'%':'')+'</div></div>'+
+        '<span style="font-size:clamp(8px,1vw,11px);font-weight:700;color:'+cor+';background:'+cor+'18;border:1px solid '+cor+'40;padding:2px 8px;border-radius:4px;white-space:nowrap">'+badge+'</span>'+
+        '<div style="font-size:clamp(18px,2.5vw,28px);font-weight:700;color:'+cor+';min-width:60px;text-align:right">'+x.sc+'<span style="font-size:clamp(9px,1vw,11px);color:#6A7A8E">pts</span></div>'+
+        '</div>';
+    }).join('')+
+    '</div></div>');
+
+  // Slides 5+ — 1 slide por vendedor com diagnóstico completo
+  vs.forEach(function(v,i){
+    var pc=DB.posChurn[i]||{},sc=scores[i],s=st(v.proj,v.devPct);
+    var cor=sc>=70?'#00E5C3':sc>=50?'#FFB800':'#FF4560';
+    var badge=sc>=70?'SAUDÁVEL':sc>=50?'ATENÇÃO':'CRÍTICO';
+    var totPos=n(pc.positivados)+n(pc.naoPositivados),txPosV=totPos>0?((n(pc.positivados)/totPos)*100).toFixed(1):0;
+    var acoes=[];
+    if(n(v.proj)<70)acoes.push({e:'🚨',p:'URGENTE',t:'Projeção crítica ('+fP(v.proj)+'). Visita de campo imediata. Verificar carteira e bloqueios.',c:'#FF4560'});
+    else if(n(v.proj)<85)acoes.push({e:'⚠️',p:'ATENÇÃO',t:'Projeção em atenção ('+fP(v.proj)+'). Acompanhar de perto e acionar clientes inativos.',c:'#FFB800'});
+    if(Math.abs(n(v.devPct))>0.65)acoes.push({e:'↩️',p:'DEVOLUÇÃO',t:'DEV acima do limite ('+fP(v.devPct)+'). Conversar com o vendedor e investigar causa raiz.',c:'#FF4560'});
+    if(n(v.marg)<(n(v.objMarg)||17.5)*0.9)acoes.push({e:'📊',p:'MARGEM',t:'Margem abaixo do objetivo ('+fP(v.marg)+'). Focar no Mix Rentável Arcofoods.',c:'#FFB800'});
+    if(n(pc.churnRate)>15)acoes.push({e:'🔴',p:'CHURN',t:'Churn alto ('+pc.churnRate+'%). Clientes parando de comprar. Plano de reativação urgente.',c:'#FF4560'});
+    else if(n(pc.churnRate)>9)acoes.push({e:'🟡',p:'CHURN',t:'Churn em atenção ('+pc.churnRate+'%). Monitorar clientes em risco de saída.',c:'#FFB800'});
+    if(n(pc.naoPositivados)>15)acoes.push({e:'👥',p:'POSITIVAÇÃO',t:pc.naoPositivados+' clientes não compraram no mês. Reativar carteira inativa.',c:'#FFB800'});
+    if(acoes.length===0)acoes.push({e:'✅',p:'OK',t:'Dentro dos parâmetros. Reconhecer o bom desempenho e manter o ritmo.',c:'#00E5C3'});
+
+    slides.push('<div style="padding:clamp(16px,3vw,44px)">'+
+      '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">DIAGNÓSTICO INDIVIDUAL · '+(i+1)+'/'+vs.length+'</div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:clamp(12px,2vw,18px);flex-wrap:wrap;gap:10px">'+
+        '<div><div style="font-size:clamp(20px,4vw,40px);font-weight:700;color:white;line-height:1.1">'+v.nome+'</div>'+
+        '<div style="font-size:clamp(10px,1.3vw,14px);color:#6A7A8E;margin-top:4px">COD '+v.cod+' · Score: <strong style="color:'+cor+'">'+sc+'/100</strong></div></div>'+
+        '<span style="font-size:clamp(10px,1.3vw,14px);font-weight:700;color:'+cor+';background:'+cor+'18;border:2px solid '+cor+';padding:4px 14px;border-radius:6px">'+badge+'</span>'+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(6px,1vw,10px);margin-bottom:clamp(10px,1.5vw,16px)">'+
+        mBox('PROJ',fP(v.proj),s==='ok'?'#00E5C3':s==='wn'?'#FFB800':'#FF4560')+
+        mBox('MARGEM',fP(v.marg),n(v.marg)>=(n(v.objMarg)||17.5)?'#00E5C3':'#FFB800')+
+        mBox('DEV',fP(v.devPct),Math.abs(n(v.devPct))>0.65?'#FF4560':'#00E5C3')+
+        mBox('POSIT',fmt(v.realPos)+'/'+fmt(v.objPos),n(v.saldoPos)>=0?'#00E5C3':'#FF4560')+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(6px,1vw,10px);margin-bottom:clamp(10px,1.5vw,16px)">'+
+        mBox('FAT',fP(v.fat),'#B0BBC8')+
+        mBox('SALDO POSIT',fmt(v.saldoPos),n(v.saldoPos)>=0?'#00E5C3':'#FF4560')+
+        mBox('POSITIVADOS',fmt(pc.positivados)||'—','#00E5C3')+
+        mBox('CHURN',fmt(pc.churnRate)+'%',n(pc.churnRate)>15?'#FF4560':n(pc.churnRate)>9?'#FFB800':'#00E5C3')+
+      '</div>'+
+      '<div style="display:flex;flex-direction:column;gap:clamp(6px,1vw,8px)">'+
+      acoes.map(function(a){return sAcao(a.e,a.p,a.t,a.c);}).join('')+
+      '</div></div>');
+  });
+
+  // Slide — Positivação e Churn
+  if(DB.posChurn&&DB.posChurn.length>0){
+    slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
+      '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">POSITIVAÇÃO E CHURN — DETALHE POR VENDEDOR</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,18px);margin-bottom:clamp(14px,2vw,20px)">'+
+      sBox('Positivados',String(totalPos),'clientes compraram','#00E5C3')+
+      sBox('Não Positivados',String(totalNPos),'clientes inativos','#FF4560')+
+      sBox('Taxa Geral',txPos+'%','da base ativa',parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+
+      '</div>'+
+      '<div style="display:flex;flex-direction:column;gap:clamp(5px,1vw,8px)">'+
+      DB.posChurn.map(function(pc){
+        var tot=n(pc.positivados)+n(pc.naoPositivados),tx=tot>0?((n(pc.positivados)/tot)*100).toFixed(1):0;
+        var chCor=n(pc.churnRate)>15?'#FF4560':n(pc.churnRate)>9?'#FFB800':'#00E5C3';
+        return'<div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,14px);background:rgba(255,255,255,0.04);border-radius:8px;padding:clamp(8px,1.5vw,12px) clamp(10px,2vw,16px)">'+
+          '<div style="flex:1;font-size:clamp(12px,1.5vw,15px);font-weight:600;color:white">'+pc.nome+'</div>'+
+          '<div style="font-size:clamp(11px,1.3vw,13px);color:#00E5C3">✓ '+fmt(pc.positivados)+'</div>'+
+          '<div style="font-size:clamp(11px,1.3vw,13px);color:#FF4560">✗ '+fmt(pc.naoPositivados)+'</div>'+
+          '<div style="font-size:clamp(11px,1.3vw,13px);color:#B0BBC8">'+tx+'%</div>'+
+          (pc.churnRate?'<div style="font-size:clamp(11px,1.3vw,13px);color:'+chCor+'">Churn: '+pc.churnRate+'%</div>':'')+
+          '</div>';
+      }).join('')+
+      '</div></div>');
+  }
+
+  // Slide — Planos de Ação (se houver)
+  if(planosAtivos.length>0){
+    slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
+      '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">PLANOS DE AÇÃO EM ANDAMENTO</div>'+
+      '<div style="display:flex;flex-direction:column;gap:clamp(8px,1.5vw,12px)">'+
+      planosAtivos.map(function(pl){
+        var cor=pl.prioridade==='Alta'?'#FF4560':pl.prioridade==='Média'?'#FFB800':'#00E5C3';
+        var pf=pl.prazo?new Date(pl.prazo+'T12:00').toLocaleDateString('pt-BR'):null;
+        return'<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,2vw,18px);border-left:3px solid '+cor+'">'+
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'+
+          '<div style="font-size:clamp(13px,1.8vw,17px);font-weight:700;color:white">'+pl.problema+'</div>'+
+          '<span style="font-size:clamp(9px,1vw,12px);font-weight:700;color:'+cor+';background:'+cor+'18;border:1px solid '+cor+'40;padding:2px 8px;border-radius:4px">'+pl.prioridade+'</span></div>'+
+          (pl.solucao?'<div style="font-size:clamp(12px,1.5vw,15px);color:#00E5C3;margin-bottom:4px">→ '+pl.solucao+'</div>':'')+
+          '<div style="font-size:clamp(10px,1.3vw,13px);color:#6A7A8E">'+(pl.responsavel?'Resp: '+pl.responsavel:'')+(pl.responsavel&&pf?' · ':'')+(pf?'Prazo: '+pf:'')+'</div>'+
+          '</div>';
+      }).join('')+
+      '</div></div>');
+  }
+
+  // Slide Final — Diretrizes
+  slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
+    '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">DIRETRIZES — PRÓXIMAS AÇÕES PRIORITÁRIAS</div>'+
+    '<div style="display:flex;flex-direction:column;gap:clamp(8px,1.5vw,12px);margin-bottom:clamp(14px,2vw,20px)">'+
+    (crit.length>0?sAcao('🚨','URGENTE','Campo imediato com: '+crit.map(function(v){return v.nome;}).join(', ')+'. Situação crítica — presença do supervisor necessária.','#FF4560'):'')+
+    (totalNPos>20?sAcao('⚠️','ALTA PRIORIDADE','Reativar '+totalNPos+' clientes não positivados. Criar lista por vendedor e definir rota.','#FFB800'):'')+
+    (churnAltos.length>0?sAcao('🔴','ALTA PRIORIDADE','Retenção: '+churnAltos.map(function(pc){return pc.nome+' ('+pc.churnRate+'%)';}).join(', ')+'. Visitar clientes e entender motivo da saída.','#FFB800'):'')+
+    sAcao('📦','CONTÍNUO','Mix Rentável: orientar equipe a incluir mínimo 2 itens de alta margem em cada pedido.','#00E5C3')+
+    (baixa?sAcao('🎯','ESTRATÉGICO','Preparar alta temporada (setembro): mapear clientes com potencial de expansão e iniciar relacionamento agora.','#00E5C3'):'')+
+    '</div>'+
+    '<div style="padding:clamp(14px,2.5vw,20px);background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.2);border-radius:12px;text-align:center">'+
+    '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:2px;color:#00E5C3;text-transform:uppercase;margin-bottom:8px">Conclusão Executiva</div>'+
+    '<div style="font-size:clamp(13px,1.8vw,17px);color:#B0BBC8;line-height:1.7">'+
+    'Regional com projeção <strong style="color:'+sitCor+'">'+projMedia.toFixed(1)+'%</strong> · '+
+    ok+' saudáveis · '+atenc.length+' em atenção · '+crit.length+' críticos<br>'+
+    'Taxa de positivação: <strong style="color:'+(parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+'">'+txPos+'%</strong> · '+
+    'Score Regional: <strong style="color:'+sitCor+'">'+scoreM+'/100</strong>'+
+    '</div></div></div>');
+
+  // CSS responsivo da apresentação
+  var css='*{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;font-family:Inter,sans-serif;background:#060C18;color:#F0F4FF;overflow:hidden;}'+
+    '.slide{display:none;height:100vh;overflow-y:auto;padding-bottom:72px;}'+
+    '.slide.ativo{display:block;}'+
+    '.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:clamp(8px,1.5vw,16px);padding:clamp(10px,1.5vw,14px) 20px;background:rgba(6,12,24,0.97);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,0.08);z-index:100;flex-wrap:wrap;}'+
+    '.nav-btn{padding:clamp(8px,1.2vw,11px) clamp(14px,2.5vw,22px);border-radius:8px;border:none;cursor:pointer;font-family:Inter,sans-serif;font-size:clamp(12px,1.5vw,14px);font-weight:600;}'+
+    '.nav-prev{background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.15);}'+
+    '.nav-next{background:#00E5C3;color:#04080F;}'+
+    '.nav-prev:disabled,.nav-next:disabled{opacity:0.3;cursor:not-allowed;}'+
+    '.nav-info{color:#6A7A8E;font-size:clamp(11px,1.3vw,13px);}'+
+    '.nav-dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:60vw;}'+
+    '.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.2);cursor:pointer;transition:all .2s;}'+
+    '.dot.on{background:#00E5C3;width:18px;border-radius:3px;}';
+
+  var cur=0;
+  var win=window.open('','_blank');
+  if(!win){toast('Permita popups no navegador para usar a apresentação.');return;}
+
+  function renderSlide(){
+    var nav='<nav class="nav">'+
+      '<button class="nav-btn nav-prev" onclick="prev()" '+(cur===0?'disabled':'')+'>← Anterior</button>'+
+      '<div class="nav-dots">'+slides.map(function(s,i){return'<div class="dot'+(i===cur?' on':'')+'" onclick="ir('+i+')" title="Slide '+(i+1)+'"></div>';}).join('')+'</div>'+
+      '<span class="nav-info">'+(cur+1)+' / '+slides.length+'</span>'+
+      '<button class="nav-btn nav-next" onclick="prox()" '+(cur===slides.length-1?'disabled':'')+'>Próximo →</button>'+
+      '</nav>';
+    win.document.body.innerHTML='<div class="slide ativo">'+slides[cur]+'</div>'+nav;
+    win.document.title='GERENCION · Apresentação · '+(cur+1)+'/'+slides.length;
+    win.scrollTo(0,0);
+  }
+
+  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>GERENCION · Apresentação</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>'+css+'</style></head><body></body></html>');
+  win.document.close();
+  win.prev=function(){if(cur>0){cur--;renderSlide();}};
+  win.prox=function(){if(cur<slides.length-1){cur++;renderSlide();}};
+  win.ir=function(i){cur=i;renderSlide();};
+  win.onkeydown=function(e){if(e.key==='ArrowRight'||e.key==='ArrowDown'){if(cur<slides.length-1){cur++;renderSlide();}}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){if(cur>0){cur--;renderSlide();}}};
+  renderSlide();
+  toast('Apresentação aberta! '+slides.length+' slides. Use F11 para tela cheia.');
+}
+// ============================================================
+// MÓDULO DE NEGOCIAÇÃO — REFORMULADO
+// ============================================================
+var negProdutosData = [];
+var UNIDADES = ['kg','fardo','cx','bombona','bag','pct','unid','balde','lata','saco','galão','caixa'];
+
+function addProduto(){
+  var idx = negProdutosData.length;
+  negProdutosData.push({id:idx,nome:'',qtd:'',unid:'kg',tabPreco:0,tabUnid:'kg',vendPreco:0,idealPreco:0});
+  renderProdutos();
+}
+
+function renderProdutos(){
+  var el = document.getElementById('negProdutos');
+  if(!negProdutosData.length){
+    el.innerHTML = '<div class="empty">Clique em "+ Adicionar Produto" para incluir itens.</div>';
+    return;
+  }
+  el.innerHTML = negProdutosData.map(function(p,i){
+    var unidOpts = UNIDADES.map(function(u){return '<option value="'+u+'"'+(u===p.unid?' selected':'')+'>'+u+'</option>';}).join('');
+    var unidTabOpts = UNIDADES.map(function(u){return '<option value="'+u+'"'+(u===p.tabUnid?' selected':'')+'>'+u+'</option>';}).join('');
+    return '<div class="biv" style="position:relative">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'+
+      '<div class="biv-t" style="margin:0">Produto '+(i+1)+'</div>'+
+      '<button class="btn bd bsm no-print" onclick="removerProduto('+i+')">× Remover</button></div>'+
+      '<div class="g2" style="margin-bottom:10px">'+
+      '<div class="fg"><label class="fl">Código + Nome do Produto</label>'+
+      '<input class="inp" id="np'+i+'nome" placeholder="ex: 66233 – Açúcar Refinado Caravelas 1kg" value="'+(p.nome||'')+'" onchange="salvarProd('+i+')"></div>'+
+      '<div class="fg"><label class="fl">Quantidade + Unidade</label>'+
+      '<div style="display:flex;gap:8px">'+
+      '<input class="inp" id="np'+i+'qtd" placeholder="ex: 10" style="flex:1" value="'+(p.qtd||'')+'" onchange="calcProd('+i+')">'+
+      '<select class="inp" id="np'+i+'unid" style="width:90px" onchange="calcProd('+i+')">'+unidOpts+'</select>'+
+      '</div></div></div>'+
+      '<div class="g3" style="margin-bottom:10px">'+
+      '<div class="fg"><label class="fl">Preço Tabela (R$)</label>'+
+      '<div style="display:flex;gap:6px;align-items:center">'+
+      '<input class="inp" type="number" step="0.0001" id="np'+i+'tab" placeholder="0,0000" style="flex:1" value="'+(p.tabPreco||'')+'" onchange="calcProd('+i+')">'+
+      '<span style="font-size:10px;color:var(--t3)">por</span>'+
+      '<select class="inp" id="np'+i+'tabunid" style="width:70px" onchange="calcProd('+i+')">'+unidTabOpts+'</select>'+
+      '</div></div>'+
+      '<div class="fg"><label class="fl">Preço Vendedor (R$)</label>'+
+      '<input class="inp" type="number" step="0.0001" id="np'+i+'vend" placeholder="0,0000" value="'+(p.vendPreco||'')+'" onchange="calcProd('+i+')"></div>'+
+      '<div class="fg"><label class="fl">Preço Ideal (R$)</label>'+
+      '<input class="inp" type="number" step="0.0001" id="np'+i+'ideal" placeholder="0,0000" value="'+(p.idealPreco||'')+'" onchange="calcProd('+i+')"></div>'+
+      '</div>'+
+      '<div id="np'+i+'res" style="display:none;padding:10px 14px;background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.15);border-radius:8px;font-size:12px;color:var(--t2)"></div>'+
+      '</div>';
+  }).join('');
+}
+
+function salvarProd(i){
+  if(!negProdutosData[i])return;
+  negProdutosData[i].nome = document.getElementById('np'+i+'nome').value;
+}
+
+function calcProd(i){
+  if(!negProdutosData[i])return;
+  var nome = document.getElementById('np'+i+'nome').value;
+  var qtd = parseFloat(document.getElementById('np'+i+'qtd').value)||0;
+  var unid = document.getElementById('np'+i+'unid').value;
+  var tab = parseFloat(document.getElementById('np'+i+'tab').value)||0;
+  var tabUnid = document.getElementById('np'+i+'tabunid').value;
+  var vend = parseFloat(document.getElementById('np'+i+'vend').value)||0;
+  var ideal = parseFloat(document.getElementById('np'+i+'ideal').value)||0;
+
+  negProdutosData[i] = {nome:nome,qtd:qtd,unid:unid,tabPreco:tab,tabUnid:tabUnid,vendPreco:vend,idealPreco:ideal};
+
+  if(!tab||!ideal||!qtd){return;}
+
+  var difUnit = vend - ideal;
+  var pctInvest = tab>0?(difUnit/tab)*100:0;
+  var totalInvest = difUnit * qtd;
+
+  negProdutosData[i].difUnit = difUnit;
+  negProdutosData[i].pctInvest = pctInvest;
+  negProdutosData[i].totalInvest = totalInvest;
+
+  var el = document.getElementById('np'+i+'res');
+  el.style.display = 'block';
+  el.innerHTML = '💰 Diferença: <strong style="color:var(--rd)">R$ '+Math.abs(difUnit).toFixed(4)+'/'+tabUnid+'</strong> · '+
+    '📊 Investimento: <strong style="color:var(--ye)">'+Math.abs(pctInvest).toFixed(2)+'%</strong> · '+
+    '💵 Total ('+qtd+' '+unid+'): <strong style="color:var(--rd)">R$ '+Math.abs(totalInvest).toFixed(2)+'</strong>';
+}
+
+function removerProduto(i){
+  negProdutosData.splice(i,1);
+  renderProdutos();
+}
+
+function coletarTodosProdutos(){
+  return negProdutosData.map(function(p,i){
+    try{
+      var qtd = parseFloat(document.getElementById('np'+i+'qtd').value)||p.qtd||0;
+      var tab = parseFloat(document.getElementById('np'+i+'tab').value)||p.tabPreco||0;
+      var vend = parseFloat(document.getElementById('np'+i+'vend').value)||p.vendPreco||0;
+      var ideal = parseFloat(document.getElementById('np'+i+'ideal').value)||p.idealPreco||0;
+      var unid = document.getElementById('np'+i+'unid').value||p.unid||'unid';
+      var tabUnid = document.getElementById('np'+i+'tabunid').value||p.tabUnid||'unid';
+      var nome = document.getElementById('np'+i+'nome').value||p.nome||'';
+      var difUnit = vend - ideal;
+      var pctInvest = tab>0?(difUnit/tab)*100:0;
+      var totalInvest = difUnit * qtd;
+      return {nome:nome,qtd:qtd,unid:unid,tabPreco:tab,tabUnid:tabUnid,vendPreco:vend,idealPreco:ideal,difUnit:difUnit,pctInvest:pctInvest,totalInvest:totalInvest};
+    }catch(e){return p;}
+  });
+}
+
+function gerarNegociacao(){
+  var cli = document.getElementById('negCli').value.trim();
+  var vend = document.getElementById('negVend').value.trim();
+  var conc = document.getElementById('negConc').value.trim();
+  var skus = document.getElementById('negSkus').value.trim();
+  var ctx = document.getElementById('negCtx').value.trim();
+
+  if(!cli){toast('Informe o cliente.');return;}
+  if(!negProdutosData.length){toast('Adicione pelo menos um produto.');return;}
+
+  var prods = coletarTodosProdutos();
+  var totalGeral = prods.reduce(function(s,p){return s+Math.abs(p.totalInvest||0);},0);
+  var pctMedio = prods.length>0?prods.reduce(function(s,p){return s+Math.abs(p.pctInvest||0);},0)/prods.length:0;
+  var p = DB.perfil;
+  var hoje = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+
+  // Gera o HTML da negociação — compacto, 1 página
+  var corInvest = pctMedio<=2?'var(--cy)':pctMedio<=4?'var(--ye)':'var(--rd)';
+
+  var html = '<div style="max-width:720px;font-size:13px;line-height:1.6">';
+
+  // CABEÇALHO compacto
+  html += '<div class="rb" style="border-left:4px solid var(--cy);padding:16px 20px;margin-bottom:10px">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">';
+  html += '<div>';
+  html += '<div style="font-size:18px;font-weight:700;color:var(--cy);margin-bottom:4px">SOLICITAÇÃO DE NEGOCIAÇÃO COMERCIAL</div>';
+  html += '<div style="color:var(--t2);font-size:12px">'+hoje+' · '+p.empresa+' · Regional '+(p.regional||'Norte Fluminense')+'</div>';
+  html += '<div style="color:var(--t2);font-size:12px;margin-top:2px">Supervisor: <strong style="color:var(--t)">'+p.supervisor+'</strong> · Vendedor: <strong style="color:var(--t)">'+vend+'</strong></div>';
+  html += '</div>';
+  html += '<div style="text-align:right">';
+  html += '<div style="font-size:11px;color:var(--t3)">Cliente</div>';
+  html += '<div style="font-size:15px;font-weight:700;color:var(--cy)">'+cli+'</div>';
+  if(conc) html += '<div style="font-size:11px;color:var(--ye)">Concorrente: '+conc+'</div>';
+  if(skus) html += '<div style="font-size:11px;color:var(--t2)">Pedido: '+skus+'</div>';
+  html += '</div>';
+  html += '</div></div>';
+
+  // JUSTIFICATIVA — gerada pela IA local inteligente
+  var justificativa = gerarJustificativaIA(ctx, cli, conc, skus, prods, pctMedio, totalGeral);
+  html += '<div class="rb" style="padding:14px 20px;margin-bottom:10px">';
+  html += '<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cy);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--b)">Justificativa</div>';
+  html += '<div style="color:var(--t2);font-size:12px;line-height:1.7">'+justificativa+'</div>';
+  html += '</div>';
+
+  // PRODUTOS — tabela compacta
+  html += '<div class="rb" style="padding:14px 20px;margin-bottom:10px">';
+  html += '<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cy);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b)">Itens em Negociação</div>';
+
+  prods.forEach(function(prod,i){
+    var corProd = Math.abs(prod.pctInvest||0)<=2?'var(--cy)':Math.abs(prod.pctInvest||0)<=4?'var(--ye)':'var(--rd)';
+    html += '<div style="'+(i>0?'border-top:1px solid var(--b);padding-top:10px;margin-top:10px':'')+'">'+
+      '<div style="font-weight:700;font-size:13px;color:var(--t);margin-bottom:8px">'+prod.nome+'</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;font-size:11px">'+
+        cNeg('Qtd',prod.qtd+' '+prod.unid,'var(--t)')+
+        cNeg('Preço Tabela','R$ '+prod.tabPreco.toFixed(4)+'/'+prod.tabUnid,'var(--t2)')+
+        cNeg('Preço Vendedor','R$ '+prod.vendPreco.toFixed(4)+'/'+prod.tabUnid,'var(--ye)')+
+        cNeg('Preço Ideal','R$ '+prod.idealPreco.toFixed(4)+'/'+prod.tabUnid,'var(--cy)')+
+        cNeg('Invest. Unit.','R$ '+Math.abs(prod.difUnit||0).toFixed(4),corProd)+
+        cNeg('Total Invest.','R$ '+Math.abs(prod.totalInvest||0).toFixed(2),corProd)+
+      '</div></div>';
+  });
+  html += '</div>';
+
+  // RESUMO + ASSINATURA — linha final compacta
+  html += '<div class="rb" style="padding:12px 20px;margin-bottom:0">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">';
+  html += '<div style="display:flex;gap:20px">';
+  html += '<div style="text-align:center"><div style="font-size:10px;color:var(--t3)">Produtos</div><div style="font-size:18px;font-weight:700;color:var(--cy)">'+prods.length+'</div></div>';
+  html += '<div style="text-align:center"><div style="font-size:10px;color:var(--t3)">% Médio Invest.</div><div style="font-size:18px;font-weight:700;color:'+corInvest+'">'+pctMedio.toFixed(2)+'%</div></div>';
+  html += '<div style="text-align:center"><div style="font-size:10px;color:var(--t3)">Investimento Total</div><div style="font-size:18px;font-weight:700;color:var(--rd)">R$ '+totalGeral.toFixed(2)+'</div></div>';
+  html += '</div>';
+  html += '<div style="text-align:right;font-size:11px;color:var(--t2)">';
+  html += '<div style="font-weight:700;color:var(--t)">'+p.supervisor+'</div>';
+  html += '<div>'+(p.cargo||'Supervisor de Vendas')+'</div>';
+  html += '<div>'+p.empresa+'</div>';
+  html += '</div>';
+  html += '</div></div>';
+
+  html += '</div>';
+
+  document.getElementById('negResultado').innerHTML = html;
+  toast('Proposta gerada! Clique em "Abrir PDF" para salvar.');
+}
+
+function cNeg(lbl,val,cor){
+  return '<div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:6px 8px;text-align:center">'+
+    '<div style="color:var(--t3);margin-bottom:2px;font-size:9px;text-transform:uppercase">'+lbl+'</div>'+
+    '<div style="font-weight:700;color:'+cor+'">'+val+'</div>'+
+    '</div>';
+}
+
+function gerarJustificativaIA(ctx, cli, conc, skus, prods, pctMedio, totalGeral){
+  // Gera justificativa profissional baseada nos dados
+  var nomesCli = cli.split('–').pop().trim();
+  var itens = prods.map(function(p){return p.nome.split('–').pop().trim();}).join(', ');
+  var concTexto = conc ? ' frente à concorrência direta da <strong style="color:var(--t)">'+conc+'</strong>' : '';
+  var skusTexto = skus ? ' O pedido contempla <strong style="color:var(--t)">'+skus+'</strong>, garantindo volume expressivo para o período.' : '';
+
+  // Base do contexto informado pelo usuário
+  var base = ctx ? ctx.charAt(0).toUpperCase() + ctx.slice(1) : '';
+
+  // Monta justificativa profissional
+  var texto = 'Solicitamos avaliação e aprovação de condição comercial especial para o cliente ';
+  texto += '<strong style="color:var(--t)">'+cli+'</strong>, visando o fechamento do pedido em negociação.';
+
+  if(base){
+    texto += ' ' + base;
+    // Garante que termina com ponto
+    if(!texto.trim().endsWith('.') && !texto.trim().endsWith('!') && !texto.trim().endsWith('?')){
+      texto += '.';
+    }
+  }
+
+  texto += skusTexto;
+
+  texto += ' Os itens que necessitam de adequação de preço são: <strong style="color:var(--t)">'+itens+'</strong>';
+  texto += concTexto+'.';
+
+  texto += ' O investimento médio solicitado é de <strong style="color:var(--t)">'+pctMedio.toFixed(2)+'%</strong>';
+  texto += ' sobre o preço tabela, totalizando <strong style="color:var(--t)">R$ '+totalGeral.toFixed(2)+'</strong> de investimento total.';
+
+  texto += ' A aprovação desta condição é <strong style="color:var(--t)">estratégica e urgente</strong> para garantir a conclusão integral do pedido, preservar a relação comercial com o cliente e assegurar a competitividade da '+( DB.perfil.empresa||'empresa')+' nessa praça.';
+
+  return texto;
+}
+
+function abrirPdfNegociacao(){
+  var res = document.getElementById('negResultado');
+  if(!res||!res.innerHTML.trim()||res.innerHTML.includes('empty')){
+    toast('Gere a proposta primeiro.');return;
+  }
+  var relHtml = res.innerHTML;
+  var cli = document.getElementById('negCli').value||'cliente';
+  var titulo = 'Negociação Comercial · '+cli+' · '+new Date().toLocaleDateString('pt-BR');
+  var win = window.open('','_blank');
+  if(!win){toast('Permita popups e tente novamente.');return;}
+  var css = '*{margin:0;padding:0;box-sizing:border-box;}'+
+    ':root{--bg:#060C18;--s1:#0A1020;--s2:#0F1628;--b:rgba(255,255,255,0.09);--cy:#00E5C3;--rd:#FF4560;--rd2:rgba(255,69,96,0.12);--ye:#FFB800;--ye2:rgba(255,184,0,0.12);--t:#F0F4FF;--t2:#B0BBC8;--t3:#6A7A8E;}'+
+    'body{font-family:Inter,sans-serif;background:var(--bg);color:var(--t);font-size:13px;line-height:1.5;padding:20px 20px 80px;}'+
+    '.rb{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:16px 20px;margin-bottom:10px;page-break-inside:avoid;}'+
+    '.toolbar{display:flex;gap:10px;justify-content:center;align-items:center;padding:12px 20px;position:fixed;bottom:0;left:0;right:0;background:rgba(6,12,24,0.97);border-top:1px solid rgba(255,255,255,0.08);flex-wrap:wrap;z-index:999;}'+
+    '@media print{'+
+      '.toolbar{display:none!important;}'+
+      'body{background:white!important;color:#1a1a2e!important;padding:15px;font-size:11px;}'+
+      '.rb{background:#f8f9ff!important;border:1px solid #dde!important;margin-bottom:8px!important;padding:12px 16px!important;}'+
+      '[style*="color:var(--cy)"]{color:#007a6a!important;}'+
+      '[style*="color:var(--rd)"]{color:#cc0033!important;}'+
+      '[style*="color:var(--ye)"]{color:#aa6600!important;}'+
+      '[style*="color:var(--t)"]{color:#1a1a2e!important;}'+
+      '[style*="color:var(--t2)"]{color:#555!important;}'+
+      '[style*="color:var(--t3)"]{color:#888!important;}'+
+      '[style*="background:rgba(255,255,255,0.04)"]{background:#eef!important;}'+
+    '}';
+  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">'+
+    '<meta name="viewport" content="width=device-width,initial-scale=1.0">'+
+    '<title>'+titulo+'</title>'+
+    '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">'+
+    '<style>'+css+'</style></head><body>'+
+    '<div style="max-width:720px;margin:0 auto">'+relHtml+'</div>'+
+    '<div class="toolbar">'+
+    '<button onclick="window.print()" style="padding:10px 22px;background:#00E5C3;border:none;color:#04080F;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;font-family:Inter,sans-serif">🖨 Imprimir / Salvar PDF</button>'+
+    '<button onclick="window.close()" style="padding:10px 18px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#B0BBC8;border-radius:8px;cursor:pointer;font-size:14px;font-family:Inter,sans-serif">✕ Fechar</button>'+
+    '</div></body></html>');
+  win.document.close();
+  toast('PDF aberto! Salve e envie pelo WhatsApp ou e-mail.');
+}
+
+function limparNegociacao(){
+  if(confirm('Limpar todos os dados da negociação?')){
+    negProdutosData = [];
+    ['negCli','negVend','negConc','negSkus','negCtx'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.value = '';
+    });
+    renderProdutos();
+    document.getElementById('negResultado').innerHTML = '';
+    toast('Negociação limpa!');
+  }
+}
+
+// ============================================================
+// IA NAS MENSAGENS DE ANIVERSÁRIO
+// ============================================================
+function gerarMsgIA(a, callback){
+  var ass = (DB.perfil.assinatura || 'Leandro Felipe\nSupervisor de Vendas - Arcofoods');
+  var nome = a.nome.split(' ')[0]; // Primeiro nome
+  var tipo = a.tipo;
+  
+  // Templates ricos por tipo
+  var templatesVendedor = [
+    '🎂🎉 Feliz aniversário, ' + nome + '! Hoje é o dia de celebrar alguém que faz a diferença todos os dias em campo. Que este novo ciclo traga ainda mais conquistas, saúde e realização. Conte sempre comigo! 💪🙏\n\n' + ass,
+    '🎊✨ Parabéns, ' + nome + '! Um vendedor do seu nível merece um dia especial à altura. Que seu novo ano seja repleto de metas batidas, clientes satisfeitos e muito sucesso. Grande abraço! 🚀\n\n' + ass,
+    '🎂🌟 Feliz aniversário, ' + nome + '! Que Deus abençoe cada passo da sua jornada. Você é peça fundamental da nossa equipe e me orgulha demais trabalhar ao seu lado. Saúde e prosperidade! 🙏💚\n\n' + ass,
+    '🎉🏆 Hoje é dia de celebrar você, ' + nome + '! Que este aniversário marque o início de um ciclo ainda mais vitorioso — com mais vendas, mais clientes e mais conquistas. Feliz aniversário! 🎯\n\n' + ass,
+    '🎂💪 ' + nome + ', feliz aniversário! Trabalhar com você é um prazer. Que este novo ano traga saúde, alegria e muitas razões para comemorar. Conte sempre com o apoio da equipe! 🌟\n\n' + ass
+  ];
+  
+  var templatesCliente = [
+    '🎂🌟 Feliz aniversário, ' + nome + '! Em nome da equipe Arcofoods, desejamos a você um dia especial e um novo ciclo cheio de saúde, alegria e sucesso nos negócios. É uma honra tê-lo como parceiro! 🤝\n\n' + ass,
+    '🎉✨ Parabéns pelo seu aniversário, ' + nome + '! Que este dia seja tão especial quanto a parceria que construímos juntos. Muita saúde, prosperidade e que os negócios sigam sempre crescendo! 💚\n\n' + ass,
+    '🎊🙏 Feliz aniversário, ' + nome + '! A Arcofoods agradece pela confiança e parceria. Que Deus abençoe sua vida com saúde, paz e muito sucesso. Conte sempre conosco! 🌟\n\n' + ass,
+    '🎂💫 ' + nome + ', hoje é seu dia! Que este aniversário seja o início de um ano repleto de conquistas, saúde e prosperidade. É um prazer ter você como parceiro da Arcofoods! 🤝✨\n\n' + ass
+  ];
+  
+  var templatesOutro = [
+    '🎂🎉 Feliz aniversário, ' + nome + '! Que este novo ciclo seja repleto de saúde, felicidade e muitas conquistas. Grande abraço e que Deus abençoe cada passo seu! 🙏🌟\n\n' + ass,
+    '🎊✨ Parabéns, ' + nome + '! Desejo tudo de melhor neste novo ano de vida. Muita saúde, paz e realizações. Feliz aniversário! 💚\n\n' + ass
+  ];
+  
+  var templates = tipo === 'Vendedor' ? templatesVendedor : tipo === 'Cliente' ? templatesCliente : templatesOutro;
+  var msg = templates[Math.floor(Math.random() * templates.length)];
+  
+  // Pequeno delay para simular geração
+  setTimeout(function(){ callback(msg); }, 800);
+}
+
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  });
+}
+</script>
+</body>
+</html>
