@@ -1368,7 +1368,7 @@ function iniciarApresentacao(){
       sBox('Taxa Geral',txPos+'%','da base ativa',parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+
       '</div>'+
       '<div style="display:flex;flex-direction:column;gap:clamp(5px,1vw,8px)">'+
-      DB.posChurn.map(function(pc){
+      DB.posChurn.map(function(pc,i){         var vd=DB.biAtual.vendedores[i]||{};
         var tot=n(pc.positivados)+n(pc.naoPositivados),tx=tot>0?((n(pc.positivados)/tot)*100).toFixed(1):0;
         var chCor=n(pc.churnRate)>15?'#FF4560':n(pc.churnRate)>9?'#FFB800':'#00E5C3';
         return'<div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,14px);background:rgba(255,255,255,0.04);border-radius:8px;padding:clamp(8px,1.5vw,12px) clamp(10px,2vw,16px)">'+
