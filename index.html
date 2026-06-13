@@ -931,10 +931,10 @@ function renderDash(){
     var premioVal=document.getElementById('stPremioVal');
     var premioSub=document.getElementById('stPremioSub');
     if(premioEl&&premioVal&&premioSub){
-      if(projReg>=110){premioEl.className='stat';premioVal.textContent='R$ 1.400';premioVal.style.color='#FFB800';premioSub.textContent='🏆 Máximo! Projeção ≥110%';}
-      else if(projReg>=100){premioEl.className='stat';premioVal.textContent='R$ 1.000';premioVal.style.color='#00E5C3';premioSub.textContent='✅ Base. Falta chegar a 110% para +R$400';}
-      else if(projReg>=90){premioEl.className='stat wn';premioVal.textContent='R$ 600';premioVal.style.color='#FFB800';premioSub.textContent='⚠ Parcial. Falta '+(100-projReg).toFixed(1)+'pp para R$ 1.000';}
-      else{premioEl.className='stat dg';premioVal.textContent='R$ 0';premioVal.style.color='#FF4560';premioSub.textContent='❌ Abaixo de 90% — sem premiação. Falta '+(90-projReg).toFixed(1)+'pp';}
+      if(projReg>=110){premioEl.className='stat';premioVal.textContent='🏆 MAX';premioVal.style.color='#FFB800';premioSub.textContent='Projeção ≥110% — Premiação máxima!';}
+      else if(projReg>=100){premioEl.className='stat';premioVal.textContent='✅ BASE';premioVal.style.color='#00E5C3';premioSub.textContent='Projeção ≥100% — Premiação base';}
+      else if(projReg>=90){premioEl.className='stat wn';premioVal.textContent='⚠ PARCIAL';premioVal.style.color='';premioSub.textContent='Projeção 90-99% — Premiação parcial';}
+      else{premioEl.className='stat dg';premioVal.textContent='❌ ZERO';premioVal.style.color='';premioSub.textContent='Projeção <90% — Sem premiação neste KPI';}
     }
   }
   var diag=document.getElementById('diagBox'),alrt=document.getElementById('alertBox'),rank=document.getElementById('rankBox');
@@ -999,10 +999,6 @@ function renderSaude(){
 
 function renderScoreIndicadores(vs){
   var projMedia=vs.reduce(function(s,v){return s+n(v.proj);},0)/vs.length;
-  var projAtual=n(r.proj);
-  var premTxt=projAtual>=110?'🏆 PREMIAÇÃO MÁXIMA':projAtual>=100?'✅ PREMIAÇÃO BASE':projAtual>=90?'⚠️ PREMIAÇÃO PARCIAL':'❌ SEM PREMIAÇÃO NESTE KPI';
-  var premCor=projAtual>=110?'var(--ye)':projAtual>=100?'var(--cy)':projAtual>=90?'var(--ye)':'var(--rd)';
-  var premDesc=projAtual>=110?'Equipe acima de 110%. Premiação máxima garantida!':projAtual>=100?'Equipe na meta. Premiação base. Buscar 110% para maximizar.':projAtual>=90?'Premiação parcial. Faltam '+(100-projAtual).toFixed(1)+'pp para 100%.':'Abaixo de 90% — sem premiação neste KPI. Ação urgente!';
   var margMedia=vs.reduce(function(s,v){return s+n(v.marg);},0)/vs.length;
   var devMedia=vs.reduce(function(s,v){return s+Math.abs(n(v.devPct));},0)/vs.length;
   var churnMedia=DB.posChurn.length?DB.posChurn.reduce(function(s,p){return s+n(p.churnRate);},0)/DB.posChurn.length:0;
