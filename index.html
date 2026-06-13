@@ -1127,7 +1127,7 @@ function gerarRelatorio(){
     html+='<div style="border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;border-left:3px solid '+cor+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong style="color:var(--t);font-size:14px">'+v.nome+'</strong>'+badgeSt(v.proj,v.devPct)+'</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">'+miniStat('PROJ',fP(v.proj),s)+miniStat('MARGEM',fP(v.marg),n(v.marg)>=(n(v.objMarg||17.5))?'ok':'wn')+miniStat('DEV',fP(v.devPct),Math.abs(n(v.devPct))>DEV_LIM?'dg':'ok')+miniStat('POSIT',fmt(v.realPos)+'/'+fmt(v.objPos),parseInt(v.saldoPos||0)>=0?'ok':'dg')+'</div>'+(pc.positivados||pc.churnRate?'<div style="font-size:11px;color:var(--t2);margin-bottom:8px">'+(pc.positivados?'Positivados: <strong style="color:var(--cy)">'+pc.positivados+'</strong> · ':'')+( pc.naoPositivados?'Não positivados: <strong style="color:var(--rd)">'+pc.naoPositivados+'</strong> · ':'')+( pc.churnRate?'Churn: <strong style="color:'+(n(pc.churnRate)>9?'var(--rd)':'var(--ye)')+'">'+pc.churnRate+'%</strong>':'')+'</div>':'')+'<div style="font-size:11px;font-weight:600;color:var(--cy);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">Ações Recomendadas:</div><ul style="padding-left:16px;color:var(--t2);font-size:12px">'+acoes.map(function(a){return'<li style="margin-bottom:3px">'+a+'</li>';}).join('')+'</ul></div>';
   });
   html+='</div>';
-  if(DB.posChurn&&DB.posChurn.length>0){         var churnMedia=DB.posChurn.length?DB.posChurn.reduce(function(s,p){return s+n(p.churnRate);},0)/DB.posChurn.length:0;
+  if(DB.posChurn&&DB.posChurn.length>0){
     html+='<div class="rb"><div class="rs">Análise de Positivação e Churn</div><div style="color:var(--t2);margin-bottom:12px">De <strong style="color:var(--t)">'+(totalPos+totalNPos)+'</strong> clientes na base: <strong style="color:var(--cy)">'+totalPos+' compraram</strong> e <strong style="color:var(--rd)">'+totalNPos+' não compraram</strong> no mês. Taxa de positivação: <strong style="color:'+(parseFloat(txPos)>=70?'var(--cy)':'var(--rd)')+'">'+txPos+'%</strong>.</div>';
     if(churnAltos.length>0)html+='<div style="padding:10px 14px;background:var(--rd2);border-radius:8px;margin-bottom:10px;font-size:12px;color:var(--t2)"><strong style="color:var(--rd)">Atenção — Churn elevado:</strong> '+churnAltos.map(function(p){return p.nome+' ('+p.churnRate+'%)';}).join(', ')+'. Clientes estão parando de comprar. Investigar motivo e acionar plano de retenção.</div>';
     html+='</div>';
@@ -1236,7 +1236,7 @@ function iniciarApresentacao(){
   var sitCor=projMedia>=85?'#00E5C3':projMedia>=70?'#FFB800':'#FF4560';
   var scores=vs.map(function(v,i){return calcScore(v,DB.posChurn[i]||{});});
   var scoreM=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
-  var sorted=vs.map(function(v,i){return{v:v,sc:scores[i],pc:DB.posChurn[i]||{}};}).sort(function(a,b){return b.sc-a.sc;});
+  var sorted=vs.map(function(v,i){return{v:v,sc:scores[i],pc:DB.posChurn[i]||{}};}).sort(function(a,b){return b.sc-a.sc;});   var churnMedia=DB.posChurn.length?DB.posChurn.reduce(function(s,p){return s+n(p.churnRate);},0)/DB.posChurn.length:0;   var churnMedia=DB.posChurn.length?DB.posChurn.reduce(function(s,p){return s+n(p.churnRate);},0)/DB.posChurn.length:0;
   var totalPos=0,totalNPos=0;
   DB.posChurn.forEach(function(pc){totalPos+=parseInt(pc.positivados||0);totalNPos+=parseInt(pc.naoPositivados||0);});
   var txPos=totalPos+totalNPos>0?((totalPos/(totalPos+totalNPos))*100).toFixed(1):0;
@@ -1274,7 +1274,7 @@ function iniciarApresentacao(){
     '</div>'+
     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,2vw,20px)">'+
     sBox('Score Regional',scoreM+'/100','0-100 pontos',scoreM>=70?'#00E5C3':scoreM>=50?'#FFB800':'#FF4560')+
-    sBox('Positivação',txPos+'%',totalPos+' de '+(totalPos+totalNPos)+' clientes',parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+             sBox('Churn Médio',churnMedia.toFixed(1)+'%','da base ativa',churnMedia<=9?'#00E5C3':churnMedia<=15?'#FFB800':'#FF4560')+             sBox('Churn Médio',churnMedia.toFixed(1)+'%','da base ativa',churnMedia<=9?'#00E5C3':churnMedia<=15?'#FFB800':'#FF4560')+
+    sBox('Positivação',txPos+'%',totalPos+' de '+(totalPos+totalNPos)+' clientes',parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+             sBox('Churn Médio',churnMedia.toFixed(1)+'%','da base ativa',churnMedia<=9?'#00E5C3':churnMedia<=15?'#FFB800':'#FF4560')+
     sBox('Devolução',fP(r.devPct),'Limite: 0,65%',Math.abs(n(r.devPct))<=0.65?'#00E5C3':'#FF4560')+
     sBox('Venda Média','R$'+(r.vendaMedia||'—'),'por cliente','#00E5C3')+
     '</div>'+
@@ -1359,7 +1359,7 @@ function iniciarApresentacao(){
   });
 
   // Slide — Positivação e Churn
-  if(DB.posChurn&&DB.posChurn.length>0){         var churnMedia=DB.posChurn.length?DB.posChurn.reduce(function(s,p){return s+n(p.churnRate);},0)/DB.posChurn.length:0;
+  if(DB.posChurn&&DB.posChurn.length>0){
     slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
       '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">POSITIVAÇÃO E CHURN — DETALHE POR VENDEDOR</div>'+
       '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(10px,2vw,18px);margin-bottom:clamp(14px,2vw,20px)">'+
