@@ -1274,7 +1274,7 @@ function iniciarApresentacao(){
     '</div>'+
     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,2vw,20px)">'+
     sBox('Score Regional',scoreM+'/100','0-100 pontos',scoreM>=70?'#00E5C3':scoreM>=50?'#FFB800':'#FF4560')+
-    sBox('Positivação',txPos+'%',totalPos+' de '+(totalPos+totalNPos)+' clientes',parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+             sBox('Churn Médio',churnMedia.toFixed(1)+'%','da base ativa',churnMedia<=9?'#00E5C3':churnMedia<=15?'#FFB800':'#FF4560')+
+    sBox('Positivação',txPos+'%',totalPos+' de '+(totalPos+totalNPos)+' clientes',parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+             sBox('Churn Médio',churnMedia.toFixed(1)+'%','da base ativa',churnMedia<=9?'#00E5C3':churnMedia<=15?'#FFB800':'#FF4560')+             sBox('Churn Médio',churnMedia.toFixed(1)+'%','da base ativa',churnMedia<=9?'#00E5C3':churnMedia<=15?'#FFB800':'#FF4560')+
     sBox('Devolução',fP(r.devPct),'Limite: 0,65%',Math.abs(n(r.devPct))<=0.65?'#00E5C3':'#FF4560')+
     sBox('Venda Média','R$'+(r.vendaMedia||'—'),'por cliente','#00E5C3')+
     '</div>'+
