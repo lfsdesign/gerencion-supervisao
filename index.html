@@ -1274,7 +1274,7 @@ function iniciarApresentacao(){
     '</div>'+
     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,2vw,20px)">'+
     sBox('Score Regional',scoreM+'/100','0-100 pontos',scoreM>=70?'#00E5C3':scoreM>=50?'#FFB800':'#FF4560')+
-    sBox('Positivação',txPos+'%',totalPos+' de '+(totalPos+totalNPos)+' clientes',parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+
+    sBox('Positivação',txPos+'%',totalPos+' de '+(totalPos+totalNPos)+' clientes',parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+             sBox('Churn Médio',churnMedia.toFixed(1)+'%','da base ativa',churnMedia<=9?'#00E5C3':churnMedia<=15?'#FFB800':'#FF4560')+
     sBox('Devolução',fP(r.devPct),'Limite: 0,65%',Math.abs(n(r.devPct))<=0.65?'#00E5C3':'#FF4560')+
     sBox('Venda Média','R$'+(r.vendaMedia||'—'),'por cliente','#00E5C3')+
     '</div>'+
@@ -1362,11 +1362,11 @@ function iniciarApresentacao(){
   if(DB.posChurn&&DB.posChurn.length>0){
     slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
       '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">POSITIVAÇÃO E CHURN — DETALHE POR VENDEDOR</div>'+
-      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,18px);margin-bottom:clamp(14px,2vw,20px)">'+
+      '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(10px,2vw,18px);margin-bottom:clamp(14px,2vw,20px)">'+
       sBox('Meta Positivação',String(n(r.objPos)),'clientes (base ativa)','#B0BBC8')+         
       sBox('Positivados',String(totalPos),'clientes compraram','#00E5C3')+
       sBox('Não Positivados',String(totalNPos),'clientes inativos','#FF4560')+
-      sBox('Taxa Geral',txPos+'%','da base ativa',parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+
+      sBox('Taxa Geral',txPos+'%','da base ativa',parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+             sBox('Churn Médio',churnMedia.toFixed(1)+'%','da base ativa',churnMedia<=9?'#00E5C3':churnMedia<=15?'#FFB800':'#FF4560')+
       '</div>'+
       '<div style="display:flex;flex-direction:column;gap:clamp(5px,1vw,8px)">'+
       DB.posChurn.map(function(pc,i){         var vd=DB.biAtual.vendedores[i]||{};
@@ -1417,7 +1417,7 @@ function iniciarApresentacao(){
     '<div style="font-size:clamp(13px,1.8vw,17px);color:#B0BBC8;line-height:1.7">'+
     'Regional com projeção <strong style="color:'+sitCor+'">'+projMedia.toFixed(1)+'%</strong> · '+
     ok+' saudáveis · '+atenc.length+' em atenção · '+crit.length+' críticos<br>'+
-    'Taxa de positivação: <strong style="color:'+(parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+'">'+txPos+'%</strong> · '+
+    'Taxa de positivação: <strong style="color:'+(parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+             sBox('Churn Médio',churnMedia.toFixed(1)+'%','da base ativa',churnMedia<=9?'#00E5C3':churnMedia<=15?'#FFB800':'#FF4560')+'">'+txPos+'%</strong> · '+
     'Score Regional: <strong style="color:'+sitCor+'">'+scoreM+'/100</strong>'+
     '</div></div></div>');
 
