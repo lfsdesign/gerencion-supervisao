@@ -1444,7 +1444,7 @@ function iniciarApresentacao(){
       '<button class="nav-btn nav-prev" onclick="prev()" '+(cur===0?'disabled':'')+'>← Anterior</button>'+
       '<div class="nav-dots">'+slides.map(function(s,i){return'<div class="dot'+(i===cur?' on':'')+'" onclick="ir('+i+')" title="Slide '+(i+1)+'"></div>';}).join('')+'</div>'+
       '<span class="nav-info">'+(cur+1)+' / '+slides.length+'</span>'+
-      '<button class="nav-btn nav-next" onclick="prox()" '+(cur===slides.length-1?'disabled':'')+'>Próximo →</button>'+       '<button class="nav-btn nav-prev" onclick="window.close()" style="background:rgba(255,69,96,0.15);color:#FF4560;border:1px solid rgba(255,69,96,0.3)">✕ Fechar</button>'+
+      '<button class="nav-btn nav-next" onclick="prox()" '+(cur===slides.length-1?'disabled':'')+'>Próximo →</button>'+       '<button class="nav-btn nav-prev" onclick="if(window.opener){window.opener.focus();} window.close();" style="background:rgba(255,69,96,0.15);color:#FF4560;border:1px solid rgba(255,69,96,0.3)">✕ Fechar</button>'+
       '</nav>';
     win.document.body.innerHTML='<div class="slide ativo">'+slides[cur]+'</div>'+nav;
     win.document.title='GERENCION · Apresentação · '+(cur+1)+'/'+slides.length;
