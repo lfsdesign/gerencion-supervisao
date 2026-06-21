@@ -1813,16 +1813,33 @@ function nBR2(v){return (v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,m
 function processarLupaFatRegional(){
   var txt=document.getElementById('lupaFatRegColar').value.trim();
   if(!txt){toast('Cole os dados da regional primeiro.');return;}
-  var cols=txt.split(/\t|;/).map(function(c){return c.trim();}).filter(function(c){return c!=='';});
+  // Quebra em linhas e junta tudo numa string só separada por tab, pra lidar com cabeçalho quebrado em várias linhas
+  var linhasTxt=txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
+  var linhaDados=null;
+  // Procura a linha que tem o maior número de valores numéricos/R$ — essa é a linha de dados real
+  var melhorScore=-1;
+  linhasTxt.forEach(function(l){
+    var partes=l.split(/\t/).map(function(c){return c.trim();}).filter(function(c){return c!=='';});
+    var score=partes.filter(function(p){return /\d/.test(p);}).length;
+    if(score>melhorScore){melhorScore=score;linhaDados=partes;}
+  });
+  if(!linhaDados||linhaDados.length<8){
+    // fallback: junta tudo e tenta separar só por tab ignorando quebras de linha
+    var todasPartes=txt.split(/\t|\n/).map(function(c){return c.trim();}).filter(function(c){return c!=='';});
+    linhaDados=todasPartes;
+  }
+  var cols=linhaDados;
   if(cols.length<8){toast('Não consegui identificar as colunas. Confira se colou a linha inteira da tabela.');return;}
+  // O primeiro item que não é número/R$/% é o nome da regional; o resto são os 12 valores na ordem
   var nome=cols[0];
+  var valores=cols.slice(1).filter(function(c){return c!=='';});
   DB.lupaFatRegional={
     nome:nome,
-    fat2025:nLupa(cols[1]),fat2026:nLupa(cols[2]),cresc:nLupa(cols[3]),
-    tgt26:nLupa(cols[4]),gap:nLupa(cols[5]),
-    sku25:nLupa(cols[6]),sku26:nLupa(cols[7]),cresSku:nLupa(cols[8]),
-    mcPct:nLupa(cols[9]),vendaMedia:nLupa(cols[10]),
-    metaYTG:nLupa(cols[11]),gapYTG:nLupa(cols[12])
+    fat2025:nLupa(valores[0]),fat2026:nLupa(valores[1]),cresc:nLupa(valores[2]),
+    tgt26:nLupa(valores[3]),gap:nLupa(valores[4]),
+    sku25:nLupa(valores[5]),sku26:nLupa(valores[6]),cresSku:nLupa(valores[7]),
+    mcPct:nLupa(valores[8]),vendaMedia:nLupa(valores[9]),
+    metaYTG:nLupa(valores[10]),gapYTG:nLupa(valores[11])
   };
   salvar();
   renderLupaFat();
