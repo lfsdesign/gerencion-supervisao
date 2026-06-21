@@ -205,6 +205,9 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <button class="nb" onclick="ir('campo',this)">🚗 Campo</button>
       <button class="nb" onclick="ir('plano',this)">◆ Plano de Ação</button>
       <button class="nb" onclick="ir('clientes',this)">🏪 Clientes</button>
+      <div class="nav-grp">Lupa (Diretoria)</div>
+      <button class="nb" onclick="ir('lupaFat',this)">🔍 Lupa · Faturamento</button>
+      <button class="nb" onclick="ir('lupaTop50',this)">🔍 Lupa · Top 50</button>
       <div class="nav-grp">Relacionamento</div>
       <button class="nb" onclick="ir('aniversarios',this)">🎂 Aniversariantes</button>
       <div class="nav-grp">Gestão</div>
@@ -358,6 +361,47 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <div id="listaClientes"></div>
     </div>
 
+    <div id="lupaFat" class="pg">
+      <div class="ph"><div class="pt">Lupa · Faturamento (YTD)</div><div class="ps">Cole os dados do BI Gestor — Regional e por Vendedor</div></div>
+      <div class="bn bn-cy"><span>ℹ</span><div>Cole a linha da <strong>tabela Regional</strong> do BI (Fat 2025, Fat 2026, %Cresc, Target, Gap, SKU/PDV, Margem, Venda Média). Depois cole a <strong>tabela de Vendedores</strong> inteira. O sistema calcula tudo e gera a frase pronta para você falar na apresentação.</div></div>
+
+      <div class="card">
+        <div class="ct">Colar Tabela Regional (BI Gestor → Visão Regional)</div>
+        <textarea id="lupaFatRegColar" class="inp" style="min-height:60px" placeholder="Cole aqui a linha da regional copiada do Power BI"></textarea>
+        <button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaFatRegional()">Processar Regional</button>
+      </div>
+
+      <div class="card">
+        <div class="ct">Colar Tabela de Vendedores (BI Gestor → Visão Vendedor)</div>
+        <textarea id="lupaFatVendColar" class="inp" style="min-height:140px" placeholder="Cole aqui a tabela inteira de vendedores copiada do Power BI"></textarea>
+        <button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaFatVendedores()">Processar Vendedores</button>
+      </div>
+
+      <div id="lupaFatResultado"></div>
+    </div>
+
+    <div id="lupaTop50" class="pg">
+      <div class="ph"><div class="pt">Lupa · Top 50 Clientes</div><div class="ps">Cole a tabela do Power BI — Regional ou de um Vendedor específico</div></div>
+      <div class="bn bn-cy"><span>ℹ</span><div>Cole a tabela do <strong>Top 50</strong> (Ranking, Vendedor, Cliente, Fat 2026, Fat 2025, %Cresc, Médio Mês, SKU Média, Semáforo). O sistema separa quem está crescendo, em risco e em queda — e permite registrar a ação de recuperação para cada cliente problemático.</div></div>
+
+      <div class="card">
+        <div class="ct">Colar Tabela Top 50</div>
+        <textarea id="lupaTop50Colar" class="inp" style="min-height:160px" placeholder="Cole aqui a tabela do Top 50 copiada do Power BI"></textarea>
+        <button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaTop50()">Processar Top 50</button>
+      </div>
+
+      <div id="lupaTop50Filtros" style="display:none;margin-bottom:14px">
+        <div class="g3">
+          <div class="fg"><label class="fl">Filtrar por Vendedor</label><select id="lupaTop50FiltroVend" class="inp" onchange="renderLupaTop50()"><option value="">Todos</option></select></div>
+          <div class="fg"><label class="fl">Filtrar por Situação</label><select id="lupaTop50FiltroSit" class="inp" onchange="renderLupaTop50()"><option value="">Todas</option><option value="forte">🟢 Forte / Crescendo</option><option value="risco">🟡 Risco / Atenção</option><option value="critico">🔴 Alto Risco / Queda</option></select></div>
+          <div class="fg"><label class="fl">Ordenar por</label><select id="lupaTop50Ordem" class="inp" onchange="renderLupaTop50()"><option value="rank">Ranking</option><option value="queda">Maior Queda</option><option value="alta">Maior Crescimento</option><option value="fat">Maior Faturamento</option></select></div>
+        </div>
+      </div>
+
+      <div id="lupaTop50Resumo"></div>
+      <div id="lupaTop50Lista"></div>
+    </div>
+
     <div id="aniversarios" class="pg">
       <div class="ph"><div class="pt">Aniversariantes</div><div class="ps">Relacionamento que fideliza e diferencia</div></div>
       <div id="anivHoje"></div>
@@ -432,8 +476,8 @@ tr:hover td{background:rgba(255,255,255,0.02);}
         <strong>Supervisor:</strong> Seu nome completo<br>
         <strong>Cargo:</strong> Seu cargo (ex: Supervisor de Vendas)<br>
         <strong>Assinatura:</strong> Como quer assinar mensagens e relatórios. Use duas linhas:<br>
-           Seu Nome<br>
-           Supervisor de Vendas - Nome da Empresa<br>
+           Seu Nome<br>
+           Supervisor de Vendas - Nome da Empresa<br>
         <strong>Contexto da Regional:</strong> Descreva as características da sua região — sazonalidade, perfil dos clientes, principais desafios. Esse texto aparece automaticamente no Relatório Executivo.<br><br>
         Após preencher tudo, clique em <strong>Salvar Perfil</strong>.</div>
         <div class="tut-dica">💡 O Contexto da Regional é o que diferencia o seu relatório. Quanto mais detalhado, mais inteligente e personalizado fica o diagnóstico automático.</div>
@@ -492,15 +536,15 @@ tr:hover td{background:rgba(255,255,255,0.02);}
         <div class="tut-titulo">Score dos Vendedores — Quem Precisa de Atenção Agora</div>
         <div class="tut-desc">O Score é uma nota de 0 a 100 calculada com os pesos reais da empresa:<br><br>
         <strong>🏆 Projeção: 40 pontos</strong> (maior peso — define sua premiação)<br>
-          • 110%+ = 40pts   • 100-109% = 35pts   • 90-99% = 20pts   • 80-89% = 8pts   • Abaixo de 80% = 0pts<br><br>
+          • 110%+ = 40pts   • 100-109% = 35pts   • 90-99% = 20pts   • 80-89% = 8pts   • Abaixo de 80% = 0pts<br><br>
         <strong>👥 Positivação: 25 pontos</strong><br>
-          • Taxa ≥90% = 25pts   • ≥75% = 18pts   • ≥60% = 10pts   • ≥45% = 4pts<br><br>
+          • Taxa ≥90% = 25pts   • ≥75% = 18pts   • ≥60% = 10pts   • ≥45% = 4pts<br><br>
         <strong>📉 Churn: 20 pontos</strong> (limite 9%)<br>
-          • ≤9% = 20pts   • ≤15% = 10pts   • ≤20% = 4pts   • Acima = 0pts<br><br>
+          • ≤9% = 20pts   • ≤15% = 10pts   • ≤20% = 4pts   • Acima = 0pts<br><br>
         <strong>📊 Margem: 10 pontos</strong><br>
-          • ≥17,5% = 10pts   • ≥15,5% = 7pts   • ≥14,9% = 3pts<br><br>
+          • ≥17,5% = 10pts   • ≥15,5% = 7pts   • ≥14,9% = 3pts<br><br>
         <strong>↩️ Devolução: 5 pontos</strong><br>
-          • ≤0,65% = 5pts   • ≤1,3% = 2pts   • Acima = 0pts<br><br>
+          • ≤0,65% = 5pts   • ≤1,3% = 2pts   • Acima = 0pts<br><br>
         <strong>Como usar:</strong> O ranking é ordenado do maior para o menor score. Vendedores com score abaixo de 50 precisam de intervenção urgente. Entre 50 e 70, monitoramento próximo. Acima de 70, manutenção.</div>
         <div class="tut-dica">💡 Use o Score para priorizar visitas de campo. Comece sempre pelo vendedor com menor score — ele tem o maior impacto na sua premiação e na saúde da regional.</div>
       </div>
@@ -813,11 +857,12 @@ var DB={
     contexto:'Região dos Lagos (RJ) — alta sazonalidade de setembro a abril. Na baixa temporada (maio a agosto) os clientes reduzem volume significativamente enquanto as metas permanecem. O principal desafio é manter a base ativa, reduzir churn e preparar a equipe para a explosão da alta temporada.'},
   biAtual:{regional:{},vendedores:[]},
   biAnterior:{regional:{},vendedores:[]},
-  posChurn:[],campos:[],planos:[],clientes:[],aniversarios:[]
+  posChurn:[],campos:[],planos:[],clientes:[],aniversarios:[],
+  lupaFatRegional:{},lupaFatVendedores:[],lupaTop50:[]
 };
 
 function salvar(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
-function carregar(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);}}catch(e){}}
+function carregar(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);if(!DB.lupaTop50)DB.lupaTop50=[];if(!DB.lupaFatVendedores)DB.lupaFatVendedores=[];if(!DB.lupaFatRegional)DB.lupaFatRegional={};}}catch(e){}}
 function n(v){return parseFloat((v||'0').toString().replace(',','.'))||0;}
 function fmt(v){return(v!==undefined&&v!==null&&v!=='')?v:'—';}
 function fP(v){if(v===undefined||v===null||v==='')return'—';var x=n(v);return x.toFixed(2)+'%';}
@@ -875,6 +920,7 @@ function init(){
   document.getElementById('pfCtx').value=p.contexto||'';
   document.getElementById('dashData').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   buildForms();renderTudo();renderProdutos();
+  renderLupaFat();renderLupaTop50();
 }
 
 function buildForms(){
@@ -924,7 +970,6 @@ function renderDash(){
     document.getElementById('stSaude').className='stat'+(scoreMedio>=70?'':scoreMedio>=50?' wn':' dg');
     document.getElementById('dSaude').textContent=scoreMedio;
     document.getElementById('dSaudeLbl').textContent=scoreLbl(scoreMedio)+' (0-100)';
-    // Calcula premiação do supervisor baseada na projeção regional
     var projReg=r&&r.proj?n(r.proj):0;
     var premioEl=document.getElementById('stPremio');
     var premioVal=document.getElementById('stPremioVal');
@@ -943,7 +988,6 @@ function renderDash(){
   var atenc=scores2.filter(function(x){return x.sc>=50&&x.sc<70;});
   var ok=scores2.length-crit.length-atenc.length;
   diag.innerHTML='<div class="dr"><div class="dot" style="background:var(--cy)"></div><span><strong>'+ok+'</strong> vendedor(es) SAUDÁVEL</span></div><div class="dr"><div class="dot" style="background:var(--ye)"></div><span><strong>'+atenc.length+'</strong> em ATENÇÃO</span></div><div class="dr"><div class="dot" style="background:var(--rd)"></div><span><strong>'+crit.length+'</strong> CRÍTICO — intervenção urgente</span></div>'+(r.saldoPos?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Saldo positivação: <strong style="color:'+(n(r.saldoPos)<0?'var(--rd)':'var(--cy)')+'">'+r.saldoPos+'</strong> clientes</span></div>':'')+(r.devR?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Devolução total: <strong style="color:var(--rd)">'+r.devR+'</strong> ('+fP(r.devPct)+')</span></div>':'')+(r.vendaMedia?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Venda Média Regional: <strong>R$ '+r.vendaMedia+'</strong></span></div>':'');
-  // Atualiza cards preditivos
   var vmEl=document.getElementById('dVendMedia');
   var skuEl=document.getElementById('dSku');
   var margEl=document.getElementById('dMargem');
@@ -960,22 +1004,15 @@ function renderDash(){
     var v=x.v,pc=x.pc;
     var proj=n(v.proj),churn=n(pc.churnRate),dev=Math.abs(n(v.devPct));
     var totPos=n(pc.positivados)+n(pc.naoPositivados),txPos=totPos>0?(n(pc.positivados)/totPos)*100:0;
-    // Projeção — impacta premiação do supervisor
     if(proj<90)alertas.push({t:'dg',m:v.nome+' — Projeção '+fP(v.proj)+' ABAIXO DE 90%. Impacta sua premiação. Intervenção urgente.'});
     else if(proj<100)alertas.push({t:'wn',m:v.nome+' — Projeção '+fP(v.proj)+'. Falta '+(100-proj).toFixed(1)+'pp para bater a meta de 100%.'});
-    // Churn
     if(churn>15)alertas.push({t:'dg',m:v.nome+' — Churn crítico: '+fP(pc.churnRate)+' (limite 9%). '+Math.round(churn/100*totPos)+' clientes perdidos. Ação imediata.'});
     else if(churn>9)alertas.push({t:'wn',m:v.nome+' — Churn em atenção: '+fP(pc.churnRate)+'. Monitorar clientes em risco de saída.'});
-    // Positivação
     if(n(pc.naoPositivados)>20)alertas.push({t:'wn',m:v.nome+' — '+pc.naoPositivados+' clientes não positivados. Impacta seu KPI de positivação.'});
-    // Devolução
     if(dev>DEV_LIM)alertas.push({t:'dg',m:v.nome+' — DEV '+fP(v.devPct)+' acima do limite de 0,65%. Investigar causa raiz.'});
-    // Margem
     if(n(v.marg)<15.5)alertas.push({t:'dg',m:v.nome+' — Margem '+fP(v.marg)+' abaixo do mínimo aceitável (15,5%). Focar Mix Rentável.'});
     else if(n(v.marg)<n(v.objMarg||17.5))alertas.push({t:'wn',m:v.nome+' — Margem '+fP(v.marg)+' abaixo do objetivo. Orientar sobre SKU de maior rentabilidade.'});
-    // Alerta preditivo combo
     if(churn>9&&proj<90)alertas.push({t:'dg',m:v.nome+' — ALERTA PREDITIVO: churn+projeção baixos indicam risco de queda acelerada. Visita de campo prioritária.'});
-    // Venda média e SKU como preditivos
     if(n(v.sku)>0&&n(v.sku)<10)alertas.push({t:'wn',m:v.nome+' — SKU/Cliente '+v.sku+' baixo. Mix limitado — potencial de crescimento não explorado.'});
   });
   alrt.innerHTML=alertas.length===0?'<div class="empty">Nenhum alerta. Regional saudável!</div>':alertas.slice(0,7).map(function(a){return'<div class="dr"><span class="badge '+(a.t==='dg'?'bdg':'bwn')+'" style="margin-right:6px;flex-shrink:0">'+(a.t==='dg'?'URGENTE':'ATENÇÃO')+'</span><span style="font-size:12px">'+a.m+'</span></div>';}).join('');
@@ -1168,9 +1205,6 @@ function miniStat(lbl,val,status){var cor=status==='ok'?'var(--cy)':status==='wn
 
 function imprimirRelatorio(){var rel=document.getElementById('relArea');if(!rel||rel.querySelector('.empty')){toast('Gere o relatório primeiro.');return;}window.print();}
 
-// ============================================================
-// NOVA FUNÇÃO enviarWhatsApp — abre relatório completo + PDF
-// ============================================================
 function enviarWhatsApp(){
   var el=document.getElementById('relArea');
   if(!el||el.querySelector('.empty')){toast('Gere o relatório primeiro.');return;}
@@ -1185,9 +1219,6 @@ function enviarWhatsApp(){
   toast('Relatório aberto! Clique em Imprimir → Salvar PDF → envie pelo WhatsApp.');
 }
 
-// ============================================================
-// NOVA FUNÇÃO enviarEmail — relatório completo + PDF + Copiar
-// ============================================================
 function enviarEmail(){
   var el=document.getElementById('relArea');
   if(!el||el.querySelector('.empty')){toast('Gere o relatório primeiro.');return;}
@@ -1227,9 +1258,6 @@ function renderChurn(){
   el.innerHTML='<div class="g2">'+com.map(function(p){var c=n(p.churnRate);return'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-weight:700">'+p.nome+'</div>'+(c>15?'<span class="badge bdg">CRÍTICO</span>':c>9?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+'</div><div style="font-size:44px;font-weight:700;color:'+(c>15?'var(--rd)':c>9?'var(--ye)':'var(--cy)')+';line-height:1">'+c.toFixed(1)+'%</div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-top:4px">CHURN RATE</div>'+(c>9?'<div style="margin-top:10px;font-size:12px;color:var(--t2);line-height:1.6">'+(c>15?'Situação crítica. Clientes migrando para a concorrência.':'Churn acima do aceitável. Reativar clientes perdidos.')+'</div>':'')+'</div>';}).join('')+'</div>';
 }
 
-// ============================================================
-// NOVA FUNÇÃO iniciarApresentacao — slides COMPLETOS responsivos
-// ============================================================
 function iniciarApresentacao(){
   var vs=DB.biAtual.vendedores;
   if(!vs||vs.length===0){toast('Lance os dados do BI primeiro.');return;}
@@ -1257,7 +1285,6 @@ function iniciarApresentacao(){
 
   var slides=[];
 
-  // Slide 1 — Capa
   slides.push('<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:calc(100vh - 70px);text-align:center;padding:clamp(20px,4vw,60px)">'+
     '<div style="font-size:clamp(10px,1.5vw,14px);letter-spacing:4px;color:#00E5C3;margin-bottom:clamp(16px,3vw,28px);text-transform:uppercase">GERENCION · SUPERVISÃO COMERCIAL · ARCOFOODS</div>'+
     '<div style="font-size:clamp(32px,7vw,72px);font-weight:700;color:white;margin-bottom:clamp(10px,2vw,16px);line-height:1.05">RELATÓRIO<br>EXECUTIVO</div>'+
@@ -1268,7 +1295,6 @@ function iniciarApresentacao(){
     '<div style="font-size:clamp(11px,1.4vw,15px);color:#B0BBC8;margin-top:6px">Score Regional: '+scoreM+'/100'+(baixa?' · ⚠ Baixa Temporada':'')+' · Projeção: '+projMedia.toFixed(1)+'%</div>'+
     '</div></div>');
 
-  // Slide 2 — Termômetro
   slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
     '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(16px,3vw,28px);text-transform:uppercase">TERMÔMETRO DA REGIONAL</div>'+
     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,20px);margin-bottom:clamp(10px,2vw,20px)">'+
@@ -1285,7 +1311,6 @@ function iniciarApresentacao(){
     (p.contexto?'<div style="margin-top:clamp(12px,2vw,20px);padding:clamp(10px,1.5vw,16px);background:rgba(255,255,255,0.04);border-radius:10px;font-size:clamp(11px,1.4vw,14px);color:#B0BBC8;border-left:3px solid #00E5C3">'+p.contexto+'</div>':'')+
     '</div>');
 
-  // Slide 3 — Diagnóstico Geral
   slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
     '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">DIAGNÓSTICO DA EQUIPE</div>'+
     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,20px);margin-bottom:clamp(14px,2.5vw,24px)">'+
@@ -1305,7 +1330,6 @@ function iniciarApresentacao(){
     }).join('')+
     '</div></div>');
 
-  // Slide 4 — Ranking Completo
   slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
     '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">RANKING COMPLETO — SCORE GERAL</div>'+
     '<div style="display:flex;flex-direction:column;gap:clamp(6px,1vw,10px)">'+
@@ -1322,7 +1346,6 @@ function iniciarApresentacao(){
     }).join('')+
     '</div></div>');
 
-  // Slides 5+ — 1 slide por vendedor com diagnóstico completo
   vs.forEach(function(v,i){
     var pc=DB.posChurn[i]||{},sc=scores[i],s=st(v.proj,v.devPct);
     var cor=sc>=70?'#00E5C3':sc>=50?'#FFB800':'#FF4560';
@@ -1362,7 +1385,6 @@ function iniciarApresentacao(){
       '</div></div>');
   });
 
-  // Slide — Positivação e Churn
   if(DB.posChurn&&DB.posChurn.length>0){
     slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
       '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">POSITIVAÇÃO E CHURN — DETALHE POR VENDEDOR</div>'+
@@ -1387,7 +1409,6 @@ function iniciarApresentacao(){
       '</div></div>');
   }
 
-  // Slide — Planos de Ação (se houver)
   if(planosAtivos.length>0){
     slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
       '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">PLANOS DE AÇÃO EM ANDAMENTO</div>'+
@@ -1406,7 +1427,6 @@ function iniciarApresentacao(){
       '</div></div>');
   }
 
-  // Slide Final — Diretrizes
   slides.push('<div style="padding:clamp(20px,4vw,50px)">'+
     '<div style="font-size:clamp(9px,1.3vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(14px,2.5vw,24px);text-transform:uppercase">DIRETRIZES — PRÓXIMAS AÇÕES PRIORITÁRIAS</div>'+
     '<div style="display:flex;flex-direction:column;gap:clamp(8px,1.5vw,12px);margin-bottom:clamp(14px,2vw,20px)">'+
@@ -1425,7 +1445,6 @@ function iniciarApresentacao(){
     'Score Regional: <strong style="color:'+sitCor+'">'+scoreM+'/100</strong>'+
     '</div></div></div>');
 
-  // CSS responsivo da apresentação
   var css='*{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;font-family:Inter,sans-serif;background:#060C18;color:#F0F4FF;overflow:hidden;}'+
     '.slide{display:none;height:100vh;overflow-y:auto;padding-bottom:72px;}'+
     '.slide.ativo{display:block;}'+
@@ -1464,6 +1483,7 @@ function iniciarApresentacao(){
   renderSlide();
   toast('Apresentação aberta! '+slides.length+' slides. Use F11 para tela cheia.');
 }
+
 // ============================================================
 // MÓDULO DE NEGOCIAÇÃO — REFORMULADO
 // ============================================================
@@ -1587,12 +1607,10 @@ function gerarNegociacao(){
   var p = DB.perfil;
   var hoje = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
 
-  // Gera o HTML da negociação — compacto, 1 página
   var corInvest = pctMedio<=2?'var(--cy)':pctMedio<=4?'var(--ye)':'var(--rd)';
 
   var html = '<div style="max-width:720px;font-size:13px;line-height:1.6">';
 
-  // CABEÇALHO compacto
   html += '<div class="rb" style="border-left:4px solid var(--cy);padding:16px 20px;margin-bottom:10px">';
   html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">';
   html += '<div>';
@@ -1608,14 +1626,12 @@ function gerarNegociacao(){
   html += '</div>';
   html += '</div></div>';
 
-  // JUSTIFICATIVA — gerada pela IA local inteligente
   var justificativa = gerarJustificativaIA(ctx, cli, conc, skus, prods, pctMedio, totalGeral);
   html += '<div class="rb" style="padding:14px 20px;margin-bottom:10px">';
   html += '<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cy);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--b)">Justificativa</div>';
   html += '<div style="color:var(--t2);font-size:12px;line-height:1.7">'+justificativa+'</div>';
   html += '</div>';
 
-  // PRODUTOS — tabela compacta
   html += '<div class="rb" style="padding:14px 20px;margin-bottom:10px">';
   html += '<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cy);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b)">Itens em Negociação</div>';
 
@@ -1634,7 +1650,6 @@ function gerarNegociacao(){
   });
   html += '</div>';
 
-  // RESUMO + ASSINATURA — linha final compacta
   html += '<div class="rb" style="padding:12px 20px;margin-bottom:0">';
   html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">';
   html += '<div style="display:flex;gap:20px">';
@@ -1663,22 +1678,18 @@ function cNeg(lbl,val,cor){
 }
 
 function gerarJustificativaIA(ctx, cli, conc, skus, prods, pctMedio, totalGeral){
-  // Gera justificativa profissional baseada nos dados
   var nomesCli = cli.split('–').pop().trim();
   var itens = prods.map(function(p){return p.nome.split('–').pop().trim();}).join(', ');
   var concTexto = conc ? ' frente à concorrência direta da <strong style="color:var(--t)">'+conc+'</strong>' : '';
   var skusTexto = skus ? ' O pedido contempla <strong style="color:var(--t)">'+skus+'</strong>, garantindo volume expressivo para o período.' : '';
 
-  // Base do contexto informado pelo usuário
   var base = ctx ? ctx.charAt(0).toUpperCase() + ctx.slice(1) : '';
 
-  // Monta justificativa profissional
   var texto = 'Solicitamos avaliação e aprovação de condição comercial especial para o cliente ';
   texto += '<strong style="color:var(--t)">'+cli+'</strong>, visando o fechamento do pedido em negociação.';
 
   if(base){
     texto += ' ' + base;
-    // Garante que termina com ponto
     if(!texto.trim().endsWith('.') && !texto.trim().endsWith('!') && !texto.trim().endsWith('?')){
       texto += '.';
     }
@@ -1751,15 +1762,11 @@ function limparNegociacao(){
   }
 }
 
-// ============================================================
-// IA NAS MENSAGENS DE ANIVERSÁRIO
-// ============================================================
 function gerarMsgIA(a, callback){
   var ass = (DB.perfil.assinatura || 'Leandro Felipe\nSupervisor de Vendas - Arcofoods');
-  var nome = a.nome.split(' ')[0]; // Primeiro nome
+  var nome = a.nome.split(' ')[0];
   var tipo = a.tipo;
   
-  // Templates ricos por tipo
   var templatesVendedor = [
     '🎂🎉 Feliz aniversário, ' + nome + '! Hoje é o dia de celebrar alguém que faz a diferença todos os dias em campo. Que este novo ciclo traga ainda mais conquistas, saúde e realização. Conte sempre comigo! 💪🙏\n\n' + ass,
     '🎊✨ Parabéns, ' + nome + '! Um vendedor do seu nível merece um dia especial à altura. Que seu novo ano seja repleto de metas batidas, clientes satisfeitos e muito sucesso. Grande abraço! 🚀\n\n' + ass,
@@ -1783,10 +1790,277 @@ function gerarMsgIA(a, callback){
   var templates = tipo === 'Vendedor' ? templatesVendedor : tipo === 'Cliente' ? templatesCliente : templatesOutro;
   var msg = templates[Math.floor(Math.random() * templates.length)];
   
-  // Pequeno delay para simular geração
   setTimeout(function(){ callback(msg); }, 800);
 }
 
+// ============================================================
+// MÓDULO LUPA — Faturamento (YTD) + Top 50
+// ============================================================
+function nLupa(v){
+  if(v===undefined||v===null)return 0;
+  var s=v.toString().trim();
+  s=s.replace(/R\$\s?/g,'').replace(/[%]/g,'');
+  s=s.replace(/\./g,'').replace(',','.');
+  s=s.replace(/[^\d.\-]/g,'');
+  var x=parseFloat(s);
+  return isNaN(x)?0:x;
+}
+function fBRL(v){return 'R$ '+(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});}
+function fPct1(v){return (v||0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';}
+function nBR1(v){return (v||0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1});}
+function nBR2(v){return (v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+function processarLupaFatRegional(){
+  var txt=document.getElementById('lupaFatRegColar').value.trim();
+  if(!txt){toast('Cole os dados da regional primeiro.');return;}
+  var cols=txt.split(/\t|;/).map(function(c){return c.trim();}).filter(function(c){return c!=='';});
+  if(cols.length<8){toast('Não consegui identificar as colunas. Confira se colou a linha inteira da tabela.');return;}
+  var nome=cols[0];
+  DB.lupaFatRegional={
+    nome:nome,
+    fat2025:nLupa(cols[1]),fat2026:nLupa(cols[2]),cresc:nLupa(cols[3]),
+    tgt26:nLupa(cols[4]),gap:nLupa(cols[5]),
+    sku25:nLupa(cols[6]),sku26:nLupa(cols[7]),cresSku:nLupa(cols[8]),
+    mcPct:nLupa(cols[9]),vendaMedia:nLupa(cols[10]),
+    metaYTG:nLupa(cols[11]),gapYTG:nLupa(cols[12])
+  };
+  salvar();
+  renderLupaFat();
+  toast('Regional processada!');
+}
+
+function processarLupaFatVendedores(){
+  var txt=document.getElementById('lupaFatVendColar').value.trim();
+  if(!txt){toast('Cole os dados dos vendedores primeiro.');return;}
+  var linhas=txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
+  var lista=[];
+  linhas.forEach(function(linha){
+    var cols=linha.split(/\t/).map(function(c){return c.trim();}).filter(function(c){return c!=='';});
+    if(cols.length<8)return;
+    if(/^vendedor$/i.test(cols[0])||/^total$/i.test(cols[0]))return;
+    lista.push({
+      nome:cols[0],
+      fat2025:nLupa(cols[1]),fat2026:nLupa(cols[2]),cresc:nLupa(cols[3]),
+      tgt26:nLupa(cols[4]),gap:nLupa(cols[5]),
+      sku25:nLupa(cols[6]),sku26:nLupa(cols[7]),cresSku:nLupa(cols[8]),
+      mcPct:nLupa(cols[9]),vendaMedia:nLupa(cols[10])
+    });
+  });
+  if(!lista.length){toast('Não consegui identificar nenhum vendedor. Confira o formato colado.');return;}
+  var totalFat2026=lista.reduce(function(s,v){return s+v.fat2026;},0);
+  lista.forEach(function(v){v.participacao=totalFat2026>0?(v.fat2026/totalFat2026)*100:0;});
+  DB.lupaFatVendedores=lista;
+  salvar();
+  renderLupaFat();
+  toast(lista.length+' vendedor(es) processado(s)!');
+}
+
+function fraseLupaRegional(r){
+  if(!r||!r.fat2026)return '';
+  var pctMeta=r.tgt26>0?(r.fat2026/r.tgt26)*100:0;
+  var faltaPct=100-pctMeta;
+  var margemDiff=r.mcPct-15.5;
+  var frase='A regional faturou '+fBRL(r.fat2026)+' no ano, contra '+fBRL(r.fat2025)+' no mesmo período do ano passado — um crescimento de '+fPct1(r.cresc)+'. ';
+  frase+='Isso representa '+nBR1(pctMeta)+'% da meta do ano, que é de '+fBRL(r.tgt26)+'';
+  frase+=faltaPct>0?(', faltando '+fBRL(Math.abs(r.gap))+' para bater o alvo.'):'.';
+  frase+=' O SKU por ponto de venda foi de '+nBR2(r.sku26)+', uma evolução de '+fPct1(r.cresSku)+' frente ao ano anterior. ';
+  frase+='A margem de contribuição está em '+nBR1(r.mcPct)+'%';
+  frase+=margemDiff>=0?(', '+nBR1(margemDiff)+' pontos acima do mínimo da empresa (15,5%).'):(', '+nBR1(Math.abs(margemDiff))+' pontos abaixo do mínimo da empresa (15,5%) — atenção.');
+  if(r.vendaMedia)frase+=' A venda média por cliente é de '+fBRL(r.vendaMedia)+'.';
+  if(r.gapYTG)frase+=' Para fechar o ano na meta, ainda falta '+fBRL(Math.abs(r.gapYTG))+' até dezembro.';
+  return frase;
+}
+
+function fraseLupaVendedor(v){
+  var pctMeta=v.tgt26>0?(v.fat2026/v.tgt26)*100:0;
+  var frase=v.nome+' representa '+nBR1(v.participacao)+'% do faturamento da regional. ';
+  frase+='Faturou '+fBRL(v.fat2026)+' este ano contra '+fBRL(v.fat2025)+' no ano passado — crescimento de '+fPct1(v.cresc)+'. ';
+  frase+='Está em '+nBR1(pctMeta)+'% da meta dele, que é '+fBRL(v.tgt26)+'';
+  frase+=pctMeta<100?(', faltando '+fBRL(Math.abs(v.gap))+'.'):'.';
+  frase+=' Margem de contribuição: '+nBR1(v.mcPct)+'%.';
+  return frase;
+}
+
+function renderLupaFat(){
+  var el=document.getElementById('lupaFatResultado');
+  if(!el)return;
+  var r=DB.lupaFatRegional,vs=DB.lupaFatVendedores;
+  if((!r||!r.fat2026)&&(!vs||!vs.length)){el.innerHTML='';return;}
+  var html='';
+  if(r&&r.fat2026){
+    var pctMeta=r.tgt26>0?(r.fat2026/r.tgt26)*100:0;
+    html+='<div class="rb" style="border-left:4px solid var(--cy)">';
+    html+='<div class="rs">Regional — '+(r.nome||DB.perfil.regional)+'</div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">';
+    html+='<div class="vm"><div class="vm-l">Fat 2026</div><div class="vm-v ok">'+fBRL(r.fat2026)+'</div></div>';
+    html+='<div class="vm"><div class="vm-l">% Cresc YoY</div><div class="vm-v '+(r.cresc>=0?'ok':'dg')+'">'+fPct1(r.cresc)+'</div></div>';
+    html+='<div class="vm"><div class="vm-l">% Meta Batida</div><div class="vm-v '+(pctMeta>=90?'ok':pctMeta>=70?'wn':'dg')+'">'+nBR1(pctMeta)+'%</div></div>';
+    html+='<div class="vm"><div class="vm-l">Margem MC%</div><div class="vm-v '+(r.mcPct>=15.5?'ok':'dg')+'">'+nBR1(r.mcPct)+'%</div></div>';
+    html+='</div>';
+    html+='<div style="background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.15);border-radius:8px;padding:14px;font-size:13px;color:var(--t2);line-height:1.8"><strong style="color:var(--cy);display:block;margin-bottom:6px;font-size:10px;letter-spacing:1px;text-transform:uppercase">📢 Fale assim na apresentação:</strong>'+fraseLupaRegional(r)+'</div>';
+    html+='</div>';
+  }
+  if(vs&&vs.length){
+    html+='<div class="rb"><div class="rs">Por Vendedor</div>';
+    vs.slice().sort(function(a,b){return b.fat2026-a.fat2026;}).forEach(function(v){
+      var pctMeta=v.tgt26>0?(v.fat2026/v.tgt26)*100:0;
+      var cor=pctMeta>=90?'var(--cy)':pctMeta>=70?'var(--ye)':'var(--rd)';
+      html+='<div style="border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;border-left:3px solid '+cor+'">';
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong style="color:var(--t);font-size:14px">'+v.nome+'</strong><span class="badge '+(pctMeta>=90?'bok':pctMeta>=70?'bwn':'bdg')+'">'+nBR1(v.participacao)+'% da regional</span></div>';
+      html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px">';
+      html+='<div class="vm"><div class="vm-l">Fat 2026</div><div class="vm-v">'+fBRL(v.fat2026)+'</div></div>';
+      html+='<div class="vm"><div class="vm-l">%Cresc</div><div class="vm-v '+(v.cresc>=0?'ok':'dg')+'">'+fPct1(v.cresc)+'</div></div>';
+      html+='<div class="vm"><div class="vm-l">% Meta</div><div class="vm-v" style="color:'+cor+'">'+nBR1(pctMeta)+'%</div></div>';
+      html+='<div class="vm"><div class="vm-l">Margem</div><div class="vm-v '+(v.mcPct>=15.5?'ok':'wn')+'">'+nBR1(v.mcPct)+'%</div></div>';
+      html+='</div>';
+      html+='<div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--cy);display:block;margin-bottom:4px;font-size:9px;letter-spacing:1px;text-transform:uppercase">📢 Fale assim:</strong>'+fraseLupaVendedor(v)+'</div>';
+      html+='</div>';
+    });
+    html+='</div>';
+  }
+  el.innerHTML=html;
+}
+
+function processarLupaTop50(){
+  var txt=document.getElementById('lupaTop50Colar').value.trim();
+  if(!txt){toast('Cole a tabela do Top 50 primeiro.');return;}
+  var linhas=txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
+  var lista=[];
+  linhas.forEach(function(linha){
+    var cols=linha.split(/\t/).map(function(c){return c.trim();});
+    if(cols.length<8)return;
+    if(/^ranking/i.test(cols[0]))return;
+    var rank2026=cols[0],rank2025=cols[1],vendCompleto=cols[2],clienteCompleto=cols[3];
+    var fat2026=nLupa(cols[4]),fat2025=nLupa(cols[5]),cresc=cols[6],medioMes=nLupa(cols[7]);
+    var skuMedia=cols[8]?nLupa(cols[8]):0;
+    var semaforo=cols[9]||'';
+    if(!fat2026)return;
+    var vendNome=vendCompleto;
+    var vendMatch=vendCompleto.match(/^\d+\s*-\s*(.+)$/);
+    if(vendMatch)vendNome=vendMatch[1].trim();
+    var crescVal=nLupa(cresc);
+    var temVendaAnterior=fat2025>0;
+    lista.push({
+      rank2026:rank2026,rank2025:rank2025,
+      vendedor:vendNome,vendedorCompleto:vendCompleto,
+      cliente:clienteCompleto,
+      fat2026:fat2026,fat2025:fat2025,
+      cresc:crescVal,temHistorico:temVendaAnterior,
+      medioMes:medioMes,skuMedia:skuMedia,
+      semaforo:semaforo.trim(),
+      acao:''
+    });
+  });
+  if(!lista.length){toast('Não consegui identificar nenhum cliente. Confira o formato colado.');return;}
+  var antigos={};
+  (DB.lupaTop50||[]).forEach(function(c){if(c.acao)antigos[c.cliente+'|'+c.vendedor]=c.acao;});
+  lista.forEach(function(c){var k=c.cliente+'|'+c.vendedor;if(antigos[k])c.acao=antigos[k];});
+  DB.lupaTop50=lista;
+  salvar();
+  var sel=document.getElementById('lupaTop50FiltroVend');
+  if(sel){
+    var vends=Array.from(new Set(lista.map(function(c){return c.vendedor;}))).sort();
+    sel.innerHTML='<option value="">Todos</option>'+vends.map(function(v){return '<option value="'+v+'">'+v+'</option>';}).join('');
+  }
+  document.getElementById('lupaTop50Filtros').style.display='block';
+  renderLupaTop50();
+  toast(lista.length+' clientes processados!');
+}
+
+function classificarLupaCliente(c){
+  var sem=(c.semaforo||'').toLowerCase();
+  if(sem.indexOf('forte')>=0)return 'forte';
+  if(sem.indexOf('alto risco')>=0)return 'critico';
+  if(sem.indexOf('risco')>=0)return 'risco';
+  if(sem.indexOf('atenção')>=0||sem.indexOf('atencao')>=0)return 'risco';
+  if(!c.temHistorico)return 'forte';
+  return c.cresc>=0?'forte':'critico';
+}
+
+function fraseLupaCliente(c){
+  var cls=classificarLupaCliente(c);
+  var frase='';
+  if(!c.temHistorico){
+    frase=c.cliente.split('-').slice(1).join('-').trim()||c.cliente;
+    frase+=', cliente do '+c.vendedor+', é uma venda nova este ano — faturou '+fBRL(c.fat2026)+' sem histórico de comparação.';
+    return frase;
+  }
+  var nomeCliente=c.cliente.split('-').slice(1).join('-').trim()||c.cliente;
+  frase=nomeCliente+', cliente do '+c.vendedor+', ';
+  if(cls==='forte'){
+    frase+='cresceu '+fPct1(Math.abs(c.cresc))+' — de '+fBRL(c.fat2025)+' para '+fBRL(c.fat2026)+'. Resultado forte, dentro do esperado.';
+  } else if(cls==='risco'){
+    frase+=c.cresc>=0?('cresceu apenas '+fPct1(c.cresc)):('caiu '+fPct1(Math.abs(c.cresc)));
+    frase+=' — de '+fBRL(c.fat2025)+' para '+fBRL(c.fat2026)+'. Está em zona de risco, precisa de atenção.';
+  } else {
+    frase+='caiu '+fPct1(Math.abs(c.cresc))+' — de '+fBRL(c.fat2025)+' para '+fBRL(c.fat2026)+'. Maior alerta da carteira.';
+  }
+  if(c.acao)frase+=' AÇÃO EM ANDAMENTO: '+c.acao;
+  return frase;
+}
+
+function salvarAcaoLupaCliente(idx,valor){
+  if(!DB.lupaTop50[idx])return;
+  DB.lupaTop50[idx].acao=valor;
+  salvar();
+  toast('Ação salva!');
+}
+
+function renderLupaTop50(){
+  var elResumo=document.getElementById('lupaTop50Resumo'),elLista=document.getElementById('lupaTop50Lista');
+  if(!elResumo||!elLista)return;
+  var dados=DB.lupaTop50||[];
+  if(!dados.length){elResumo.innerHTML='';elLista.innerHTML='';return;}
+
+  var filtroVend=document.getElementById('lupaTop50FiltroVend')?document.getElementById('lupaTop50FiltroVend').value:'';
+  var filtroSit=document.getElementById('lupaTop50FiltroSit')?document.getElementById('lupaTop50FiltroSit').value:'';
+  var ordem=document.getElementById('lupaTop50Ordem')?document.getElementById('lupaTop50Ordem').value:'rank';
+
+  var filtrados=dados.filter(function(c,i){c._idx=i;return true;});
+  if(filtroVend)filtrados=filtrados.filter(function(c){return c.vendedor===filtroVend;});
+  if(filtroSit)filtrados=filtrados.filter(function(c){return classificarLupaCliente(c)===filtroSit;});
+
+  if(ordem==='queda')filtrados=filtrados.slice().sort(function(a,b){return a.cresc-b.cresc;});
+  else if(ordem==='alta')filtrados=filtrados.slice().sort(function(a,b){return b.cresc-a.cresc;});
+  else if(ordem==='fat')filtrados=filtrados.slice().sort(function(a,b){return b.fat2026-a.fat2026;});
+  else filtrados=filtrados.slice().sort(function(a,b){return parseInt(a.rank2026||999)-parseInt(b.rank2026||999);});
+
+  var forte=dados.filter(function(c){return classificarLupaCliente(c)==='forte';}).length;
+  var risco=dados.filter(function(c){return classificarLupaCliente(c)==='risco';}).length;
+  var critico=dados.filter(function(c){return classificarLupaCliente(c)==='critico';}).length;
+  var totalFat2026=dados.reduce(function(s,c){return s+c.fat2026;},0);
+  var totalFat2025=dados.reduce(function(s,c){return s+c.fat2025;},0);
+  var crescGeral=totalFat2025>0?((totalFat2026-totalFat2025)/totalFat2025)*100:0;
+
+  elResumo.innerHTML='<div class="stats s4" style="margin-bottom:14px">'+
+    '<div class="stat"><div class="st-l">Faturamento Top '+dados.length+'</div><div class="st-v" style="font-size:20px">'+fBRL(totalFat2026)+'</div><div class="st-s">'+fPct1(crescGeral)+' vs ano anterior</div></div>'+
+    '<div class="stat"><div class="st-l">🟢 Forte / Crescendo</div><div class="st-v">'+forte+'</div></div>'+
+    '<div class="stat wn"><div class="st-l">🟡 Risco / Atenção</div><div class="st-v">'+risco+'</div></div>'+
+    '<div class="stat dg"><div class="st-l">🔴 Alto Risco / Queda</div><div class="st-v">'+critico+'</div></div>'+
+    '</div>';
+
+  elLista.innerHTML=filtrados.map(function(c){
+    var idx=c._idx;
+    var cls=classificarLupaCliente(c);
+    var cor=cls==='forte'?'var(--cy)':cls==='risco'?'var(--ye)':'var(--rd)';
+    var badge=cls==='forte'?'<span class="badge bok">FORTE</span>':cls==='risco'?'<span class="badge bwn">RISCO</span>':'<span class="badge bdg">ALTO RISCO</span>';
+    var mostrarAcao=(cls==='risco'||cls==='critico');
+    var html='<div class="vc" style="border-left:3px solid '+cor+'">';
+    html+='<div class="vc-top"><div><div class="vc-nome">#'+c.rank2026+' — '+c.cliente+'</div><div class="vc-cod">'+c.vendedorCompleto+'</div></div>'+badge+'</div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px">';
+    html+='<div class="vm"><div class="vm-l">Fat 2026</div><div class="vm-v">'+fBRL(c.fat2026)+'</div></div>';
+    html+='<div class="vm"><div class="vm-l">Fat 2025</div><div class="vm-v">'+(c.temHistorico?fBRL(c.fat2025):'—')+'</div></div>';
+    html+='<div class="vm"><div class="vm-l">% Cresc</div><div class="vm-v '+(c.cresc>=0?'ok':'dg')+'">'+(c.temHistorico?fPct1(c.cresc):'novo')+'</div></div>';
+    html+='<div class="vm"><div class="vm-l">Médio/Mês</div><div class="vm-v">'+fBRL(c.medioMes)+'</div></div>';
+    html+='</div>';
+    html+='<div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:'+(mostrarAcao?'10px':'0')+'"><strong style="color:var(--cy);display:block;margin-bottom:4px;font-size:9px;letter-spacing:1px;text-transform:uppercase">📢 Fale assim:</strong>'+fraseLupaCliente(c)+'</div>';
+    if(mostrarAcao){
+      html+='<div class="fg" style="margin-bottom:0"><label class="fl">O que estamos fazendo para recuperar este cliente</label><textarea class="inp" style="min-height:50px" placeholder="Ex: visita agendada com o RCA dia X, oferta especial enviada, etc." onchange="salvarAcaoLupaCliente('+idx+',this.value)">'+(c.acao||'')+'</textarea></div>';
+    }
+    html+='</div>';
+    return html;
+  }).join('');
+}
 </script>
 <script>
 if('serviceWorker' in navigator){
