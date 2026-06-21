@@ -208,6 +208,8 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <div class="nav-grp">Lupa (Diretoria)</div>
       <button class="nb" onclick="ir('lupaFat',this)">🔍 Lupa · Faturamento</button>
       <button class="nb" onclick="ir('lupaTop50',this)">🔍 Lupa · Top 50</button>
+      <button class="nb" onclick="ir('lupaSss',this)">🔍 Lupa · SSS</button>
+      <button class="nb" onclick="ir('lupaIndic',this)">🔍 Lupa · Indicadores</button>
       <div class="nav-grp">Relacionamento</div>
       <button class="nb" onclick="ir('aniversarios',this)">🎂 Aniversariantes</button>
       <div class="nav-grp">Gestão</div>
@@ -400,6 +402,32 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 
       <div id="lupaTop50Resumo"></div>
       <div id="lupaTop50Lista"></div>
+    </div>
+
+    <div id="lupaSss" class="pg">
+      <div class="ph"><div class="pt">Lupa · SSS Cadastrado</div><div class="ps">Same Store Sales — crescimento dos clientes já existentes, separado dos novos</div></div>
+      <div class="bn bn-cy"><span>ℹ</span><div>Cole a tabela <strong>SSS Cadastrado</strong> do BI Gestor (Vendedor, SSS 2025, SSS 2026, Var SSS, %SSS, Perda, Novos, Var Novos, %Novos, %Part, Fat 2025, Fat 2026). O sistema calcula e gera a frase pronta por vendedor.</div></div>
+
+      <div class="card">
+        <div class="ct">Colar Tabela SSS Cadastrado</div>
+        <textarea id="lupaSssColar" class="inp" style="min-height:160px" placeholder="Cole aqui a tabela inteira do SSS Cadastrado copiada do Power BI"></textarea>
+        <button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaSss()">Processar SSS</button>
+      </div>
+
+      <div id="lupaSssResultado"></div>
+    </div>
+
+    <div id="lupaIndic" class="pg">
+      <div class="ph"><div class="pt">Lupa · Indicadores</div><div class="ps">SKU/PDV, Margem de Contribuição e Venda Média por vendedor</div></div>
+      <div class="bn bn-cy"><span>ℹ</span><div>Cole a tabela <strong>Indicadores</strong> do BI Gestor (Vendedor, Sku/Pdv 2025, Sku/Pdv 2026, %Sku/Pdv, Mc% 2025, Mc% 2026, %Mc, Venda Média 2025, Venda Média 2026, %Venda Média). O sistema calcula e gera a frase pronta por vendedor.</div></div>
+
+      <div class="card">
+        <div class="ct">Colar Tabela Indicadores</div>
+        <textarea id="lupaIndicColar" class="inp" style="min-height:160px" placeholder="Cole aqui a tabela inteira de Indicadores copiada do Power BI"></textarea>
+        <button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaIndic()">Processar Indicadores</button>
+      </div>
+
+      <div id="lupaIndicResultado"></div>
     </div>
 
     <div id="aniversarios" class="pg">
@@ -858,11 +886,11 @@ var DB={
   biAtual:{regional:{},vendedores:[]},
   biAnterior:{regional:{},vendedores:[]},
   posChurn:[],campos:[],planos:[],clientes:[],aniversarios:[],
-  lupaFatRegional:{},lupaFatVendedores:[],lupaTop50:[]
+  lupaFatRegional:{},lupaFatVendedores:[],lupaTop50:[],lupaSss:[],lupaIndic:[]
 };
 
 function salvar(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
-function carregar(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);if(!DB.lupaTop50)DB.lupaTop50=[];if(!DB.lupaFatVendedores)DB.lupaFatVendedores=[];if(!DB.lupaFatRegional)DB.lupaFatRegional={};}}catch(e){}}
+function carregar(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);if(!DB.lupaTop50)DB.lupaTop50=[];if(!DB.lupaFatVendedores)DB.lupaFatVendedores=[];if(!DB.lupaFatRegional)DB.lupaFatRegional={};if(!DB.lupaSss)DB.lupaSss=[];if(!DB.lupaIndic)DB.lupaIndic=[];}}catch(e){}}
 function n(v){return parseFloat((v||'0').toString().replace(',','.'))||0;}
 function fmt(v){return(v!==undefined&&v!==null&&v!=='')?v:'—';}
 function fP(v){if(v===undefined||v===null||v==='')return'—';var x=n(v);return x.toFixed(2)+'%';}
@@ -920,7 +948,7 @@ function init(){
   document.getElementById('pfCtx').value=p.contexto||'';
   document.getElementById('dashData').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   buildForms();renderTudo();renderProdutos();
-  renderLupaFat();renderLupaTop50();
+  renderLupaFat();renderLupaTop50();renderLupaSss();renderLupaIndic();
 }
 
 function buildForms(){
@@ -1914,7 +1942,7 @@ function renderLupaFat(){
     html+='<div class="vm"><div class="vm-l">% Meta Batida</div><div class="vm-v '+(pctMeta>=90?'ok':pctMeta>=70?'wn':'dg')+'">'+nBR1(pctMeta)+'%</div></div>';
     html+='<div class="vm"><div class="vm-l">Margem MC%</div><div class="vm-v '+(r.mcPct>=15.5?'ok':'dg')+'">'+nBR1(r.mcPct)+'%</div></div>';
     html+='</div>';
-    html+='<div style="background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.15);border-radius:8px;padding:14px;font-size:13px;color:var(--t2);line-height:1.8"><strong style="color:var(--cy);display:block;margin-bottom:6px;font-size:10px;letter-spacing:1px;text-transform:uppercase">📢 Fale assim na apresentação:</strong>'+fraseLupaRegional(r)+'</div>';
+    html+='<div style="background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.15);border-radius:8px;padding:14px;font-size:13px;color:var(--t2);line-height:1.8"><strong style="color:var(--cy);display:block;margin-bottom:6px;font-size:10px;letter-spacing:1px;text-transform:uppercase">NOTA:</strong>'+fraseLupaRegional(r)+'</div>';
     html+='</div>';
   }
   if(vs&&vs.length){
@@ -1930,7 +1958,7 @@ function renderLupaFat(){
       html+='<div class="vm"><div class="vm-l">% Meta</div><div class="vm-v" style="color:'+cor+'">'+nBR1(pctMeta)+'%</div></div>';
       html+='<div class="vm"><div class="vm-l">Margem</div><div class="vm-v '+(v.mcPct>=15.5?'ok':'wn')+'">'+nBR1(v.mcPct)+'%</div></div>';
       html+='</div>';
-      html+='<div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--cy);display:block;margin-bottom:4px;font-size:9px;letter-spacing:1px;text-transform:uppercase">📢 Fale assim:</strong>'+fraseLupaVendedor(v)+'</div>';
+      html+='<div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--cy);display:block;margin-bottom:4px;font-size:9px;letter-spacing:1px;text-transform:uppercase">NOTA:</strong>'+fraseLupaVendedor(v)+'</div>';
       html+='</div>';
     });
     html+='</div>';
@@ -2070,13 +2098,149 @@ function renderLupaTop50(){
     html+='<div class="vm"><div class="vm-l">% Cresc</div><div class="vm-v '+(c.cresc>=0?'ok':'dg')+'">'+(c.temHistorico?fPct1(c.cresc):'novo')+'</div></div>';
     html+='<div class="vm"><div class="vm-l">Médio/Mês</div><div class="vm-v">'+fBRL(c.medioMes)+'</div></div>';
     html+='</div>';
-    html+='<div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:'+(mostrarAcao?'10px':'0')+'"><strong style="color:var(--cy);display:block;margin-bottom:4px;font-size:9px;letter-spacing:1px;text-transform:uppercase">📢 Fale assim:</strong>'+fraseLupaCliente(c)+'</div>';
+    html+='<div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:'+(mostrarAcao?'10px':'0')+'"><strong style="color:var(--cy);display:block;margin-bottom:4px;font-size:9px;letter-spacing:1px;text-transform:uppercase">NOTA:</strong>'+fraseLupaCliente(c)+'</div>';
     if(mostrarAcao){
       html+='<div class="fg" style="margin-bottom:0"><label class="fl">O que estamos fazendo para recuperar este cliente</label><textarea class="inp" style="min-height:50px" placeholder="Ex: visita agendada com o RCA dia X, oferta especial enviada, etc." onchange="salvarAcaoLupaCliente('+idx+',this.value)">'+(c.acao||'')+'</textarea></div>';
     }
     html+='</div>';
     return html;
   }).join('');
+}
+
+// ============================================================
+// MÓDULO LUPA — SSS Cadastrado
+// ============================================================
+function processarLupaSss(){
+  var txt=document.getElementById('lupaSssColar').value.trim();
+  if(!txt){toast('Cole os dados do SSS Cadastrado primeiro.');return;}
+  var linhas=txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
+  var lista=[];
+  linhas.forEach(function(linha){
+    var cols=linha.split(/\t/).map(function(c){return c.trim();}).filter(function(c){return c!=='';});
+    if(cols.length<10)return;
+    if(/^vendedor$/i.test(cols[0])||/^total$/i.test(cols[0]))return;
+    lista.push({
+      nome:cols[0],
+      sss2025:nLupa(cols[1]),sss2026:nLupa(cols[2]),varSss:nLupa(cols[3]),pctSss:nLupa(cols[4]),
+      perda:nLupa(cols[5]),novos:nLupa(cols[6]),varNovos:nLupa(cols[7]),pctNovos:nLupa(cols[8]),
+      pctPart:nLupa(cols[9]),fat2025:cols[10]?nLupa(cols[10]):0,fat2026:cols[11]?nLupa(cols[11]):0
+    });
+  });
+  if(!lista.length){toast('Não consegui identificar nenhum vendedor. Confira o formato colado.');return;}
+  DB.lupaSss=lista;
+  salvar();
+  renderLupaSss();
+  toast(lista.length+' vendedor(es) processado(s)!');
+}
+
+function fraseLupaSss(s){
+  var frase=s.nome+' tem SSS (vendas dos clientes já existentes) de '+fBRL(s.sss2026)+' este ano, contra '+fBRL(s.sss2025)+' no ano passado';
+  frase+=s.pctSss>=0?(' — crescimento de '+fPct1(s.pctSss)+' nos clientes que já compravam.'):(' — queda de '+fPct1(Math.abs(s.pctSss))+' nos clientes que já compravam.');
+  if(s.perda)frase+=' Perdeu '+fBRL(s.perda)+' em vendas de clientes que pararam de comprar.';
+  if(s.novos)frase+=' Conquistou '+fBRL(s.novos)+' em clientes novos'+(s.pctNovos?(', '+(s.pctNovos>=0?'crescimento de ':'queda de ')+fPct1(Math.abs(s.pctNovos))+' frente ao mesmo período do ano passado.'):'.');
+  if(s.pctPart)frase+=' Os clientes novos representam '+nBR1(s.pctPart)+'% do faturamento total dele.';
+  return frase;
+}
+
+function renderLupaSss(){
+  var el=document.getElementById('lupaSssResultado');
+  if(!el)return;
+  var lista=DB.lupaSss||[];
+  if(!lista.length){el.innerHTML='';return;}
+  var totalSss2026=lista.reduce(function(s,v){return s+v.sss2026;},0);
+  var totalSss2025=lista.reduce(function(s,v){return s+v.sss2025;},0);
+  var totalNovos=lista.reduce(function(s,v){return s+v.novos;},0);
+  var totalPerda=lista.reduce(function(s,v){return s+v.perda;},0);
+  var crescGeral=totalSss2025>0?((totalSss2026-totalSss2025)/totalSss2025)*100:0;
+  var html='<div class="rb" style="border-left:4px solid var(--cy)"><div class="rs">Resumo Regional — SSS</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">';
+  html+='<div class="vm"><div class="vm-l">SSS Total 2026</div><div class="vm-v ok">'+fBRL(totalSss2026)+'</div></div>';
+  html+='<div class="vm"><div class="vm-l">%Cresc SSS</div><div class="vm-v '+(crescGeral>=0?'ok':'dg')+'">'+fPct1(crescGeral)+'</div></div>';
+  html+='<div class="vm"><div class="vm-l">Novos (R$)</div><div class="vm-v ok">'+fBRL(totalNovos)+'</div></div>';
+  html+='<div class="vm"><div class="vm-l">Perda (R$)</div><div class="vm-v dg">'+fBRL(totalPerda)+'</div></div>';
+  html+='</div></div>';
+  html+='<div class="rb"><div class="rs">Por Vendedor</div>';
+  lista.slice().sort(function(a,b){return b.sss2026-a.sss2026;}).forEach(function(s){
+    var cor=s.pctSss>=0?'var(--cy)':'var(--rd)';
+    html+='<div style="border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;border-left:3px solid '+cor+'">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong style="color:var(--t);font-size:14px">'+s.nome+'</strong><span class="badge '+(s.pctSss>=0?'bok':'bdg')+'">'+fPct1(s.pctSss)+' SSS</span></div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px">';
+    html+='<div class="vm"><div class="vm-l">SSS 2026</div><div class="vm-v">'+fBRL(s.sss2026)+'</div></div>';
+    html+='<div class="vm"><div class="vm-l">Perda</div><div class="vm-v dg">'+fBRL(s.perda)+'</div></div>';
+    html+='<div class="vm"><div class="vm-l">Novos</div><div class="vm-v ok">'+fBRL(s.novos)+'</div></div>';
+    html+='<div class="vm"><div class="vm-l">% Part. Novos</div><div class="vm-v">'+nBR1(s.pctPart)+'%</div></div>';
+    html+='</div>';
+    html+='<div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--cy);display:block;margin-bottom:4px;font-size:9px;letter-spacing:1px;text-transform:uppercase">NOTA:</strong>'+fraseLupaSss(s)+'</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+// ============================================================
+// MÓDULO LUPA — Indicadores (SKU/PDV, Margem, Venda Média)
+// ============================================================
+function processarLupaIndic(){
+  var txt=document.getElementById('lupaIndicColar').value.trim();
+  if(!txt){toast('Cole os dados de Indicadores primeiro.');return;}
+  var linhas=txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
+  var lista=[];
+  linhas.forEach(function(linha){
+    var cols=linha.split(/\t/).map(function(c){return c.trim();}).filter(function(c){return c!=='';});
+    if(cols.length<9)return;
+    if(/^vendedor$/i.test(cols[0])||/^total$/i.test(cols[0]))return;
+    lista.push({
+      nome:cols[0],
+      sku2025:nLupa(cols[1]),sku2026:nLupa(cols[2]),pctSku:nLupa(cols[3]),
+      mc2025:nLupa(cols[4]),mc2026:nLupa(cols[5]),deltaMc:nLupa(cols[6]),
+      vm2025:nLupa(cols[7]),vm2026:nLupa(cols[8]),pctVm:cols[9]?nLupa(cols[9]):0
+    });
+  });
+  if(!lista.length){toast('Não consegui identificar nenhum vendedor. Confira o formato colado.');return;}
+  DB.lupaIndic=lista;
+  salvar();
+  renderLupaIndic();
+  toast(lista.length+' vendedor(es) processado(s)!');
+}
+
+function fraseLupaIndic(d){
+  var frase=d.nome+' tem SKU por ponto de venda de '+nBR2(d.sku2026)+', uma '+(d.pctSku>=0?'evolução':'queda')+' de '+fPct1(Math.abs(d.pctSku))+' frente ao ano passado. ';
+  frase+='A margem de contribuição é de '+nBR1(d.mc2026)+'%';
+  frase+=d.deltaMc>=0?(', '+nBR1(d.deltaMc)+' pontos acima do ano anterior.'):(', '+nBR1(Math.abs(d.deltaMc))+' pontos abaixo do ano anterior.');
+  frase+=' A venda média por cliente é de '+fBRL(d.vm2026)+'';
+  frase+=d.pctVm?(', '+(d.pctVm>=0?'crescimento':'queda')+' de '+fPct1(Math.abs(d.pctVm))+' frente a '+fBRL(d.vm2025)+'.'):'.';
+  return frase;
+}
+
+function renderLupaIndic(){
+  var el=document.getElementById('lupaIndicResultado');
+  if(!el)return;
+  var lista=DB.lupaIndic||[];
+  if(!lista.length){el.innerHTML='';return;}
+  var skuMedio=lista.reduce(function(s,v){return s+v.sku2026;},0)/lista.length;
+  var mcMedio=lista.reduce(function(s,v){return s+v.mc2026;},0)/lista.length;
+  var vmMedio=lista.reduce(function(s,v){return s+v.vm2026;},0)/lista.length;
+  var html='<div class="rb" style="border-left:4px solid var(--cy)"><div class="rs">Resumo Regional — Indicadores</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">';
+  html+='<div class="vm"><div class="vm-l">SKU/PDV Médio</div><div class="vm-v ok">'+nBR2(skuMedio)+'</div></div>';
+  html+='<div class="vm"><div class="vm-l">Margem MC% Média</div><div class="vm-v '+(mcMedio>=15.5?'ok':'wn')+'">'+nBR1(mcMedio)+'%</div></div>';
+  html+='<div class="vm"><div class="vm-l">Venda Média</div><div class="vm-v ok">'+fBRL(vmMedio)+'</div></div>';
+  html+='</div></div>';
+  html+='<div class="rb"><div class="rs">Por Vendedor</div>';
+  lista.slice().sort(function(a,b){return b.mc2026-a.mc2026;}).forEach(function(d){
+    var cor=d.mc2026>=15.5?'var(--cy)':'var(--ye)';
+    html+='<div style="border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;border-left:3px solid '+cor+'">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong style="color:var(--t);font-size:14px">'+d.nome+'</strong><span class="badge '+(d.mc2026>=15.5?'bok':'bwn')+'">Margem '+nBR1(d.mc2026)+'%</span></div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">';
+    html+='<div class="vm"><div class="vm-l">SKU/PDV</div><div class="vm-v">'+nBR2(d.sku2026)+'</div></div>';
+    html+='<div class="vm"><div class="vm-l">Margem MC%</div><div class="vm-v" style="color:'+cor+'">'+nBR1(d.mc2026)+'%</div></div>';
+    html+='<div class="vm"><div class="vm-l">Venda Média</div><div class="vm-v">'+fBRL(d.vm2026)+'</div></div>';
+    html+='</div>';
+    html+='<div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--cy);display:block;margin-bottom:4px;font-size:9px;letter-spacing:1px;text-transform:uppercase">NOTA:</strong>'+fraseLupaIndic(d)+'</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  el.innerHTML=html;
 }
 </script>
 <script>
