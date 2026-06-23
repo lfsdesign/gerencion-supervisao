@@ -376,8 +376,242 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       </div>
     </div>
     <div id="tutorial" class="pg">
-      <div class="ph"><div class="pt">Tutorial Completo</div><div class="ps">Guia para usar o GERENCION</div></div>
-      <div class="tut-step"><div class="tut-num">1</div><div class="tut-titulo">Novo Lançar BI — Cole e Processe</div><div class="tut-desc">O módulo Lançar BI foi atualizado. Agora você copia a tabela direto do Power BI e cola — sem preencher campo por campo.<br><br><strong>Bloco 1 — Regional (Página 1):</strong> Copie a linha NORTE FLUMINENSE e cole. Clique em Processar Regional.<br><strong>Bloco 2 — Vendedores (Página 1):</strong> Copie todas as linhas dos vendedores (sem cabeçalho, sem Total). Clique em Processar Vendedores.<br><strong>Bloco 3 — Churn (Página 7):</strong> Copie as linhas dos vendedores da tabela de Churn (sem cabeçalho, sem Total). O sistema calcula o Churn da Regional automaticamente.<br><br>Ao final clique em <strong>💾 Salvar BI Completo</strong>.</div><div class="tut-dica">💡 O preview mostra os valores detectados antes de salvar — confira se estão corretos.</div></div>
+      <div class="ph"><div class="pt">Tutorial Completo</div><div class="ps">Aprenda a usar o GERENCION do zero ao avançado — guia para Supervisores de Vendas</div></div>
+      <div class="bn bn-cy"><span>📘</span><div>Este tutorial cobre todas as funcionalidades do sistema. Leia uma vez do início ao fim e depois use como consulta rápida. O GERENCION foi desenvolvido para transformar dados do Power BI em inteligência comercial prática.</div></div>
+
+      <div class="tut-step">
+        <div class="tut-num">1</div>
+        <div class="tut-titulo">O que é o GERENCION e como ele funciona</div>
+        <div class="tut-desc">O GERENCION é um sistema de supervisão comercial que transforma os dados brutos do Power BI em diagnósticos, alertas e planos de ação inteligentes. Ele não substitui o BI — ele o amplifica e cruza todas as informações.<br><br>
+        <strong>Lógica do sistema:</strong><br>
+        1. Você alimenta o sistema com os dados do BI (Vendas + Lupa + Churn)<br>
+        2. O sistema cruza tudo automaticamente<br>
+        3. Gera diagnósticos, alertas, narrativas e sugestões de ação<br>
+        4. Você prepara a apresentação com seu plano<br>
+        5. A diretoria vê uma apresentação profissional e coerente<br><br>
+        <strong>Onde os dados ficam salvos?</strong> No próprio dispositivo (localStorage do navegador). Use sempre o mesmo dispositivo ou exporte/importe regularmente.<br><br>
+        <strong>O sistema funciona offline?</strong> Sim, após o primeiro carregamento funciona sem internet.</div>
+        <div class="tut-dica">💡 Quando você baixa uma versão nova do arquivo HTML, seus dados NÃO somem — eles ficam no browser. Mas sempre exporte antes de trocar de dispositivo.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">2</div>
+        <div class="tut-titulo">Primeiro Acesso — Configure seu Perfil</div>
+        <div class="tut-desc">Antes de usar qualquer função, configure seu perfil. Vá em <strong>⚙ Perfil</strong> no menu lateral e preencha todos os campos:<br><br>
+        <strong>Empresa:</strong> Nome da empresa (ex: Arcofoods)<br>
+        <strong>Regional:</strong> Nome da sua regional (ex: Norte Fluminense)<br>
+        <strong>Supervisor:</strong> Seu nome completo<br>
+        <strong>Cargo:</strong> Seu cargo<br>
+        <strong>Assinatura:</strong> Como quer assinar mensagens<br>
+        <strong>Contexto da Regional:</strong> Características da sua região — sazonalidade, perfil dos clientes, principais desafios. Aparece automaticamente no Relatório e na Apresentação.<br><br>
+        Após preencher tudo, clique em <strong>Salvar Perfil</strong>.</div>
+        <div class="tut-dica">💡 O Contexto da Regional é o que diferencia o seu relatório. Quanto mais detalhado, mais inteligente fica o diagnóstico automático.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">3</div>
+        <div class="tut-titulo">Lançar BI — Alimentando o Sistema (Página 1 do BI)</div>
+        <div class="tut-desc">Acesse <strong>⊕ Lançar BI</strong> no menu. O módulo tem 3 blocos de colar:<br><br>
+        <strong>Bloco 1 — Regional (Página 1):</strong><br>
+        No Power BI, selecione e copie a linha NORTE FLUMINENSE da tabela. Cole no campo e clique em <strong>⚡ Processar Regional</strong>. O sistema mostra um preview dos 13 campos detectados — confira se estão corretos.<br><br>
+        <strong>Bloco 2 — Vendedores (Página 1):</strong><br>
+        Como cada vendedor é copiado individualmente, cole um de cada vez e clique em <strong>➕ Adicionar Vendedor</strong>. O sistema acumula. Faça para os 9 vendedores. A lista mostra quem já foi adicionado e quem falta.<br><br>
+        <strong>Bloco 3 — Churn (Página 7):</strong><br>
+        Cole as linhas dos vendedores da tabela de Churn (sem cabeçalho, sem linha Total). Clique em <strong>⚡ Processar Churn</strong>. O sistema calcula o Churn da Regional automaticamente.<br><br>
+        Ao final clique em <strong>💾 Salvar BI Completo</strong>.</div>
+        <div class="tut-dica">💡 Se algum vendedor não for detectado automaticamente, confira se o código (ex: 017) está no início do nome copiado.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">4</div>
+        <div class="tut-titulo">Lupa — Alimentando o Sistema (BI Gestor)</div>
+        <div class="tut-desc">Os módulos Lupa alimentam o sistema com dados do BI Gestor — faturamento anual, SSS, Top 50 e Indicadores. Acesse cada um pelo menu <strong>Lupa (Diretoria)</strong>:<br><br>
+        <strong>🔍 Lupa · Faturamento:</strong> Cole a linha da Regional e depois a tabela de Vendedores do BI Gestor. O sistema gera a frase pronta (NOTA) para você falar na apresentação.<br><br>
+        <strong>🔍 Lupa · Top 50:</strong> Cole a tabela completa do Top 50. O sistema classifica cada cliente como Forte, Risco ou Alto Risco e permite registrar a ação de recuperação.<br><br>
+        <strong>🔍 Lupa · SSS:</strong> Cole a tabela SSS Cadastrado. O sistema analisa o crescimento dos clientes existentes separado dos novos.<br><br>
+        <strong>🔍 Lupa · Indicadores:</strong> Cole a tabela de Indicadores (SKU/PDV, Margem MC, Venda Média). Gera a frase pronta por vendedor.<br><br>
+        <strong>Importante:</strong> Todos esses dados se cruzam automaticamente com o BI de Vendas na Apresentação e no Relatório.</div>
+        <div class="tut-dica">💡 Quanto mais módulos você alimentar, mais completo e inteligente fica o diagnóstico. O ideal é alimentar todos antes de cada apresentação para a diretoria.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">5</div>
+        <div class="tut-titulo">Preparar Apresentação — Sugestões + Seu Plano</div>
+        <div class="tut-desc">Este é o módulo mais importante antes de uma apresentação para a diretoria. Acesse <strong>🎯 Preparar Apresentação</strong> no menu.<br><br>
+        Para cada vendedor você verá:<br><br>
+        <strong>3 Dimensões de Status:</strong><br>
+        • <strong>MÊS</strong> — projeção atual (verde ≥100% / amarelo ≥90% / vermelho abaixo de 90%)<br>
+        • <strong>ANO</strong> — % da meta YTD e crescimento vs 2025<br>
+        • <strong>RETENÇÃO</strong> — churn rate (verde ≤9% / amarelo ≤15% / vermelho acima)<br><br>
+        <strong>Sugestões do Sistema (em amarelo — só você vê):</strong><br>
+        O sistema analisa todos os dados cruzados e sugere ações específicas baseadas nos problemas reais de cada vendedor.<br><br>
+        <strong>Seu Plano de Ação (campo de texto livre):</strong><br>
+        Leia as sugestões, use como referência, e escreva com suas palavras o que você vai fazer. Este texto aparecerá na apresentação para a diretoria — as sugestões do sistema não aparecem.<br><br>
+        Clique em <strong>💾 Salvar Plano</strong> para cada vendedor.</div>
+        <div class="tut-dica">💡 Faça isso no dia anterior à apresentação. Chegue com os planos prontos — você saberá exatamente o que falar para cada vendedor.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">6</div>
+        <div class="tut-titulo">Dashboard — Sua Bússola Diária</div>
+        <div class="tut-desc">O Dashboard é a primeira tela que você deve verificar toda manhã. Mostra o estado atual da regional em segundos.<br><br>
+        <strong>Cards principais:</strong><br>
+        🟢 <strong>Projeção Regional:</strong> % de quanto a equipe já faturou em relação à meta do mês.<br>
+        🟢 <strong>Saldo Positivação:</strong> Clientes faltando para bater o objetivo.<br>
+        🟢 <strong>% Devolução:</strong> Limite máximo: 0,65%.<br>
+        🟢 <strong>Saúde da Regional:</strong> Índice geral de 0 a 100.<br><br>
+        <strong>Diagnóstico Rápido:</strong> Quantos vendedores estão saudáveis, em atenção e em situação crítica.<br><br>
+        <strong>Alertas Preditivos:</strong> O sistema identifica padrões de risco antes que virem problema.</div>
+        <div class="tut-dica">💡 Verifique o Dashboard toda manhã antes de qualquer outra atividade.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">7</div>
+        <div class="tut-titulo">Relatório Executivo — Diagnóstico Completo Cruzado</div>
+        <div class="tut-desc">O Relatório Executivo cruza TODOS os dados alimentados no sistema. Acesse <strong>📄 Relatório Executivo</strong> e clique em <strong>Gerar Relatório</strong>.<br><br>
+        O relatório inclui:<br>
+        • Panorama regional — mês atual + acumulado do ano lado a lado<br>
+        • Top 50 — clientes em queda com destaque<br>
+        • Diagnóstico individual de cada vendedor — MÊS + ANO + SSS + Indicadores + Top50 cruzados<br>
+        • Análise Integrada — narrativa inteligente explicando a situação de cada um<br>
+        • Plano de Ação — o que você escreveu no Preparar Apresentação<br>
+        • Conclusão executiva<br><br>
+        <strong>Botões:</strong><br>
+        🖨 <strong>Imprimir:</strong> Gera PDF direto<br>
+        💬 <strong>WhatsApp/PDF:</strong> Abre para salvar como PDF e enviar</div>
+        <div class="tut-dica">💡 Gere o relatório antes de toda reunião com a diretoria. Ele já chega com tudo cruzado e os planos prontos.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">8</div>
+        <div class="tut-titulo">Apresentação — Slides para a Diretoria</div>
+        <div class="tut-desc">A Apresentação transforma todos os dados em slides profissionais. Acesse <strong>🎯 Apresentação</strong> e clique em <strong>▶ Iniciar Apresentação</strong>.<br><br>
+        <strong>Estrutura dos slides:</strong><br>
+        1. Capa com situação geral da regional<br>
+        2. Regional — Mês Atual (projeção, premiação, churn, positivação)<br>
+        3. Regional — Ano YTD (faturamento, crescimento, meta)<br>
+        4. Top 50 — clientes em queda com ação imediata<br>
+        5. Churn e Positivação — todos os vendedores<br>
+        6. Ranking da Equipe por projeção<br>
+        7 a 15. Um slide por vendedor — MÊS + ANO + SSS + Indicadores + Top50 + Análise + Plano<br>
+        16. Diretrizes finais<br><br>
+        Pressione <strong>F11</strong> para tela cheia. Use as setas do teclado para navegar.</div>
+        <div class="tut-dica">💡 Os planos de ação que você escreveu aparecem nos slides dos vendedores. A diretoria vê seus planos, não as sugestões do sistema.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">9</div>
+        <div class="tut-titulo">Análise da Equipe — Diagnóstico Individual</div>
+        <div class="tut-desc">Acesse <strong>◉ Análise da Equipe</strong> para ver cada vendedor com diagnóstico automático e alertas.<br><br>
+        Para cada vendedor aparecem:<br>
+        • Indicadores do mês (PROJ%, FAT%, MARG%, POSIT, SALDO, %DEV)<br>
+        • Tags informativos (SKU/CLI, Venda Média, Churn%, Taxa Positivação)<br>
+        • Alertas automáticos com ação recomendada<br>
+        • Botão <strong>+ Plano</strong> para abrir o Plano de Ação com o nome já preenchido<br><br>
+        Consulte esta tela antes de ir a campo para saber exatamente o que conversar com cada vendedor.</div>
+        <div class="tut-dica">💡 Use os alertas desta tela como roteiro de campo. Você chega na conversa preparado com dados na mão.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">10</div>
+        <div class="tut-titulo">Score dos Vendedores</div>
+        <div class="tut-desc">O Score é uma nota de 0 a 100 para uso interno de acompanhamento — não é apresentado como "score" para a diretoria. Os pesos refletem os KPIs reais da Arcofoods:<br><br>
+        🏆 <strong>Projeção: 40pts</strong> — maior peso, define premiação<br>
+        👥 <strong>Positivação: 25pts</strong><br>
+        📉 <strong>Churn: 20pts</strong> (limite 9%)<br>
+        📊 <strong>Margem: 10pts</strong><br>
+        ↩️ <strong>Devolução: 5pts</strong><br><br>
+        Score ≥70 = saudável · 50-69 = atenção · abaixo de 50 = crítico<br><br>
+        Use para priorizar visitas de campo — comece sempre pelo menor score.</div>
+        <div class="tut-dica">💡 Na apresentação para a diretoria não use a palavra "score" — use as 3 dimensões (Mês / Ano / Retenção) que são mais claras e fáceis de explicar.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">11</div>
+        <div class="tut-titulo">Positivação e Churn</div>
+        <div class="tut-desc"><strong>Positivação</strong> — quantos clientes compraram no mês.<br>
+        Taxa ≥70% = OK · 60-70% = atenção · abaixo = urgente<br><br>
+        <strong>Churn</strong> — % de clientes que pararam de comprar.<br>
+        ≤9% = OK · 9-15% = atenção · acima de 15% = crítico<br><br>
+        O churn é o maior risco estrutural da regional. Um vendedor pode estar bem na projeção do mês mas com churn alto — significa que está conquistando novos clientes de um lado e perdendo de outro. A carteira não se consolida.<br><br>
+        <strong>Ação imediata para churn alto:</strong><br>
+        1. Identificar os clientes que saíram<br>
+        2. Ligar pessoalmente e entender o motivo<br>
+        3. Apresentar proposta de retorno<br>
+        4. Registrar no Plano de Ação</div>
+        <div class="tut-dica">💡 É muito mais barato recuperar um cliente que saiu do que conquistar um novo. Priorize sempre a retenção.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">12</div>
+        <div class="tut-titulo">Acompanhamento de Campo e Plano de Ação</div>
+        <div class="tut-desc"><strong>🚗 Campo:</strong> Registre cada visita — vendedor, data, cidade, cliente e o que foi combinado. O histórico mostra que você é um supervisor presente e organizado.<br><br>
+        <strong>◆ Plano de Ação:</strong> Sempre que identificar um problema, crie um plano estruturado com:<br>
+        • Problema identificado<br>
+        • Estratégia / Solução<br>
+        • Responsável<br>
+        • Prazo<br>
+        • Prioridade (Alta / Média / Baixa)<br>
+        • Status (Em andamento / Concluído / Pendente)<br><br>
+        Os planos ativos aparecem automaticamente no Relatório Executivo e na Apresentação.</div>
+        <div class="tut-dica">💡 Qualquer supervisor vê o problema. Poucos têm o plano estruturado. O Plano de Ação é o que diferencia um supervisor reativo de um estratégico.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">13</div>
+        <div class="tut-titulo">Negociação Comercial</div>
+        <div class="tut-desc">O módulo de Negociação cria propostas comerciais profissionais para aprovação interna.<br><br>
+        <strong>Como usar:</strong><br>
+        1. Preencha: cliente, vendedor, concorrente, total de SKUs e contexto<br>
+        2. Clique em <strong>+ Adicionar Produto</strong> para cada item<br>
+        3. Para cada produto informe: preço tabela, preço vendedor e preço ideal<br>
+        4. O sistema calcula diferença, % de investimento e total<br>
+        5. Clique em <strong>✨ Gerar Proposta</strong><br>
+        6. Clique em <strong>📄 Abrir PDF</strong> para salvar e enviar</div>
+        <div class="tut-dica">💡 Uma proposta bem estruturada tem muito mais chance de aprovação do que um pedido verbal. Mostre o impacto financeiro e a justificativa estratégica.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">14</div>
+        <div class="tut-titulo">Aniversariantes e Relacionamento</div>
+        <div class="tut-desc">Cadastre vendedores e clientes estratégicos com data de aniversário.<br><br>
+        O sistema avisa quando alguém faz aniversário hoje e ordena os próximos por data.<br><br>
+        <strong>Botão WhatsApp:</strong> Abre com mensagem já preenchida — é só enviar.<br>
+        <strong>Botão ✨ Msg IA:</strong> Copia um prompt para o ChatGPT gerar uma mensagem única e personalizada.<br>
+        <strong>Botão 📅 Calendário:</strong> Adiciona ao Google Calendar com recorrência anual.</div>
+        <div class="tut-dica">💡 Uma mensagem de aniversário do supervisor cria um vínculo que nenhum número de BI cria. É o toque humano que diferencia um líder.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">15</div>
+        <div class="tut-titulo">Exportar e Importar Dados</div>
+        <div class="tut-desc">Os dados ficam no dispositivo. Para transferir ou fazer backup:<br><br>
+        <strong>Exportar:</strong> Clique em <strong>Exportar Dados</strong> no final do menu. Um arquivo .json é baixado com a data no nome.<br><br>
+        <strong>Importar:</strong> No dispositivo de destino, clique em <strong>Importar Dados</strong> e selecione o arquivo .json.<br><br>
+        <strong>Quando exportar:</strong><br>
+        • Antes de atualizar o arquivo HTML<br>
+        • Antes de trocar de dispositivo<br>
+        • Toda sexta-feira como backup semanal<br><br>
+        <strong>Importante:</strong> Se você abrir o arquivo HTML novo e os dados sumirem, é porque estão em outro perfil de browser. Importe o .json e tudo volta.</div>
+        <div class="tut-dica">💡 Exporte toda sexta. Salve no Google Drive com a data no nome. Nunca perca mais de uma semana de trabalho.</div>
+      </div>
+
+      <div class="tut-step">
+        <div class="tut-num">16</div>
+        <div class="tut-titulo">Rotina Recomendada</div>
+        <div class="tut-desc"><strong>☀️ Toda manhã (5 min):</strong><br>
+        → Dashboard · Verificar alertas · Planejar o dia<br><br>
+        <strong>📊 Após atualização do BI:</strong><br>
+        → Lançar BI (Regional + Vendedores + Churn) · Lupa (Faturamento + Top50 + SSS + Indicadores)<br><br>
+        <strong>🚗 Antes de ir a campo:</strong><br>
+        → Análise da Equipe · Saber o que conversar com cada vendedor<br><br>
+        <strong>📅 Dia anterior à apresentação:</strong><br>
+        → 🎯 Preparar Apresentação · Ler sugestões do sistema · Escrever seu plano de ação para cada vendedor · Gerar Relatório<br><br>
+        <strong>🎯 Na apresentação:</strong><br>
+        → Iniciar Apresentação · F11 tela cheia · Setas do teclado para navegar</div>
+        <div class="tut-dica">💡 Consistência é tudo. 30 minutos por semana no lançamento do BI transformam completamente a qualidade das suas decisões e da sua apresentação.</div>
+      </div>
+
     </div>
     <div id="apresentacao" class="pg">
       <div class="ph"><div><div class="pt">Modo Apresentação</div><div class="ps">Para reuniões com a diretoria</div></div>
