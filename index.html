@@ -838,9 +838,9 @@ function gerarRelatorio(){
     var clientes = lt.filter(function(c){return c.vendedor&&c.vendedor.toUpperCase()===nome.toUpperCase();});
     return {
       cod:cod,nome:nome,
-      proj:nv(v.proj),marg:nv(v.marg),dev:Math.abs(nv(v.devPct)),
-      objMarg:nv(v.objMarg)||17.5,
-      posit:nv(pc.positivados),nposit:nv(pc.naoPositivados),churn:nv(pc.churnRate),
+      proj:n(v.proj),marg:n(v.marg),dev:Math.abs(n(v.devPct)),
+      objMarg:n(v.objMarg)||17.5,
+      posit:n(pc.positivados),nposit:n(pc.naoPositivados),churn:n(pc.churnRate),
       fat26:lvi.fat2026||0,fat25:lvi.fat2025||0,cresc:lvi.cresc||0,
       meta:lvi.tgt26||0,gap:lvi.gap||0,part:lvi.participacao||0,
       pctMeta:lvi.tgt26>0?(lvi.fat2026/lvi.tgt26*100):0,
@@ -1147,7 +1147,7 @@ function iniciarApresentacao(){
     var posit=nv(pc.positivados),nposit=nv(pc.naoPositivados);
     return{
       cod:cod,nome:nome,
-      proj:nv(v.proj),marg:nv(v.marg),dev:Math.abs(nv(v.devPct)),objMarg:nv(v.objMarg)||17.5,
+      proj:n(v.proj),marg:n(v.marg),dev:Math.abs(n(v.devPct)),objMarg:nv(v.objMarg)||17.5,
       posit:posit,nposit:nposit,churn:nv(pc.churnRate),
       txPos:(posit+nposit)>0?(posit/(posit+nposit)*100):0,
       fat26:lvi.fat2026||0,cresc:lvi.cresc||0,meta:lvi.tgt26||0,gap:lvi.gap||0,
