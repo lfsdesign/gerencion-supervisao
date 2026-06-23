@@ -828,6 +828,78 @@ function gerarRelatorio(){
   var situacao = proj_r>=90&&churn_med<=15&&dev_r<=0.65?'ATENÇÃO':(proj_r>=100&&churn_med<=9?'SAUDÁVEL':'CRÍTICA');
   var sitCor   = situacao==='SAUDÁVEL'?'var(--cy)':situacao==='ATENÇÃO'?'var(--ye)':'var(--rd)';
 
+  // ── NARRATIVA INTELIGENTE POR VENDEDOR ───────────────────
+  function narrativaVendedor(v, d){
+    var nome = v.nome.split(' ')[0];
+    var partes = [];
+
+    // 1. Situação do mês (projeção)
+    if(d.proj >= 100){
+      partes.push(nome+' está na meta do mês com projeção de '+d.proj.toFixed(1)+'%');
+    } else if(d.proj >= 90){
+      partes.push(nome+' está próximo da meta com projeção de '+d.proj.toFixed(1)+'% — faltam '+(100-d.proj).toFixed(1)+' pontos percentuais para atingir 100%');
+    } else {
+      partes.push(nome+' está abaixo da meta com projeção de '+d.proj.toFixed(1)+'% — situação que exige ação imediata, pois impacta a premiação da equipe');
+    }
+
+    // 2. Ano — YTD
+    if(d.pctMeta >= 100 && d.gap >= 0){
+      partes.push('no acumulado do ano já superou a meta em '+brl(d.gap)+', com crescimento de '+d.cresc.toFixed(1)+'% sobre 2025');
+    } else if(d.pctMeta >= 90){
+      partes.push('no acumulado do ano atingiu '+d.pctMeta.toFixed(0)+'% da meta anual com crescimento de '+d.cresc.toFixed(1)+'% sobre 2025, faltando '+brl(Math.abs(d.gap))+' para fechar');
+    } else if(d.cresc < 0){
+      partes.push('no acumulado do ano o faturamento caiu '+Math.abs(d.cresc).toFixed(1)+'% em relação a 2025, com apenas '+d.pctMeta.toFixed(0)+'% da meta anual atingida');
+    } else {
+      partes.push('no acumulado do ano atingiu '+d.pctMeta.toFixed(0)+'% da meta anual com crescimento de '+d.cresc.toFixed(1)+'% sobre 2025');
+    }
+
+    // 3. SSS — qualidade da carteira existente
+    if(d.sss > 10){
+      partes.push('os clientes antigos estão comprando mais (SSS de +'+d.sss.toFixed(1)+'%), sinal de carteira saudável e relacionamento forte');
+    } else if(d.sss >= 0){
+      partes.push('os clientes antigos mantêm volume estável (SSS +'+d.sss.toFixed(1)+'%), porém a perda de '+brl(d.perda)+' em clientes que saíram precisa de atenção');
+    } else {
+      partes.push('os clientes antigos estão comprando menos (SSS de '+d.sss.toFixed(1)+'%), com '+brl(d.perda)+' em perdas de clientes que reduziram ou saíram da carteira');
+    }
+
+    // 4. Churn — retenção
+    if(d.churn <= 9){
+      partes.push('o churn de '+d.churn.toFixed(1)+'% está dentro do limite de 9%, indicando boa retenção da base');
+    } else if(d.churn <= 15){
+      partes.push('o churn de '+d.churn.toFixed(1)+'% está acima do limite de 9% — '+Math.round(d.nposit)+' clientes perdidos que precisam ser recuperados');
+    } else if(d.churn <= 25){
+      partes.push('o ponto crítico é o churn de '+d.churn.toFixed(1)+'% — quase 1 em cada 4 clientes da carteira foi perdido no período, com '+Math.round(d.nposit)+' clientes sem comprar');
+    } else {
+      partes.push('o maior alerta é o churn de '+d.churn.toFixed(1)+'% — mais de 1 em cada 4 clientes foi perdido, '+Math.round(d.nposit)+' clientes sem comprar, o que ameaça a sustentabilidade do crescimento');
+    }
+
+    // 5. Margem
+    if(d.marg < 15.5){
+      partes.push('a margem de '+d.marg.toFixed(1)+'% está abaixo do mínimo aceitável de 15,5% e precisa de correção urgente no mix de produtos');
+    } else if(d.marg < d.objMarg){
+      partes.push('a margem de '+d.marg.toFixed(1)+'% está abaixo do objetivo de '+d.objMarg.toFixed(1)+'%, com espaço para evoluir no mix rentável');
+    } else {
+      partes.push('a margem de '+d.marg.toFixed(1)+'% está acima do objetivo — bom trabalho no mix rentável');
+    }
+
+    // 6. Top50 em queda
+    if(d.top_crit >= 3){
+      partes.push('atenção: '+d.top_crit+' clientes do Top 50 estão em queda e precisam de visita comercial prioritária');
+    } else if(d.top_crit === 1){
+      partes.push('há 1 cliente estratégico do Top 50 em queda que precisa de visita comercial');
+    }
+
+    // 7. Devolução
+    if(d.dev > 0.65){
+      partes.push('a devolução de '+d.dev.toFixed(2)+'% está acima do limite de 0,65% e a causa raiz precisa ser investigada');
+    }
+
+    // Junta com ponto e maiúscula
+    var texto = partes.join('. ')+'.';
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
+
+
   // ── VENDEDOR cruzado ──────────────────────────────────
   function dadosVend(v){
     var cod=v.cod,nome=v.nome;
@@ -1044,6 +1116,11 @@ function gerarRelatorio(){
       html+='<div style="border-top:1px solid var(--b);padding-top:10px;font-size:12px;color:var(--cy)">✅ Vendedor dentro dos parâmetros em todos os indicadores.</div>';
     }
 
+    // ── NARRATIVA DE CONCLUSÃO ─────────────────────────────
+    html+='<div style="margin-top:14px;padding:14px 16px;background:rgba(0,229,195,0.05);border:1px solid rgba(0,229,195,0.15);border-radius:10px">';
+    html+='<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--cy);margin-bottom:8px">Análise Integrada</div>';
+    html+='<div style="font-size:12px;color:var(--t2);line-height:1.9">'+narrativaVendedor(v, d)+'</div>';
+    html+='</div>';
     html+='</div>';
   });
 
@@ -1133,6 +1210,78 @@ function iniciarApresentacao(){
   var txPosR    = (totalPos+totalNPos)>0?(totalPos/(totalPos+totalNPos)*100):0;
   var situacao  = proj_r>=90&&churn_med<=15?'ATENÇÃO':(proj_r>=100&&churn_med<=9?'SAUDÁVEL':'CRÍTICA');
   var sitCor    = situacao==='SAUDÁVEL'?'#00E5C3':situacao==='ATENÇÃO'?'#FFB800':'#FF4560';
+
+  // ── NARRATIVA INTELIGENTE POR VENDEDOR ───────────────────
+  function narrativaVendedor(v, d){
+    var nome = v.nome.split(' ')[0];
+    var partes = [];
+
+    // 1. Situação do mês (projeção)
+    if(d.proj >= 100){
+      partes.push(nome+' está na meta do mês com projeção de '+d.proj.toFixed(1)+'%');
+    } else if(d.proj >= 90){
+      partes.push(nome+' está próximo da meta com projeção de '+d.proj.toFixed(1)+'% — faltam '+(100-d.proj).toFixed(1)+' pontos percentuais para atingir 100%');
+    } else {
+      partes.push(nome+' está abaixo da meta com projeção de '+d.proj.toFixed(1)+'% — situação que exige ação imediata, pois impacta a premiação da equipe');
+    }
+
+    // 2. Ano — YTD
+    if(d.pctMeta >= 100 && d.gap >= 0){
+      partes.push('no acumulado do ano já superou a meta em '+brl(d.gap)+', com crescimento de '+d.cresc.toFixed(1)+'% sobre 2025');
+    } else if(d.pctMeta >= 90){
+      partes.push('no acumulado do ano atingiu '+d.pctMeta.toFixed(0)+'% da meta anual com crescimento de '+d.cresc.toFixed(1)+'% sobre 2025, faltando '+brl(Math.abs(d.gap))+' para fechar');
+    } else if(d.cresc < 0){
+      partes.push('no acumulado do ano o faturamento caiu '+Math.abs(d.cresc).toFixed(1)+'% em relação a 2025, com apenas '+d.pctMeta.toFixed(0)+'% da meta anual atingida');
+    } else {
+      partes.push('no acumulado do ano atingiu '+d.pctMeta.toFixed(0)+'% da meta anual com crescimento de '+d.cresc.toFixed(1)+'% sobre 2025');
+    }
+
+    // 3. SSS — qualidade da carteira existente
+    if(d.sss > 10){
+      partes.push('os clientes antigos estão comprando mais (SSS de +'+d.sss.toFixed(1)+'%), sinal de carteira saudável e relacionamento forte');
+    } else if(d.sss >= 0){
+      partes.push('os clientes antigos mantêm volume estável (SSS +'+d.sss.toFixed(1)+'%), porém a perda de '+brl(d.perda)+' em clientes que saíram precisa de atenção');
+    } else {
+      partes.push('os clientes antigos estão comprando menos (SSS de '+d.sss.toFixed(1)+'%), com '+brl(d.perda)+' em perdas de clientes que reduziram ou saíram da carteira');
+    }
+
+    // 4. Churn — retenção
+    if(d.churn <= 9){
+      partes.push('o churn de '+d.churn.toFixed(1)+'% está dentro do limite de 9%, indicando boa retenção da base');
+    } else if(d.churn <= 15){
+      partes.push('o churn de '+d.churn.toFixed(1)+'% está acima do limite de 9% — '+Math.round(d.nposit)+' clientes perdidos que precisam ser recuperados');
+    } else if(d.churn <= 25){
+      partes.push('o ponto crítico é o churn de '+d.churn.toFixed(1)+'% — quase 1 em cada 4 clientes da carteira foi perdido no período, com '+Math.round(d.nposit)+' clientes sem comprar');
+    } else {
+      partes.push('o maior alerta é o churn de '+d.churn.toFixed(1)+'% — mais de 1 em cada 4 clientes foi perdido, '+Math.round(d.nposit)+' clientes sem comprar, o que ameaça a sustentabilidade do crescimento');
+    }
+
+    // 5. Margem
+    if(d.marg < 15.5){
+      partes.push('a margem de '+d.marg.toFixed(1)+'% está abaixo do mínimo aceitável de 15,5% e precisa de correção urgente no mix de produtos');
+    } else if(d.marg < d.objMarg){
+      partes.push('a margem de '+d.marg.toFixed(1)+'% está abaixo do objetivo de '+d.objMarg.toFixed(1)+'%, com espaço para evoluir no mix rentável');
+    } else {
+      partes.push('a margem de '+d.marg.toFixed(1)+'% está acima do objetivo — bom trabalho no mix rentável');
+    }
+
+    // 6. Top50 em queda
+    if(d.top_crit >= 3){
+      partes.push('atenção: '+d.top_crit+' clientes do Top 50 estão em queda e precisam de visita comercial prioritária');
+    } else if(d.top_crit === 1){
+      partes.push('há 1 cliente estratégico do Top 50 em queda que precisa de visita comercial');
+    }
+
+    // 7. Devolução
+    if(d.dev > 0.65){
+      partes.push('a devolução de '+d.dev.toFixed(2)+'% está acima do limite de 0,65% e a causa raiz precisa ser investigada');
+    }
+
+    // Junta com ponto e maiúscula
+    var texto = partes.join('. ')+'.';
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
+
 
   // ── dados por vendedor ────────────────────────────────
   function dadosVend(v){
@@ -1411,6 +1560,11 @@ function iniciarApresentacao(){
               '<span>'+a.e+'</span><span>'+a.t+'</span></div>';
           }).join('')+
           '</div>'+
+        '</div>'+
+        // ── NARRATIVA DE CONCLUSÃO ──────────────────────────
+        '<div style="margin:clamp(8px,1.2vw,12px) 0 0 0;padding:clamp(10px,1.5vw,14px);background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.2);border-radius:10px">'+
+          '<div style="font-size:clamp(8px,0.9vw,10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#00E5C3;margin-bottom:6px">Análise Integrada</div>'+
+          '<div style="font-size:clamp(10px,1.2vw,13px);color:#B0BBC8;line-height:1.8">'+narrativaVendedor(v, d)+'</div>'+
         '</div>'+
       '</div>'+
     '</div>');
