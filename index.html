@@ -160,7 +160,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <div class="nav-grp">Estratégia</div>
       <button class="nb" onclick="ir('campo',this)">🚗 Campo</button>
       <button class="nb" onclick="ir('plano',this)">◆ Plano de Ação</button>
-      <button class="nb" onclick="ir('planosVend',this)">🎯 Preparar Apresentação</button>
+      <button class="nb" onclick="ir('planosVend',this);renderPlanosVendedor()">🎯 Preparar Apresentação</button>
       <button class="nb" onclick="ir('clientes',this)">🏪 Clientes</button>
       <div class="nav-grp">Lupa (Diretoria)</div>
       <button class="nb" onclick="ir('lupaFat',this)">🔍 Lupa · Faturamento</button>
@@ -664,6 +664,8 @@ var DB={
 function salvar(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
 function carregar(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);if(!DB.lupaTop50)DB.lupaTop50=[];if(!DB.lupaFatVendedores)DB.lupaFatVendedores=[];if(!DB.lupaFatRegional)DB.lupaFatRegional={};if(!DB.lupaSss)DB.lupaSss=[];if(!DB.lupaIndic)DB.lupaIndic=[];if(!DB.planosVendedor)DB.planosVendedor={};}}catch(e){}}
 function n(v){return parseFloat((v||'0').toString().replace(',','.'))||0;}
+function brl(v){return'R$ '+Math.abs(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});}
+function fPct(v){return(v||0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';}
 function fmt(v){return(v!==undefined&&v!==null&&v!=='')?v:'—';}
 function fP(v){if(v===undefined||v===null||v==='')return'—';var x=n(v);return x.toFixed(2)+'%';}
 function calcScore(v,pc){
