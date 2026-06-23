@@ -783,49 +783,285 @@ function msgIABtn(i){var a=DB.aniversarios[i];if(!a)return;var nome=a.nome.split
 function gerarRelatorio(){
   var p=DB.perfil,r=DB.biAtual.regional,vs=DB.biAtual.vendedores;
   if(!vs||vs.length===0){toast('Lance os dados do BI primeiro.');return;}
+
   var hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
   var baixa=(new Date().getMonth()>=4&&new Date().getMonth()<=7);
-  var totalPos=0,totalNPos=0;DB.posChurn.forEach(function(pc){totalPos+=parseInt(pc.positivados||0);totalNPos+=parseInt(pc.naoPositivados||0);});
-  var txPos=totalPos+totalNPos>0?((totalPos/(totalPos+totalNPos))*100).toFixed(1):0;
-  var churnAltos=DB.posChurn.filter(function(pc){return n(pc.churnRate)>9;});
-  var planosAtivos=DB.planos.filter(function(pl){return pl.status!=='Concluído';});
-  var projMedia=vs.reduce(function(s,v){return s+n(v.proj);},0)/vs.length;
-  var situacao=projMedia>=85?'SAUDÁVEL':projMedia>=70?'ATENÇÃO':'CRÍTICA';
-  var sitCor=projMedia>=85?'var(--cy)':projMedia>=70?'var(--ye)':'var(--rd)';
-  var projAtual=n(r.proj);
-  var premTxt=projAtual>=110?'🏆 MÁXIMA':projAtual>=100?'✅ BASE':projAtual>=90?'⚠️ PARCIAL':'❌ ZERO';
-  var premCor=projAtual>=110?'var(--ye)':projAtual>=100?'var(--cy)':projAtual>=90?'var(--ye)':'var(--rd)';
-  var html='<div style="max-width:760px;font-size:13px;line-height:1.7">';
-  html+='<div class="rb" style="border-left:4px solid var(--cy);padding-left:20px"><div style="font-size:22px;font-weight:700;color:var(--cy);margin-bottom:6px">RELATÓRIO EXECUTIVO</div><div style="color:var(--t2)">'+hoje+' · '+p.empresa+' · Regional '+(p.regional||'Norte Fluminense')+'</div><div style="color:var(--t2)">Supervisor: <strong style="color:var(--t)">'+p.supervisor+'</strong></div><div style="margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border-radius:8px"><strong style="color:var(--t)">Situação: </strong><span style="color:'+sitCor+';font-weight:700">'+situacao+'</span> · Projeção: <strong style="color:'+sitCor+'">'+projMedia.toFixed(1)+'%</strong>'+(baixa?' · <span style="color:var(--ye)">⚠ Baixa Temporada</span>':'')+'</div></div>';
-  html+='<div class="rb" style="border-left:4px solid '+premCor+';padding:14px 20px"><div style="font-size:16px;font-weight:700;color:'+premCor+'">PREMIAÇÃO: '+premTxt+' — '+fP(r.proj)+'</div></div>';
-  html+='<div class="rb"><div class="rs">Contexto Regional</div><div style="color:var(--t2)">'+(p.contexto||'Norte Fluminense.')+'</div></div>';
-  html+='<div class="rb"><div class="rs">Termômetro</div>';
-  function tRow(lbl,val,sub,s,desc){var cor=s==='ok'?'var(--cy)':s==='wn'?'var(--ye)':'var(--rd)';return'<div style="display:flex;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--b);gap:12px"><div style="min-width:160px;font-size:12px;color:var(--t2)">'+lbl+'</div><div style="min-width:100px"><strong style="color:'+cor+'">'+val+'</strong>'+(sub?'<div style="font-size:10px;color:var(--t3)">'+sub+'</div>':'')+'</div>'+(desc?'<div style="font-size:12px;color:var(--t2);flex:1">'+desc+'</div>':'')+'</div>';}
-  html+=tRow('Projeção',fP(r.proj),'Meta: 100%',n(r.proj)>=85?'ok':n(r.proj)>=70?'wn':'dg','');
-  html+=tRow('Margem',fP(r.marg),'Obj: '+(r.objMarg||'17,5')+'%',n(r.marg)>=(n(r.objMarg||17.5))?'ok':'wn','');
-  html+=tRow('Positivação',fmt(r.realPos)+'/'+fmt(r.objPos),'Saldo: '+fmt(r.saldoPos),parseInt(r.saldoPos||0)>=0?'ok':'dg','');
-  html+=tRow('Taxa Positivação',txPos+'%','da base',parseFloat(txPos)>=70?'ok':'dg','');
-  html+=tRow('Devolução',fP(r.devPct),'Limite: 0,65%',Math.abs(n(r.devPct))>DEV_LIM?'dg':'ok','');
+
+  // ── helpers ──────────────────────────────────────────────
+  function nv(v){var s=String(v||0).replace(/R\$\s?/g,'').replace(/%/g,'').replace(/\./g,'').replace(',','.').replace(/[^\d.\-]/g,'');return parseFloat(s)||0;}
+  function brl(v){return'R$ '+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});}
+  function pct(v){return nv(v).toFixed(1)+'%';}
+  function cor3(val,bom,ruim){return val>=bom?'var(--cy)':val>=ruim?'var(--ye)':'var(--rd)';}
+  function sem(val,bom,ruim){return val>=bom?'✅':val>=ruim?'⚠️':'🔴';}
+
+  // ── REGIONAL dados cruzados ────────────────────────────
+  var proj_r  = nv(r.proj), marg_r = nv(r.marg), dev_r  = Math.abs(nv(r.devPct));
+  var pos_r   = nv(r.realPos), obj_pos = nv(r.objPos), saldo_pos = nv(r.saldoPos);
+  var lr = DB.lupaFatRegional||{};
+  var fat26r  = lr.fat2026||0, fat25r = lr.fat2025||0, crescR = lr.cresc||0;
+  var metaR   = lr.tgt26||0,   gapR   = lr.gap||0,     mcR    = lr.mcPct||0;
+  var vmR     = lr.vendaMedia||0;
+  var pctMetaR= metaR>0?(fat26r/metaR*100):0;
+  var lt = DB.lupaTop50||[];
+  var forte_n = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Forte')>=0;}).length;
+  var risco_n = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Risco')>=0&&c.semaforo.indexOf('Alto')<0;}).length;
+  var crit_n  = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Alto Risco')>=0;}).length;
+  var fat_top50 = lt.reduce(function(s,c){return s+(c.fat2026||0);},0);
+  var pct_top50 = fat26r>0?(fat_top50/fat26r*100):0;
+  var churn_med = DB.posChurn.length?DB.posChurn.reduce(function(s,p){return s+nv(p.churnRate);},0)/DB.posChurn.length:0;
+  var totalPos  = DB.posChurn.reduce(function(s,p){return s+nv(p.positivados);},0);
+  var totalNPos = DB.posChurn.reduce(function(s,p){return s+nv(p.naoPositivados);},0);
+  var txPosR    = (totalPos+totalNPos)>0?(totalPos/(totalPos+totalNPos)*100):0;
+
+  // Situação geral
+  var situacao = proj_r>=90&&churn_med<=15&&dev_r<=0.65?'ATENÇÃO':(proj_r>=100&&churn_med<=9?'SAUDÁVEL':'CRÍTICA');
+  var sitCor   = situacao==='SAUDÁVEL'?'var(--cy)':situacao==='ATENÇÃO'?'var(--ye)':'var(--rd)';
+
+  // ── VENDEDOR cruzado ──────────────────────────────────
+  function dadosVend(v){
+    var cod=v.cod,nome=v.nome;
+    var pc  = DB.posChurn.find(function(p){return p.nome&&p.nome.split(' ').pop()===nome.split(' ').pop();})||{};
+    var lvi = (DB.lupaFatVendedores||[]).find(function(l){return l.nome&&l.nome.indexOf(cod)>=0;})||{};
+    var ssi = (DB.lupaSss||[]).find(function(l){return l.nome&&l.nome.indexOf(cod)>=0;})||{};
+    var lii = (DB.lupaIndic||[]).find(function(l){return l.nome&&l.nome.indexOf(cod)>=0;})||{};
+    var clientes = lt.filter(function(c){return c.vendedor&&c.vendedor.toUpperCase()===nome.toUpperCase();});
+    return {
+      cod:cod,nome:nome,
+      proj:nv(v.proj),marg:nv(v.marg),dev:Math.abs(nv(v.devPct)),
+      objMarg:nv(v.objMarg)||17.5,
+      posit:nv(pc.positivados),nposit:nv(pc.naoPositivados),churn:nv(pc.churnRate),
+      fat26:lvi.fat2026||0,fat25:lvi.fat2025||0,cresc:lvi.cresc||0,
+      meta:lvi.tgt26||0,gap:lvi.gap||0,part:lvi.participacao||0,
+      pctMeta:lvi.tgt26>0?(lvi.fat2026/lvi.tgt26*100):0,
+      sss:ssi.pctSss||0,perda:ssi.perda||0,novos:ssi.novos||0,pctPart:ssi.pctPart||0,
+      sku:lii.sku2026||0,pctSku:lii.pctSku||0,mc:lii.mc2026||0,vm:lii.vm2026||0,pctVm:lii.pctVm||0,
+      top_forte:clientes.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Forte')>=0;}).length,
+      top_risco:clientes.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Risco')>=0&&c.semaforo.indexOf('Alto')<0;}).length,
+      top_crit:clientes.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Alto Risco')>=0;}).length,
+      top_total:clientes.length,
+      clientes_crit:clientes.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Alto Risco')>=0;}).slice(0,3)
+    };
+  }
+
+  function alertasVend(d){
+    var al=[];
+    if(d.proj<90)al.push({n:'dg',t:'Projeção '+d.proj.toFixed(1)+'% abaixo de 90% — impacta premiação. Ação urgente.'});
+    else if(d.proj<100)al.push({n:'wn',t:'Projeção '+d.proj.toFixed(1)+'% — falta '+(100-d.proj).toFixed(1)+'pp para a meta.'});
+    if(d.churn>15)al.push({n:'dg',t:'Churn '+d.churn.toFixed(1)+'% crítico (limite 9%). '+Math.round(d.nposit)+' clientes perdidos.'});
+    else if(d.churn>9)al.push({n:'wn',t:'Churn '+d.churn.toFixed(1)+'% em atenção — acima do limite de 9%.'});
+    if(d.dev>0.65)al.push({n:'dg',t:'Devolução '+d.dev.toFixed(2)+'% acima do limite de 0,65%.'});
+    if(d.marg<15.5)al.push({n:'dg',t:'Margem '+d.marg.toFixed(1)+'% abaixo do mínimo (15,5%). Focar Mix Rentável.'});
+    else if(d.marg<d.objMarg)al.push({n:'wn',t:'Margem '+d.marg.toFixed(1)+'% abaixo do objetivo ('+d.objMarg+'%).'});
+    if(d.sss<0)al.push({n:'wn',t:'SSS negativo ('+d.sss.toFixed(1)+'%): clientes antigos comprando menos. Perda: '+brl(d.perda)+'.'});
+    if(d.cresc<0)al.push({n:'wn',t:'Faturamento YTD em queda ('+d.cresc.toFixed(1)+'% vs 2025).'});
+    if(d.top_crit>=3)al.push({n:'dg',t:d.top_crit+' clientes do Top 50 em queda — risco de perda de volume relevante.'});
+    return al;
+  }
+
+  // ── CONSTRUIR HTML ───────────────────────────────────
+  var html='<div style="max-width:780px;font-size:13px;line-height:1.7">';
+
+  // CAPA
+  html+='<div class="rb" style="border-left:4px solid '+sitCor+';padding-left:20px">';
+  html+='<div style="font-size:22px;font-weight:700;color:var(--cy);margin-bottom:6px">RELATÓRIO EXECUTIVO DE SUPERVISÃO</div>';
+  html+='<div style="color:var(--t2)">'+hoje+' · '+p.empresa+' · Regional '+(p.regional||'Norte Fluminense')+'</div>';
+  html+='<div style="color:var(--t2)">Supervisor: <strong style="color:var(--t)">'+p.supervisor+'</strong></div>';
+  html+='<div style="margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border-radius:8px">';
+  html+='Situação da Regional: <strong style="color:'+sitCor+'">'+situacao+'</strong>';
+  html+=' · Projeção: <strong style="color:'+cor3(proj_r,90,70)+'">'+pct(r.proj)+'</strong>';
+  html+=' · Churn médio: <strong style="color:'+cor3(10-churn_med,1,-5)+'">'+churn_med.toFixed(1)+'%</strong>';
+  if(baixa)html+=' · <span style="color:var(--ye)">⚠ Baixa Temporada</span>';
+  html+='</div></div>';
+
+  // CONTEXTO
+  html+='<div class="rb"><div class="rs">Contexto da Regional</div>';
+  html+='<div style="color:var(--t2);line-height:1.8">'+(p.contexto||'Norte Fluminense.')+'</div></div>';
+
+  // REGIONAL — MÊS + ANO UNIFICADOS
+  html+='<div class="rb"><div class="rs">Panorama da Regional — Mês Atual + Acumulado no Ano</div>';
+
+  // Cards visuais
+  html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">';
+  function card(lbl,val,sub,c){return'<div style="background:var(--s2);border-radius:10px;padding:12px;text-align:center;border-top:2px solid '+c+'"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">'+lbl+'</div><div style="font-size:20px;font-weight:700;color:'+c+'">'+val+'</div><div style="font-size:10px;color:var(--t3);margin-top:2px">'+sub+'</div></div>';}
+  html+=card('Projeção Mês',pct(r.proj),'meta 100%',cor3(proj_r,90,70));
+  html+=card('Fat. Acumulado',brl(fat26r),pct(crescR)+' vs 2025',cor3(crescR,10,0));
+  html+=card('Meta YTD',pctMetaR.toFixed(0)+'%','de '+brl(metaR),cor3(pctMetaR,95,80));
+  html+=card('Churn Médio',churn_med.toFixed(1)+'%','limite 9%',cor3(9-churn_med,0,-6));
+  html+=card('Margem',pct(r.marg),'obj '+pct(r.objMarg||15.75),cor3(marg_r,nv(r.objMarg||15.75),15.5));
+  html+=card('Positivação',Math.round(txPosR)+'%',Math.round(totalPos)+'/'+Math.round(totalPos+totalNPos)+' clientes',cor3(txPosR,75,60));
+  html+=card('Devolução',Math.abs(nv(r.devPct)).toFixed(2)+'%','limite 0,65%',cor3(0.65-dev_r,0,-0.3));
+  html+=card('SKU/Cliente',nv(r.sku).toFixed(1),'prod. por cliente','var(--cy)');
   html+='</div>';
-  html+='<div class="rb"><div class="rs">Diagnóstico Individual</div>';
-  vs.forEach(function(v,i){
-    var pc=DB.posChurn[i]||{},s=st(v.proj,v.devPct),cor=s==='ok'?'var(--cy)':s==='wn'?'var(--ye)':'var(--rd)';
-    var acoes=[];
-    if(n(v.proj)<90)acoes.push('URGENTE: projeção abaixo de 90%. Campo imediato.');
-    else if(n(v.proj)<100)acoes.push('A '+(100-n(v.proj)).toFixed(1)+'pp da meta.');
-    else if(n(v.proj)>=110)acoes.push('Excelente! ≥110%.');
-    if(Math.abs(n(v.devPct))>DEV_LIM)acoes.push('Devolução acima do limite.');
-    if(v.marg&&n(v.marg)<n(v.objMarg||17.5))acoes.push('Margem abaixo do objetivo. Focar Mix Rentável.');
-    if(pc.churnRate&&n(pc.churnRate)>9)acoes.push('Churn '+pc.churnRate+'% acima do limite (9%).');
-    if(acoes.length===0)acoes.push('Manter o ritmo.');
-    function ms(lbl,val,s){var c=s==='ok'?'var(--cy)':s==='wn'?'var(--ye)':'var(--rd)';return'<div style="background:var(--s2);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--t2);text-transform:uppercase;margin-bottom:3px">'+lbl+'</div><div style="font-size:14px;font-weight:700;color:'+c+'">'+val+'</div></div>';}
-    html+='<div style="border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;border-left:3px solid '+cor+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong style="color:var(--t);font-size:14px">'+v.nome+'</strong>'+badgeSt(v.proj,v.devPct)+'</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">'+ms('PROJ',fP(v.proj),s)+ms('MARGEM',fP(v.marg),n(v.marg)>=(n(v.objMarg||17.5))?'ok':'wn')+ms('DEV',fP(v.devPct),Math.abs(n(v.devPct))>DEV_LIM?'dg':'ok')+ms('POSIT',fmt(v.realPos)+'/'+fmt(v.objPos),parseInt(v.saldoPos||0)>=0?'ok':'dg')+'</div>'+(pc.positivados||pc.churnRate?'<div style="font-size:11px;color:var(--t2);margin-bottom:8px">'+(pc.positivados?'Posit: <strong style="color:var(--cy)">'+pc.positivados+'</strong> · ':'')+( pc.naoPositivados?'Não posit: <strong style="color:var(--rd)">'+pc.naoPositivados+'</strong> · ':'')+( pc.churnRate?'Churn: <strong style="color:'+(n(pc.churnRate)>9?'var(--rd)':'var(--ye)')+'">'+pc.churnRate+'%</strong>':'')+'</div>':'')+'<ul style="padding-left:16px;color:var(--t2);font-size:12px">'+acoes.map(function(a){return'<li>'+a+'</li>';}).join('')+'</ul></div>';
+
+  // Análise narrativa cruzada regional
+  html+='<div style="background:var(--s2);border-radius:10px;padding:16px;font-size:12px;color:var(--t2);line-height:1.9">';
+  html+='<strong style="color:var(--cy);display:block;margin-bottom:8px;font-size:10px;letter-spacing:1px;text-transform:uppercase">Diagnóstico Cruzado</strong>';
+
+  // Narrativa inteligente
+  var narrativa='';
+  // Projeção vs YTD
+  if(proj_r<90&&pctMetaR>=95)narrativa+='A regional acumula <strong style="color:var(--cy)">'+pctMetaR.toFixed(0)+'% da meta anual</strong> com crescimento de <strong>'+crescR+'%</strong> sobre 2025, demonstrando solidez no ano — porém o mês atual está com projeção de <strong style="color:var(--rd)">'+pct(r.proj)+'</strong>, abaixo dos 90% que garantem premiação. A equipe precisa de aceleração nas últimas semanas do mês. ';
+  else if(proj_r>=100)narrativa+='A regional está na meta do mês com projeção de <strong style="color:var(--cy)">'+pct(r.proj)+'</strong> e acumula <strong>'+pctMetaR.toFixed(0)+'%</strong> da meta anual com crescimento de <strong>'+crescR+'%</strong> vs 2025. ';
+  else narrativa+='A regional projeta <strong style="color:var(--ye)">'+pct(r.proj)+'</strong> no mês e acumula <strong>'+pctMetaR.toFixed(0)+'%</strong> da meta anual, com crescimento de <strong>'+crescR+'%</strong> vs 2025. ';
+
+  // Gap anual
+  if(gapR<0)narrativa+='Para fechar o ano na meta, faltam <strong style="color:var(--rd)">'+brl(Math.abs(gapR))+'</strong>. ';
+  else narrativa+='A meta anual já foi superada em <strong style="color:var(--cy)">'+brl(gapR)+'</strong>. ';
+
+  // Churn
+  if(churn_med>15)narrativa+='O ponto crítico da regional é o <strong style="color:var(--rd)">churn médio de '+churn_med.toFixed(1)+'%</strong>, muito acima do limite de 9% — clientes estão saindo da carteira mais rápido do que novos estão entrando. ';
+  else if(churn_med>9)narrativa+='O churn médio de <strong style="color:var(--ye)">'+churn_med.toFixed(1)+'%</strong> está acima do limite de 9% e merece atenção. ';
+  else narrativa+='O churn médio de <strong style="color:var(--cy)">'+churn_med.toFixed(1)+'%</strong> está sob controle. ';
+
+  // Top50
+  narrativa+='Dos <strong>'+lt.length+' clientes do Top 50</strong> (que representam '+pct_top50.toFixed(0)+'% do faturamento regional), <strong style="color:var(--rd)">'+crit_n+' estão em queda</strong>, '+risco_n+' em risco e '+forte_n+' crescendo acima de 20%. ';
+
+  // Margem
+  if(marg_r<15.5)narrativa+='A margem de <strong style="color:var(--rd)">'+pct(r.marg)+'</strong> está abaixo do mínimo aceitável de 15,5% — atenção ao mix de produtos. ';
+  else if(marg_r>=nv(r.objMarg||15.75))narrativa+='A margem de <strong style="color:var(--cy)">'+pct(r.marg)+'</strong> está acima do objetivo, resultado positivo do mix rentável. ';
+
+  html+=narrativa+'</div></div>';
+
+  // TOP 50 REGIONAL
+  html+='<div class="rb"><div class="rs">Top 50 Clientes — Saúde da Carteira Estratégica</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">';
+  html+=card('Forte (≥20%)',String(forte_n),'clientes crescendo','var(--cy)');
+  html+=card('Risco (0–15%)',String(risco_n),'crescimento fraco','var(--ye)');
+  html+=card('Alto Risco',String(crit_n),'clientes em queda','var(--rd)');
+  html+='</div>';
+  // Clientes críticos destaque
+  var crit_clientes=lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Alto Risco')>=0;}).slice(0,5);
+  if(crit_clientes.length){
+    html+='<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--rd);margin-bottom:8px">Clientes em Queda — Ação Prioritária</div>';
+    html+='<div style="display:flex;flex-direction:column;gap:6px">';
+    crit_clientes.forEach(function(c){
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;background:var(--s2);border-radius:8px;padding:8px 12px;border-left:3px solid var(--rd)">';
+      html+='<div><div style="font-size:12px;font-weight:600;color:var(--t)">#'+c.rank2026+' '+c.cliente.split('-').slice(1).join('-').trim()+'</div>';
+      html+='<div style="font-size:10px;color:var(--t3)">'+c.vendedor+'</div></div>';
+      html+='<div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--rd)">'+nv(c.cresc).toFixed(1)+'%</div>';
+      html+='<div style="font-size:10px;color:var(--t3)">'+brl(c.fat2026)+'</div></div></div>';
+    });
+    html+='</div>';
+  }
+  html+='</div>';
+
+  // POR VENDEDOR — DIAGNÓSTICO INDIVIDUAL CRUZADO
+  html+='<div class="rb"><div class="rs">Diagnóstico Individual — Visão Completa por Vendedor</div></div>';
+
+  vs.forEach(function(v){
+    var d=dadosVend(v);
+    var al=alertasVend(d);
+    var status=al.some(function(a){return a.n==='dg';})?'CRÍTICO':al.length?'ATENÇÃO':'SAUDÁVEL';
+    var stCor=status==='CRÍTICO'?'var(--rd)':status==='ATENÇÃO'?'var(--ye)':'var(--cy)';
+    var txPos=d.posit+d.nposit>0?(d.posit/(d.posit+d.nposit)*100):0;
+
+    html+='<div class="rb" style="border-left:4px solid '+stCor+';margin-bottom:10px">';
+    // Cabeçalho vendedor
+    html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
+    html+='<div><div style="font-size:17px;font-weight:700;color:var(--t)">'+d.nome+'</div>';
+    html+='<div style="font-size:11px;color:var(--t3);margin-top:2px">COD '+d.cod+' · '+d.part.toFixed(0)+'% do faturamento regional</div></div>';
+    html+='<span style="font-size:11px;font-weight:700;color:'+stCor+';background:'+stCor+'18;border:1px solid '+stCor+'40;padding:3px 10px;border-radius:6px">'+status+'</span>';
+    html+='</div>';
+
+    // Grid de indicadores — MÊS
+    html+='<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:6px">Mês Atual</div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px">';
+    function mini(lbl,val,c){return'<div style="background:var(--s2);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;margin-bottom:3px">'+lbl+'</div><div style="font-size:14px;font-weight:700;color:'+c+'">'+val+'</div></div>';}
+    html+=mini('Projeção',d.proj.toFixed(1)+'%',cor3(d.proj,90,70));
+    html+=mini('Margem',d.marg.toFixed(1)+'%',cor3(d.marg,d.objMarg,15.5));
+    html+=mini('Devolução',d.dev.toFixed(2)+'%',cor3(0.65-d.dev,0,-0.3));
+    html+=mini('Churn',d.churn.toFixed(1)+'%',cor3(9-d.churn,0,-6));
+    html+=mini('Posit.',txPos.toFixed(0)+'%',cor3(txPos,75,60));
+    html+='</div>';
+
+    // Grid ANO
+    html+='<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:6px">Acumulado no Ano (YTD)</div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px">';
+    html+=mini('Fat 2026',brl(d.fat26),'var(--t)');
+    html+=mini('Cresc YoY',d.cresc.toFixed(1)+'%',cor3(d.cresc,10,0));
+    html+=mini('% da Meta',d.pctMeta.toFixed(0)+'%',cor3(d.pctMeta,95,80));
+    html+=mini('Gap Meta',brl(Math.abs(d.gap)),d.gap>=0?'var(--cy)':'var(--rd)');
+    html+='</div>';
+
+    // SSS + Indicadores linha a linha
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">';
+    // SSS
+    html+='<div style="background:var(--s2);border-radius:8px;padding:12px">';
+    html+='<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:8px">Same Store Sales (SSS)</div>';
+    html+='<div style="font-size:12px;color:var(--t2)"><div style="display:flex;justify-content:space-between;padding:3px 0"><span>Cresc. clientes antigos</span><strong style="color:'+cor3(d.sss,5,-5)+'">'+d.sss.toFixed(1)+'%</strong></div>';
+    html+='<div style="display:flex;justify-content:space-between;padding:3px 0"><span>Perda (clientes saindo)</span><strong style="color:var(--rd)">'+brl(d.perda)+'</strong></div>';
+    html+='<div style="display:flex;justify-content:space-between;padding:3px 0"><span>Novos clientes</span><strong style="color:var(--cy)">'+brl(d.novos)+'</strong></div>';
+    html+='<div style="display:flex;justify-content:space-between;padding:3px 0"><span>% fat de novos</span><strong>'+d.pctPart.toFixed(1)+'%</strong></div></div></div>';
+    // Indicadores
+    html+='<div style="background:var(--s2);border-radius:8px;padding:12px">';
+    html+='<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:8px">Indicadores de Qualidade</div>';
+    html+='<div style="font-size:12px;color:var(--t2)"><div style="display:flex;justify-content:space-between;padding:3px 0"><span>SKU/Cliente</span><strong style="color:var(--cy)">'+d.sku.toFixed(1)+' <span style="font-size:10px;color:var(--t3)">('+( d.pctSku>=0?'+':'')+d.pctSku.toFixed(1)+'%)</span></strong></div>';
+    html+='<div style="display:flex;justify-content:space-between;padding:3px 0"><span>Margem MC</span><strong style="color:'+cor3(d.mc,15.5,14)+'">'+d.mc.toFixed(1)+'%</strong></div>';
+    html+='<div style="display:flex;justify-content:space-between;padding:3px 0"><span>Venda Média</span><strong>'+brl(d.vm)+' <span style="font-size:10px;color:var(--t3)">('+( d.pctVm>=0?'+':'')+d.pctVm.toFixed(1)+'%)</span></strong></div></div></div>';
+    html+='</div>';
+
+    // Top 50 desse vendedor
+    if(d.top_total>0){
+      html+='<div style="background:var(--s2);border-radius:8px;padding:12px;margin-bottom:14px">';
+      html+='<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:8px">Top 50 — Carteira Estratégica ('+d.top_total+' clientes)</div>';
+      html+='<div style="display:flex;gap:14px;font-size:12px;margin-bottom:8px">';
+      html+='<span>🟢 Forte: <strong style="color:var(--cy)">'+d.top_forte+'</strong></span>';
+      html+='<span>🟡 Risco: <strong style="color:var(--ye)">'+d.top_risco+'</strong></span>';
+      html+='<span>🔴 Queda: <strong style="color:var(--rd)">'+d.top_crit+'</strong></span>';
+      html+='</div>';
+      if(d.clientes_crit.length){
+        d.clientes_crit.forEach(function(c){
+          html+='<div style="font-size:11px;color:var(--t2);display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--b)">';
+          html+='<span>🔴 '+c.cliente.split('-').slice(1).join('-').trim().substring(0,30)+'</span>';
+          html+='<span style="color:var(--rd)">'+nv(c.cresc).toFixed(1)+'% · '+brl(c.fat2026)+'</span></div>';
+        });
+      }
+      html+='</div>';
+    }
+
+    // Alertas e ações
+    if(al.length){
+      html+='<div style="border-top:1px solid var(--b);padding-top:12px">';
+      html+='<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:8px">Pontos de Atenção e Ações</div>';
+      al.forEach(function(a){
+        html+='<div style="display:flex;gap:8px;padding:5px 0;font-size:12px;color:var(--t2)">';
+        html+='<span class="badge '+(a.n==='dg'?'bdg':'bwn')+'" style="flex-shrink:0">'+(a.n==='dg'?'URGENTE':'ATENÇÃO')+'</span>';
+        html+=a.t+'</div>';
+      });
+      html+='</div>';
+    } else {
+      html+='<div style="border-top:1px solid var(--b);padding-top:10px;font-size:12px;color:var(--cy)">✅ Vendedor dentro dos parâmetros em todos os indicadores.</div>';
+    }
+
+    html+='</div>';
   });
+
+  // CONCLUSÃO EXECUTIVA
+  var topAlertas=vs.map(function(v){return dadosVend(v);}).filter(function(d){return alertasVend(d).some(function(a){return a.n==='dg';});});
+  var topBons=vs.map(function(v){return dadosVend(v);}).filter(function(d){return alertasVend(d).length===0;});
+
+  html+='<div class="rb" style="border-left:4px solid var(--cy);padding-left:20px">';
+  html+='<div class="rs">Conclusão Executiva</div>';
+  html+='<div style="color:var(--t2);font-size:13px;line-height:1.9">';
+
+  var concl='A Regional Norte Fluminense '+( proj_r<90?'está abaixo da meta de projeção no mês atual (<strong style="color:var(--rd)">'+pct(r.proj)+'</strong>)':'apresenta projeção de <strong style="color:var(--cy)">'+pct(r.proj)+'</strong> no mês')+', enquanto no acumulado do ano o faturamento de <strong>'+brl(fat26r)+'</strong> representa <strong style="color:'+cor3(pctMetaR,95,80)+'">'+pctMetaR.toFixed(0)+'% da meta</strong> com crescimento de <strong>'+crescR+'%</strong> sobre 2025. ';
+
+  if(topAlertas.length>0)concl+='Os vendedores que demandam intervenção imediata são: <strong style="color:var(--rd)">'+topAlertas.map(function(d){return d.nome;}).join(', ')+'</strong>. ';
+  if(topBons.length>0)concl+=(topBons.length===1?'<strong style="color:var(--cy)">'+topBons[0].nome+'</strong> está':'<strong style="color:var(--cy)">'+topBons.map(function(d){return d.nome;}).join(' e ')+'</strong> estão')+' com todos os indicadores dentro dos parâmetros. ';
+
+  concl+='O churn médio de <strong style="color:'+cor3(9-churn_med,0,-6)+'">'+churn_med.toFixed(1)+'%</strong> é o principal risco estrutural — '+crit_n+' clientes do Top 50 estão em queda e precisam de ação comercial direta. ';
+
+  if(baixa)concl+='O contexto de baixa temporada da Região dos Lagos pressiona naturalmente os volumes, exigindo foco em retenção de base e preparo para a virada da alta temporada em setembro.';
+
+  html+=concl+'</div></div>';
+
+  html+='<div style="font-size:10px;color:var(--t3);text-align:center;padding:16px">GERENCION · Supervisão Comercial · '+p.empresa+' · '+hoje+'</div>';
   html+='</div>';
-  if(planosAtivos.length>0){html+='<div class="rb"><div class="rs">Planos de Ação Ativos</div>'+planosAtivos.map(function(pl){return'<div style="border-bottom:1px solid var(--b);padding:10px 0"><strong style="color:var(--t)">'+pl.problema+'</strong>'+(pl.solucao?'<div style="font-size:12px;color:var(--cy)">→ '+pl.solucao+'</div>':'')+'</div>';}).join('')+'</div>';}
-  html+='<div style="font-size:10px;color:var(--t3);text-align:center;padding:16px">GERENCION · '+p.empresa+' · '+hoje+'</div></div>';
-  document.getElementById('relArea').innerHTML=html;toast('Relatório gerado!');
+
+  document.getElementById('relArea').innerHTML=html;
+  toast('Relatório executivo completo gerado!');
 }
+
 function imprimirRelatorio(){var rel=document.getElementById('relArea');if(!rel||rel.querySelector('.empty')){toast('Gere o relatório primeiro.');return;}window.print();}
 function abrirJanela(titulo,html){
   var win=window.open('','_blank');if(!win){toast('Permita popups.');return;}
@@ -843,49 +1079,422 @@ function importarDados(){var input=document.createElement('input');input.type='f
 function renderPos(){var el=document.getElementById('posBox');if(!el)return;if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de positivação.</div>';return;}var tp=0,tn=0;DB.posChurn.forEach(function(p){tp+=parseInt(p.positivados||0);tn+=parseInt(p.naoPositivados||0);});var tx=tp+tn>0?((tp/(tp+tn))*100).toFixed(1):0;el.innerHTML='<div class="stats s3" style="margin-bottom:14px"><div class="stat"><div class="st-l">Positivados</div><div class="st-v">'+tp+'</div></div><div class="stat dg"><div class="st-l">Não Positivados</div><div class="st-v">'+tn+'</div></div><div class="stat '+(parseFloat(tx)>=70?'':'wn')+'"><div class="st-l">Taxa</div><div class="st-v">'+tx+'%</div></div></div><div class="tw"><table><thead><tr><th>Vendedor</th><th>Positivados</th><th>Não Posit</th><th>Taxa</th><th>Situação</th></tr></thead><tbody>'+DB.posChurn.map(function(p){var tot=parseInt(p.positivados||0)+parseInt(p.naoPositivados||0),tx=tot>0?((parseInt(p.positivados||0)/tot)*100).toFixed(1):0,np=parseInt(p.naoPositivados||0);return'<tr><td style="font-weight:600">'+p.nome+'</td><td style="color:var(--cy)">'+fmt(p.positivados)+'</td><td style="color:var(--rd)">'+fmt(p.naoPositivados)+'</td><td>'+tx+'%</td><td>'+(np>20?'<span class="badge bdg">URGENTE</span>':np>10?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+'</td></tr>';}).join('')+'</tbody></table></div>';}
 function renderChurn(){var el=document.getElementById('churnBox');if(!el)return;if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de churn.</div>';return;}var com=DB.posChurn.filter(function(p){return p.churnRate!=='';});if(com.length===0){el.innerHTML='<div class="empty">Nenhum dado de churn lançado.</div>';return;}el.innerHTML='<div class="g2">'+com.map(function(p){var c=n(p.churnRate);return'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-weight:700">'+p.nome+'</div>'+(c>15?'<span class="badge bdg">CRÍTICO</span>':c>9?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+'</div><div style="font-size:44px;font-weight:700;color:'+(c>15?'var(--rd)':c>9?'var(--ye)':'var(--cy)')+';line-height:1">'+c.toFixed(1)+'%</div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-top:4px">CHURN RATE</div></div>';}).join('')+'</div>';}
 function iniciarApresentacao(){
-  var vs=DB.biAtual.vendedores;if(!vs||vs.length===0){toast('Lance os dados do BI primeiro.');return;}
+  var vs=DB.biAtual.vendedores;
+  if(!vs||vs.length===0){toast('Lance os dados do BI primeiro.');return;}
+
   var p=DB.perfil,r=DB.biAtual.regional;
-  var projMedia=vs.reduce(function(s,v){return s+n(v.proj);},0)/vs.length;
-  var baixa=(new Date().getMonth()>=4&&new Date().getMonth()<=7);
-  var situacao=projMedia>=85?'SAUDÁVEL':projMedia>=70?'ATENÇÃO':'CRÍTICA';
-  var sitCor=projMedia>=85?'#00E5C3':projMedia>=70?'#FFB800':'#FF4560';
-  var scores=vs.map(function(v,i){return calcScore(v,DB.posChurn[i]||{});});
-  var scoreM=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
-  var totalPos=0,totalNPos=0;DB.posChurn.forEach(function(pc){totalPos+=parseInt(pc.positivados||0);totalNPos+=parseInt(pc.naoPositivados||0);});
-  var txPos=totalPos+totalNPos>0?((totalPos/(totalPos+totalNPos))*100).toFixed(1):0;
   var hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-  var crit=vs.filter(function(v){return st(v.proj,v.devPct)==='dg';});var atenc=vs.filter(function(v){return st(v.proj,v.devPct)==='wn';});var ok=vs.length-crit.length-atenc.length;
-  var planosAtivos=DB.planos.filter(function(pl){return pl.status!=='Concluído';});
-  var churnMedia=DB.posChurn.length?DB.posChurn.reduce(function(s,pc){return s+n(pc.churnRate);},0)/DB.posChurn.length:0;
-  function sBox(lbl,val,sub,cor){return'<div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:24px;text-align:center"><div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#6A7A8E;margin-bottom:8px">'+lbl+'</div><div style="font-size:38px;font-weight:700;color:'+cor+'">'+val+'</div>'+(sub?'<div style="font-size:13px;color:#6A7A8E;margin-top:4px">'+sub+'</div>':'')+'</div>';}
-  function sAcao(em,prio,txt,cor){return'<div style="display:flex;gap:16px;background:rgba(255,255,255,0.04);border-radius:10px;padding:16px;border-left:3px solid '+cor+'"><div style="font-size:24px">'+em+'</div><div><div style="font-size:12px;font-weight:700;color:'+cor+';letter-spacing:1px;margin-bottom:3px">'+prio+'</div><div style="font-size:15px;color:#B0BBC8">'+txt+'</div></div></div>';}
-  function mBox(lbl,val,cor){return'<div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;text-align:center"><div style="font-size:11px;color:#6A7A8E;text-transform:uppercase;margin-bottom:3px">'+lbl+'</div><div style="font-size:14px;font-weight:700;color:'+cor+'">'+val+'</div></div>';}
+  var baixa=(new Date().getMonth()>=4&&new Date().getMonth()<=7);
+
+  // ── helpers ──────────────────────────────────────────
+  function nv(v){var s=String(v||0).replace(/R\$\s?/g,'').replace(/%/g,'').replace(/\./g,'').replace(',','.').replace(/[^\d.\-]/g,'');return parseFloat(s)||0;}
+  function brl(v){return'R$ '+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});}
+  function fP(v){return nv(v).toFixed(1)+'%';}
+  function cor3(val,bom,ruim){return val>=bom?'#00E5C3':val>=ruim?'#FFB800':'#FF4560';}
+
+  // ── dados regionais ───────────────────────────────────
+  var proj_r  = nv(r.proj), marg_r = nv(r.marg), dev_r = Math.abs(nv(r.devPct));
+  var pos_r   = nv(r.realPos), obj_pos = nv(r.objPos), saldo_pos = nv(r.saldoPos);
+  var lr = DB.lupaFatRegional||{};
+  var fat26r = lr.fat2026||0, crescR = lr.cresc||0, metaR = lr.tgt26||0;
+  var gapR = lr.gap||0, mcR = lr.mcPct||0, vmR = lr.vendaMedia||0;
+  var pctMetaR = metaR>0?(fat26r/metaR*100):0;
+  var lt = DB.lupaTop50||[];
+  var forte_n  = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Forte')>=0;}).length;
+  var risco_n  = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Risco')>=0&&c.semaforo.indexOf('Alto')<0;}).length;
+  var crit_n   = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Alto Risco')>=0;}).length;
+  var fat_top  = lt.reduce(function(s,c){return s+(c.fat2026||0);},0);
+  var pct_top  = fat26r>0?(fat_top/fat26r*100):0;
+  var churn_med = DB.posChurn.length?DB.posChurn.reduce(function(s,p){return s+nv(p.churnRate);},0)/DB.posChurn.length:0;
+  var totalPos  = DB.posChurn.reduce(function(s,p){return s+nv(p.positivados);},0);
+  var totalNPos = DB.posChurn.reduce(function(s,p){return s+nv(p.naoPositivados);},0);
+  var txPosR    = (totalPos+totalNPos)>0?(totalPos/(totalPos+totalNPos)*100):0;
+  var situacao  = proj_r>=90&&churn_med<=15?'ATENÇÃO':(proj_r>=100&&churn_med<=9?'SAUDÁVEL':'CRÍTICA');
+  var sitCor    = situacao==='SAUDÁVEL'?'#00E5C3':situacao==='ATENÇÃO'?'#FFB800':'#FF4560';
+
+  // ── dados por vendedor ────────────────────────────────
+  function dadosVend(v){
+    var cod=v.cod,nome=v.nome;
+    var pc  = DB.posChurn.find(function(p){return p.nome&&p.nome.split(' ').pop()===nome.split(' ').pop();})||{};
+    var lvi = (DB.lupaFatVendedores||[]).find(function(l){return l.nome&&l.nome.indexOf(cod)>=0;})||{};
+    var ssi = (DB.lupaSss||[]).find(function(l){return l.nome&&l.nome.indexOf(cod)>=0;})||{};
+    var lii = (DB.lupaIndic||[]).find(function(l){return l.nome&&l.nome.indexOf(cod)>=0;})||{};
+    var clientes = lt.filter(function(c){return c.vendedor&&c.vendedor.toUpperCase()===nome.toUpperCase();});
+    var top_crit = clientes.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Alto Risco')>=0;});
+    var top_forte= clientes.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Forte')>=0;});
+    var posit=nv(pc.positivados),nposit=nv(pc.naoPositivados);
+    return{
+      cod:cod,nome:nome,
+      proj:nv(v.proj),marg:nv(v.marg),dev:Math.abs(nv(v.devPct)),objMarg:nv(v.objMarg)||17.5,
+      posit:posit,nposit:nposit,churn:nv(pc.churnRate),
+      txPos:(posit+nposit)>0?(posit/(posit+nposit)*100):0,
+      fat26:lvi.fat2026||0,cresc:lvi.cresc||0,meta:lvi.tgt26||0,gap:lvi.gap||0,
+      pctMeta:lvi.tgt26>0?(lvi.fat2026/lvi.tgt26*100):0,part:lvi.participacao||0,
+      sss:ssi.pctSss||0,perda:ssi.perda||0,novos:ssi.novos||0,pctPart:ssi.pctPart||0,
+      sku:lii.sku2026||0,pctSku:lii.pctSku||0,mc:lii.mc2026||0,vm:lii.vm2026||0,pctVm:lii.pctVm||0,
+      top_total:clientes.length,top_forte:top_forte.length,top_crit:top_crit.length,
+      top_crit_list:top_crit.slice(0,3)
+    };
+  }
+
+  function statusVend(d){
+    if(d.proj<90||d.churn>20||d.marg<14)return{s:'CRÍTICO',c:'#FF4560'};
+    if(d.proj<100||d.churn>9||d.dev>0.65||d.marg<d.objMarg||d.sss<0||d.top_crit>=2)return{s:'ATENÇÃO',c:'#FFB800'};
+    return{s:'SAUDÁVEL',c:'#00E5C3'};
+  }
+
+  // ── componentes visuais de slide ──────────────────────
+  function sBox(lbl,val,sub,cor){
+    return'<div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:clamp(12px,2vw,20px);text-align:center">'+
+      '<div style="font-size:clamp(9px,1.1vw,11px);letter-spacing:1px;text-transform:uppercase;color:#6A7A8E;margin-bottom:6px">'+lbl+'</div>'+
+      '<div style="font-size:clamp(18px,3vw,32px);font-weight:700;color:'+cor+'">'+val+'</div>'+
+      (sub?'<div style="font-size:clamp(9px,1vw,11px);color:#6A7A8E;margin-top:3px">'+sub+'</div>':'')+
+    '</div>';
+  }
+
+  function mBox(lbl,val,cor){
+    return'<div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:clamp(6px,1vw,10px);text-align:center">'+
+      '<div style="font-size:clamp(8px,0.9vw,10px);color:#6A7A8E;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">'+lbl+'</div>'+
+      '<div style="font-size:clamp(12px,1.5vw,16px);font-weight:700;color:'+cor+'">'+val+'</div>'+
+    '</div>';
+  }
+
+  function linha(lbl,val,cor){
+    return'<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:clamp(11px,1.3vw,13px)">'+
+      '<span style="color:#B0BBC8">'+lbl+'</span>'+
+      '<strong style="color:'+cor+'">'+val+'</strong>'+
+    '</div>';
+  }
+
   var slides=[];
-  slides.push('<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:calc(100vh - 70px);text-align:center;padding:60px"><div style="font-size:14px;letter-spacing:4px;color:#00E5C3;margin-bottom:28px;text-transform:uppercase">GERENCION · SUPERVISÃO COMERCIAL · ARCOFOODS</div><div style="font-size:72px;font-weight:700;color:white;margin-bottom:16px;line-height:1.05">RELATÓRIO<br>EXECUTIVO</div><div style="font-size:22px;color:#B0BBC8;margin-bottom:10px">'+p.empresa+' · Regional '+(p.regional||'Norte Fluminense')+'</div><div style="font-size:16px;color:#6A7A8E;margin-bottom:52px)">'+p.supervisor+' · '+hoje+'</div><div style="display:inline-flex;flex-direction:column;align-items:center;padding:24px 48px;border-radius:16px;background:'+sitCor+'15;border:2px solid '+sitCor+'"><div style="font-size:54px;font-weight:700;color:'+sitCor+'">'+situacao+'</div><div style="font-size:15px;color:#B0BBC8;margin-top:6px">Score: '+scoreM+'/100'+(baixa?' · ⚠ Baixa Temporada':'')+' · Projeção: '+projMedia.toFixed(1)+'%</div></div></div>');
-  slides.push('<div style="padding:50px"><div style="font-size:12px;letter-spacing:3px;color:#00E5C3;margin-bottom:28px;text-transform:uppercase">TERMÔMETRO DA REGIONAL</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px">'+sBox('Projeção',fP(r.proj),'Meta: 100%',projMedia>=85?'#00E5C3':projMedia>=70?'#FFB800':'#FF4560')+sBox('Margem',fP(r.marg),'Obj: '+(r.objMarg||'17,5')+'%',n(r.marg)>=n(r.objMarg||17.5)?'#00E5C3':'#FFB800')+sBox('Positivação',txPos+'%',totalPos+' de '+(totalPos+totalNPos),parseFloat(txPos)>=70?'#00E5C3':'#FF4560')+sBox('Churn Médio',churnMedia.toFixed(1)+'%','da carteira',churnMedia<=9?'#00E5C3':churnMedia<=15?'#FFB800':'#FF4560')+'</div></div>');
-  slides.push('<div style="padding:50px"><div style="font-size:12px;letter-spacing:3px;color:#00E5C3;margin-bottom:24px;text-transform:uppercase">DIAGNÓSTICO DA EQUIPE</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:24px">'+sBox('SAUDÁVEIS',String(ok),ok+' vendedor(es)','#00E5C3')+sBox('ATENÇÃO',String(atenc.length),atenc.length+' vendedor(es)','#FFB800')+sBox('CRÍTICOS',String(crit.length),crit.length+' vendedor(es)','#FF4560')+'</div><div style="display:flex;flex-direction:column;gap:10px">'+vs.map(function(v,i){var pc=DB.posChurn[i]||{},sc=scores[i],cor=sc>=70?'#00E5C3':sc>=50?'#FFB800':'#FF4560';return'<div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.04);border-radius:10px;padding:14px 18px;border-left:3px solid '+cor+'"><div style="flex:1;font-size:16px;font-weight:600;color:white">'+v.nome+'</div><div style="font-size:13px;color:#B0BBC8">PROJ: '+fP(v.proj)+' · MARG: '+fP(v.marg)+(pc.churnRate?' · Churn: '+pc.churnRate+'%':'')+'</div><div style="font-size:26px;font-weight:700;color:'+cor+'">'+sc+'<span style="font-size:11px;color:#6A7A8E">pts</span></div></div>';}).join('')+'</div></div>');
-  vs.forEach(function(v,i){
-    var pc=DB.posChurn[i]||{},sc=scores[i],s=st(v.proj,v.devPct),cor=sc>=70?'#00E5C3':sc>=50?'#FFB800':'#FF4560';
-    var badge=sc>=70?'SAUDÁVEL':sc>=50?'ATENÇÃO':'CRÍTICO';
-    var acoes=[];
-    if(n(v.proj)<70)acoes.push({e:'🚨',p:'URGENTE',t:'Projeção crítica ('+fP(v.proj)+'). Visita imediata.',c:'#FF4560'});
-    else if(n(v.proj)<85)acoes.push({e:'⚠️',p:'ATENÇÃO',t:'Projeção ('+fP(v.proj)+'). Acionar clientes inativos.',c:'#FFB800'});
-    if(n(pc.churnRate)>15)acoes.push({e:'🔴',p:'CHURN',t:'Churn alto ('+pc.churnRate+'%). Reativação urgente.',c:'#FF4560'});
-    else if(n(pc.churnRate)>9)acoes.push({e:'🟡',p:'CHURN',t:'Churn em atenção ('+pc.churnRate+'%).',c:'#FFB800'});
-    if(n(pc.naoPositivados)>15)acoes.push({e:'👥',p:'POSIT',t:pc.naoPositivados+' clientes não compraram.',c:'#FFB800'});
-    if(acoes.length===0)acoes.push({e:'✅',p:'OK',t:'Dentro dos parâmetros. Manter o ritmo.',c:'#00E5C3'});
-    slides.push('<div style="padding:44px"><div style="font-size:12px;letter-spacing:3px;color:#00E5C3;margin-bottom:20px;text-transform:uppercase">DIAGNÓSTICO INDIVIDUAL · '+(i+1)+'/'+vs.length+'</div><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px"><div><div style="font-size:40px;font-weight:700;color:white;line-height:1.1">'+v.nome+'</div><div style="font-size:14px;color:#6A7A8E;margin-top:4px">COD '+v.cod+' · Score: <strong style="color:'+cor+'">'+sc+'/100</strong></div></div><span style="font-size:14px;font-weight:700;color:'+cor+';background:'+cor+'18;border:2px solid '+cor+';padding:4px 14px;border-radius:6px">'+badge+'</span></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">'+mBox('PROJ',fP(v.proj),s==='ok'?'#00E5C3':s==='wn'?'#FFB800':'#FF4560')+mBox('MARGEM',fP(v.marg),n(v.marg)>=(n(v.objMarg)||17.5)?'#00E5C3':'#FFB800')+mBox('DEV',fP(v.devPct),Math.abs(n(v.devPct))>0.65?'#FF4560':'#00E5C3')+mBox('POSIT',fmt(v.realPos)+'/'+fmt(v.objPos),n(v.saldoPos)>=0?'#00E5C3':'#FF4560')+'</div><div style="display:flex;flex-direction:column;gap:8px">'+acoes.map(function(a){return sAcao(a.e,a.p,a.t,a.c);}).join('')+'</div></div>');
+
+  // ════════════════════════════════════════════════
+  // SLIDE 1 — CAPA
+  // ════════════════════════════════════════════════
+  slides.push('<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:calc(100vh - 70px);text-align:center;padding:clamp(20px,4vw,60px)">'+
+    '<div style="font-size:clamp(10px,1.4vw,13px);letter-spacing:4px;color:#00E5C3;margin-bottom:clamp(16px,2.5vw,28px);text-transform:uppercase">'+p.empresa+' · SUPERVISÃO COMERCIAL</div>'+
+    '<div style="font-size:clamp(28px,6vw,64px);font-weight:700;color:white;margin-bottom:clamp(8px,1.5vw,14px);line-height:1.05">RELATÓRIO<br>EXECUTIVO</div>'+
+    '<div style="font-size:clamp(13px,2vw,20px);color:#B0BBC8;margin-bottom:clamp(4px,1vw,8px)">Regional '+( p.regional||'Norte Fluminense')+'</div>'+
+    '<div style="font-size:clamp(11px,1.4vw,15px);color:#6A7A8E;margin-bottom:clamp(20px,4vw,44px)">'+p.supervisor+' · '+(p.cargo||'Supervisor de Vendas')+' · '+hoje+'</div>'+
+    '<div style="display:inline-flex;flex-direction:column;align-items:center;padding:clamp(14px,2.5vw,24px) clamp(24px,5vw,56px);border-radius:16px;background:'+sitCor+'15;border:2px solid '+sitCor+'">'+
+      '<div style="font-size:clamp(24px,4.5vw,48px);font-weight:700;color:'+sitCor+'">'+situacao+'</div>'+
+      '<div style="font-size:clamp(11px,1.3vw,14px);color:#B0BBC8;margin-top:6px">Projeção '+fP(r.proj)+(baixa?' · Baixa Temporada':'')+' · '+hoje+'</div>'+
+    '</div>'+
+  '</div>');
+
+  // ════════════════════════════════════════════════
+  // SLIDE 2 — REGIONAL MÊS ATUAL
+  // ════════════════════════════════════════════════
+  var premStr = proj_r>=110?'🏆 PREMIAÇÃO MÁXIMA':proj_r>=100?'✅ PREMIAÇÃO BASE':proj_r>=90?'⚠ PREMIAÇÃO PARCIAL':'❌ SEM PREMIAÇÃO';
+  var premCor = proj_r>=110?'#FFB800':proj_r>=100?'#00E5C3':proj_r>=90?'#FFB800':'#FF4560';
+
+  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+    '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,22px);text-transform:uppercase">Regional — Mês Atual</div>'+
+    '<div style="display:flex;gap:clamp(8px,1.5vw,16px);align-items:center;margin-bottom:clamp(14px,2vw,20px);background:'+premCor+'15;border:1px solid '+premCor+'40;border-radius:12px;padding:clamp(10px,1.5vw,16px)">'+
+      '<div style="font-size:clamp(18px,3vw,28px);font-weight:700;color:'+premCor+'">'+premStr+'</div>'+
+      '<div style="margin-left:auto;text-align:right"><div style="font-size:clamp(22px,4vw,40px);font-weight:700;color:'+premCor+'">'+fP(r.proj)+'</div><div style="font-size:clamp(9px,1vw,11px);color:#6A7A8E">projeção do mês</div></div>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(12px,2vw,18px)">'+
+      sBox('Margem',fP(r.marg),'obj '+fP(r.objMarg||15.75),cor3(marg_r,nv(r.objMarg||15.75),15.5))+
+      sBox('Positivação',Math.round(txPosR)+'%',Math.round(totalPos)+'/'+Math.round(totalPos+totalNPos),cor3(txPosR,75,60))+
+      sBox('Churn Médio',churn_med.toFixed(1)+'%','limite 9%',cor3(9-churn_med,0,-6))+
+      sBox('Devolução',dev_r.toFixed(2)+'%','limite 0,65%',cor3(0.65-dev_r,0,-0.3))+
+    '</div>'+
+    (p.contexto?'<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,1.5vw,14px);font-size:clamp(11px,1.3vw,13px);color:#B0BBC8;border-left:3px solid #00E5C3;line-height:1.7">'+p.contexto+'</div>':'')+
+  '</div>');
+
+  // ════════════════════════════════════════════════
+  // SLIDE 3 — REGIONAL ANO (YTD)
+  // ════════════════════════════════════════════════
+  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+    '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,22px);text-transform:uppercase">Regional — Acumulado no Ano (YTD)</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(14px,2vw,20px)">'+
+      sBox('Fat. 2026',brl(fat26r),'acumulado jan–jun',cor3(crescR,10,0))+
+      sBox('Crescimento',crescR.toFixed(1)+'%','vs mesmo período 2025',cor3(crescR,10,0))+
+      sBox('Meta YTD',pctMetaR.toFixed(0)+'%','de '+brl(metaR),cor3(pctMetaR,95,80))+
+      sBox('Gap',brl(Math.abs(gapR)),gapR>=0?'acima da meta':'faltam para meta',gapR>=0?'#00E5C3':'#FF4560')+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1.5vw,14px)">'+
+      sBox('Margem MC',mcR.toFixed(1)+'%','margem de contribuição',cor3(mcR,15.5,14))+
+      sBox('Venda Média',brl(vmR),'por cliente',  '#00E5C3')+
+      sBox('SKU/Cliente',nv(r.sku).toFixed(1),'produtos por cliente','#00E5C3')+
+    '</div>'+
+  '</div>');
+
+  // ════════════════════════════════════════════════
+  // SLIDE 4 — TOP 50
+  // ════════════════════════════════════════════════
+  var crit_clientes = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Alto Risco')>=0;})
+    .sort(function(a,b){return nv(a.cresc)-nv(b.cresc);}).slice(0,8);
+
+  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+    '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">Top 50 Clientes — Carteira Estratégica</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(14px,2vw,20px)">'+
+      sBox('Total Top 50',String(lt.length),'clientes estratégicos','#00E5C3')+
+      sBox('Forte (≥20%)',String(forte_n),'crescendo','#00E5C3')+
+      sBox('Risco (0–15%)',String(risco_n),'crescimento fraco','#FFB800')+
+      sBox('Alto Risco',String(crit_n),'em queda','#FF4560')+
+    '</div>'+
+    '<div style="font-size:clamp(10px,1.2vw,12px);font-weight:700;color:#FF4560;letter-spacing:1px;text-transform:uppercase;margin-bottom:clamp(8px,1vw,12px)">Clientes em Queda — Requerem Ação Imediata</div>'+
+    '<div style="display:flex;flex-direction:column;gap:clamp(4px,0.8vw,8px)">'+
+    crit_clientes.map(function(c){
+      return'<div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,14px);background:rgba(255,69,96,0.06);border-radius:8px;padding:clamp(8px,1.2vw,12px) clamp(10px,1.5vw,16px);border-left:3px solid #FF4560">'+
+        '<div style="flex:1"><div style="font-size:clamp(11px,1.4vw,14px);font-weight:600;color:white">'+c.cliente.split('-').slice(1).join('-').trim().substring(0,38)+'</div>'+
+        '<div style="font-size:clamp(9px,1vw,11px);color:#6A7A8E">'+c.vendedor+'</div></div>'+
+        '<div style="text-align:right;flex-shrink:0"><div style="font-size:clamp(13px,1.8vw,18px);font-weight:700;color:#FF4560">'+nv(c.cresc).toFixed(1)+'%</div>'+
+        '<div style="font-size:clamp(9px,1vw,11px);color:#6A7A8E">'+brl(c.fat2026)+'</div></div>'+
+      '</div>';
+    }).join('')+
+    '</div>'+
+  '</div>');
+
+  // ════════════════════════════════════════════════
+  // SLIDE 5 — CHURN + POSITIVAÇÃO
+  // ════════════════════════════════════════════════
+  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+    '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">Retenção de Clientes — Churn e Positivação</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(14px,2vw,20px)">'+
+      sBox('Churn Médio',churn_med.toFixed(1)+'%','limite 9%',cor3(9-churn_med,0,-6))+
+      sBox('Taxa Positivação',Math.round(txPosR)+'%',Math.round(totalPos)+' de '+Math.round(totalPos+totalNPos),cor3(txPosR,75,60))+
+      sBox('Sem Comprar',String(Math.round(totalNPos)),'clientes inativos no mês','#FF4560')+
+    '</div>'+
+    '<div style="display:flex;flex-direction:column;gap:clamp(5px,0.8vw,8px)">'+
+    DB.posChurn.map(function(pc){
+      var churn=nv(pc.churnRate);
+      var posit=nv(pc.positivados),nposit=nv(pc.naoPositivados);
+      var tot=posit+nposit;
+      var tx=tot>0?(posit/tot*100):0;
+      var cor=cor3(9-churn,0,-6);
+      return'<div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,14px);background:rgba(255,255,255,0.04);border-radius:8px;padding:clamp(8px,1.2vw,12px) clamp(10px,1.5vw,16px)">'+
+        '<div style="flex:1;font-size:clamp(12px,1.5vw,15px);font-weight:600;color:white">'+pc.nome+'</div>'+
+        '<div style="font-size:clamp(11px,1.3vw,13px);color:#B0BBC8">Posit: <strong style="color:'+cor3(tx,75,60)+'">'+Math.round(posit)+'/'+Math.round(tot)+' ('+tx.toFixed(0)+'%)</strong></div>'+
+        '<div style="font-size:clamp(11px,1.3vw,13px);color:#B0BBC8">Churn: <strong style="color:'+cor+'">'+churn.toFixed(1)+'%</strong></div>'+
+      '</div>';
+    }).join('')+
+    '</div>'+
+  '</div>');
+
+  // ════════════════════════════════════════════════
+  // SLIDE 6 — RANKING DA EQUIPE
+  // ════════════════════════════════════════════════
+  var dados_vends = vs.map(function(v){var d=dadosVend(v);return{d:d,st:statusVend(d)};})
+    .sort(function(a,b){return b.d.proj-a.d.proj;});
+
+  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+    '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">Equipe — Ranking por Projeção do Mês</div>'+
+    '<div style="display:flex;flex-direction:column;gap:clamp(5px,0.8vw,8px)">'+
+    dados_vends.map(function(obj,i){
+      var d=obj.d,st=obj.st;
+      return'<div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,14px);background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(8px,1.3vw,13px) clamp(10px,2vw,18px);border-left:3px solid '+st.c+'">'+
+        '<div style="font-size:clamp(14px,2vw,20px);color:#6A7A8E;min-width:26px">'+(i+1)+'º</div>'+
+        '<div style="flex:1"><div style="font-size:clamp(12px,1.6vw,16px);font-weight:600;color:white">'+d.nome+'</div>'+
+        '<div style="font-size:clamp(9px,1vw,11px);color:#6A7A8E">YTD: '+brl(d.fat26)+' ('+d.cresc.toFixed(1)+'%) · '+d.part.toFixed(0)+'% da regional</div></div>'+
+        '<div style="font-size:clamp(10px,1.3vw,13px);color:#B0BBC8;text-align:right">'+
+          'Churn <strong style="color:'+cor3(9-d.churn,0,-6)+'">'+d.churn.toFixed(1)+'%</strong>'+
+        '</div>'+
+        '<div style="font-size:clamp(18px,2.8vw,28px);font-weight:700;color:'+st.c+';min-width:70px;text-align:right">'+d.proj.toFixed(1)+'<span style="font-size:clamp(9px,1vw,11px);color:#6A7A8E">%</span></div>'+
+        '<span style="font-size:clamp(8px,0.9vw,10px);font-weight:700;color:'+st.c+';background:'+st.c+'18;padding:2px 7px;border-radius:4px;white-space:nowrap">'+st.s+'</span>'+
+      '</div>';
+    }).join('')+
+    '</div>'+
+  '</div>');
+
+  // ════════════════════════════════════════════════
+  // SLIDES 7-15 — UM POR VENDEDOR
+  // ════════════════════════════════════════════════
+  vs.forEach(function(v,idx){
+    var d=dadosVend(v);
+    var st=statusVend(d);
+
+    // Alertas para o slide
+    var alertas=[];
+    if(d.proj<90)alertas.push({e:'🚨',t:'Projeção '+d.proj.toFixed(1)+'% — abaixo de 90%. Ação urgente.',c:'#FF4560'});
+    else if(d.proj<100)alertas.push({e:'⚠️',t:'Projeção '+d.proj.toFixed(1)+'% — falta '+(100-d.proj).toFixed(1)+'pp para a meta.',c:'#FFB800'});
+    if(d.churn>15)alertas.push({e:'🔴',t:'Churn '+d.churn.toFixed(1)+'% crítico — '+Math.round(d.nposit)+' clientes perdidos.',c:'#FF4560'});
+    else if(d.churn>9)alertas.push({e:'🟡',t:'Churn '+d.churn.toFixed(1)+'% — atenção (limite 9%).',c:'#FFB800'});
+    if(d.dev>0.65)alertas.push({e:'↩️',t:'Devolução '+d.dev.toFixed(2)+'% acima do limite de 0,65%.',c:'#FF4560'});
+    if(d.marg<15.5)alertas.push({e:'📊',t:'Margem '+d.marg.toFixed(1)+'% abaixo do mínimo — focar Mix Rentável.',c:'#FF4560'});
+    else if(d.marg<d.objMarg)alertas.push({e:'📊',t:'Margem '+d.marg.toFixed(1)+'% abaixo do objetivo ('+d.objMarg+'%).',c:'#FFB800'});
+    if(d.sss<0)alertas.push({e:'📉',t:'SSS negativo ('+d.sss.toFixed(1)+'%) — clientes antigos comprando menos. Perda: '+brl(d.perda)+'.',c:'#FFB800'});
+    if(d.top_crit>=2)alertas.push({e:'🏪',t:d.top_crit+' clientes do Top 50 em queda — ação comercial necessária.',c:'#FFB800'});
+    if(alertas.length===0)alertas.push({e:'✅',t:'Todos os indicadores dentro dos parâmetros. Manter o ritmo.',c:'#00E5C3'});
+
+    slides.push('<div style="padding:clamp(16px,3vw,42px)">'+
+      // Cabeçalho
+      '<div style="font-size:clamp(9px,1.1vw,11px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(10px,1.5vw,16px);text-transform:uppercase">Diagnóstico Individual · '+(idx+1)+'/'+vs.length+'</div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:clamp(10px,1.5vw,16px);flex-wrap:wrap;gap:8px">'+
+        '<div>'+
+          '<div style="font-size:clamp(20px,3.5vw,38px);font-weight:700;color:white;line-height:1.1">'+d.nome+'</div>'+
+          '<div style="font-size:clamp(10px,1.2vw,13px);color:#6A7A8E;margin-top:4px">COD '+d.cod+' · '+d.part.toFixed(0)+'% do faturamento regional · '+brl(d.fat26)+' no ano</div>'+
+        '</div>'+
+        '<span style="font-size:clamp(10px,1.2vw,13px);font-weight:700;color:'+st.c+';background:'+st.c+'18;border:2px solid '+st.c+';padding:4px 14px;border-radius:6px">'+st.s+'</span>'+
+      '</div>'+
+      // Grid principal: 2 colunas
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(10px,1.5vw,14px)">'+
+        // Coluna esquerda: MÊS + CHURN
+        '<div style="display:flex;flex-direction:column;gap:clamp(6px,1vw,10px)">'+
+          '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,1.5vw,14px)">'+
+            '<div style="font-size:clamp(8px,0.9vw,10px);color:#6A7A8E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Mês Atual</div>'+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'+
+              mBox('Projeção',d.proj.toFixed(1)+'%',cor3(d.proj,90,70))+
+              mBox('Margem',d.marg.toFixed(1)+'%',cor3(d.marg,d.objMarg,15.5))+
+              mBox('Devolução',d.dev.toFixed(2)+'%',cor3(0.65-d.dev,0,-0.3))+
+              mBox('Positivação',d.txPos.toFixed(0)+'%',cor3(d.txPos,75,60))+
+            '</div>'+
+          '</div>'+
+          '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,1.5vw,14px)">'+
+            '<div style="font-size:clamp(8px,0.9vw,10px);color:#6A7A8E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Churn e Positivação</div>'+
+            linha('Churn',d.churn.toFixed(1)+'%',cor3(9-d.churn,0,-6))+
+            linha('Positivados',Math.round(d.posit)+'/'+Math.round(d.posit+d.nposit),'#00E5C3')+
+            linha('Sem comprar',Math.round(d.nposit)+' clientes',d.nposit>15?'#FF4560':'#FFB800')+
+          '</div>'+
+        '</div>'+
+        // Coluna direita: YTD + SSS + Indic
+        '<div style="display:flex;flex-direction:column;gap:clamp(6px,1vw,10px)">'+
+          '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,1.5vw,14px)">'+
+            '<div style="font-size:clamp(8px,0.9vw,10px);color:#6A7A8E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Ano (YTD)</div>'+
+            linha('Fat. 2026',brl(d.fat26),'#00E5C3')+
+            linha('Crescimento',d.cresc.toFixed(1)+'% vs 2025',cor3(d.cresc,10,0))+
+            linha('% da Meta',d.pctMeta.toFixed(0)+'%',cor3(d.pctMeta,95,80))+
+            linha('Gap',brl(Math.abs(d.gap)),d.gap>=0?'#00E5C3':'#FF4560')+
+          '</div>'+
+          '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,1.5vw,14px)">'+
+            '<div style="font-size:clamp(8px,0.9vw,10px);color:#6A7A8E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">SSS · Indicadores</div>'+
+            linha('SSS (clientes antigos)',d.sss.toFixed(1)+'%',cor3(d.sss,5,-5))+
+            linha('Perda',brl(d.perda),'#FF4560')+
+            linha('Novos clientes',brl(d.novos),'#00E5C3')+
+            linha('SKU/Cliente',d.sku.toFixed(1)+(d.pctSku>=0?' (+':'(') +d.pctSku.toFixed(0)+'%)','#00E5C3')+
+            linha('Venda Média',brl(d.vm)+(d.pctVm>=0?' (+':'(') +d.pctVm.toFixed(0)+'%)',cor3(d.pctVm,5,-5))+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      // Top 50 e alertas lado a lado
+      '<div style="display:grid;grid-template-columns:'+(d.top_total>0?'1fr 1fr':'1fr')+';gap:clamp(8px,1.5vw,14px)">'+
+        (d.top_total>0?
+          '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,1.5vw,14px)">'+
+            '<div style="font-size:clamp(8px,0.9vw,10px);color:#6A7A8E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Top 50 — Carteira ('+d.top_total+' clientes)</div>'+
+            '<div style="display:flex;gap:14px;font-size:clamp(10px,1.2vw,13px);margin-bottom:6px">'+
+              '<span>🟢 <strong style="color:#00E5C3">'+d.top_forte+'</strong></span>'+
+              '<span>🔴 <strong style="color:#FF4560">'+d.top_crit+'</strong></span>'+
+            '</div>'+
+            d.top_crit_list.map(function(c){
+              return'<div style="font-size:clamp(9px,1.1vw,12px);color:#B0BBC8;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05)">🔴 '+c.cliente.split('-').slice(1).join('-').trim().substring(0,28)+' <strong style="color:#FF4560">'+nv(c.cresc).toFixed(0)+'%</strong></div>';
+            }).join('')+
+          '</div>':'')+
+        '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,1.5vw,14px)">'+
+          '<div style="font-size:clamp(8px,0.9vw,10px);color:#6A7A8E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Pontos de Atenção</div>'+
+          '<div style="display:flex;flex-direction:column;gap:5px">'+
+          alertas.map(function(a){
+            return'<div style="display:flex;gap:8px;font-size:clamp(10px,1.2vw,13px);color:#B0BBC8">'+
+              '<span>'+a.e+'</span><span>'+a.t+'</span></div>';
+          }).join('')+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>');
   });
-  if(planosAtivos.length>0)slides.push('<div style="padding:50px"><div style="font-size:12px;letter-spacing:3px;color:#00E5C3;margin-bottom:24px;text-transform:uppercase">PLANOS DE AÇÃO</div><div style="display:flex;flex-direction:column;gap:12px">'+planosAtivos.map(function(pl){var cor=pl.prioridade==='Alta'?'#FF4560':pl.prioridade==='Média'?'#FFB800':'#00E5C3';return'<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:18px;border-left:3px solid '+cor+'"><div style="font-size:17px;font-weight:700;color:white;margin-bottom:6px">'+pl.problema+'</div>'+(pl.solucao?'<div style="font-size:15px;color:#00E5C3">→ '+pl.solucao+'</div>':'')+'</div>';}).join('')+'</div></div>');
-  slides.push('<div style="padding:50px"><div style="font-size:12px;letter-spacing:3px;color:#00E5C3;margin-bottom:24px;text-transform:uppercase">DIRETRIZES</div><div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">'+(crit.length>0?sAcao('🚨','URGENTE','Campo imediato: '+crit.map(function(v){return v.nome;}).join(', ')+'.','#FF4560'):'')+sAcao('📦','CONTÍNUO','Mix Rentável: mínimo 2 itens de alta margem por pedido.','#00E5C3')+(baixa?sAcao('🎯','ESTRATÉGICO','Preparar alta temporada (setembro).','#00E5C3'):'')+'</div><div style="padding:20px;background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.2);border-radius:12px;text-align:center"><div style="font-size:17px;color:#B0BBC8">Projeção <strong style="color:'+sitCor+'">'+projMedia.toFixed(1)+'%</strong> · Score Regional <strong style="color:'+sitCor+'">'+scoreM+'/100</strong><br>Positivação <strong>'+txPos+'%</strong> · '+ok+' saudáveis · '+atenc.length+' atenção · '+crit.length+' críticos</div></div></div>');
-  var css='*{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;font-family:Inter,sans-serif;background:#060C18;color:#F0F4FF;overflow:hidden;}.slide{display:none;height:100vh;overflow-y:auto;padding-bottom:72px;}.slide.ativo{display:block;}.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:16px;padding:14px 20px;background:rgba(6,12,24,0.97);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,0.08);z-index:100;}.nav-btn{padding:11px 22px;border-radius:8px;border:none;cursor:pointer;font-family:Inter,sans-serif;font-size:14px;font-weight:600;}.nav-prev{background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.15);}.nav-next{background:#00E5C3;color:#04080F;}.nav-prev:disabled,.nav-next:disabled{opacity:0.3;cursor:not-allowed;}.nav-info{color:#6A7A8E;font-size:13px;}.nav-dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:60vw;}.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.2);cursor:pointer;transition:all .2s;}.dot.on{background:#00E5C3;width:18px;border-radius:3px;}';
-  var cur=0;var win=window.open('','_blank');if(!win){toast('Permita popups.');return;}
-  function renderSlide(){var nav='<nav class="nav"><button class="nav-btn nav-prev" onclick="prev()" '+(cur===0?'disabled':'')+'>← Anterior</button><div class="nav-dots">'+slides.map(function(s,i){return'<div class="dot'+(i===cur?' on':'')+'" onclick="ir('+i+')"></div>';}).join('')+'</div><span class="nav-info">'+(cur+1)+' / '+slides.length+'</span><button class="nav-btn nav-next" onclick="prox()" '+(cur===slides.length-1?'disabled':'')+'>Próximo →</button><button class="nav-btn nav-prev" onclick="window.close();" style="background:rgba(255,69,96,0.15);color:#FF4560;border:1px solid rgba(255,69,96,0.3)">✕ Fechar</button></nav>';win.document.body.innerHTML='<div class="slide ativo">'+slides[cur]+'</div>'+nav;win.scrollTo(0,0);}
-  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>GERENCION · Apresentação</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>'+css+'</style></head><body></body></html>');win.document.close();
-  win.prev=function(){if(cur>0){cur--;renderSlide();}};win.prox=function(){if(cur<slides.length-1){cur++;renderSlide();}};win.ir=function(i){cur=i;renderSlide();};
-  win.onkeydown=function(e){if(e.key==='ArrowRight'||e.key==='ArrowDown'){if(cur<slides.length-1){cur++;renderSlide();}}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){if(cur>0){cur--;renderSlide();}}};
-  renderSlide();toast('Apresentação aberta! '+slides.length+' slides.');
+
+  // ════════════════════════════════════════════════
+  // SLIDE FINAL — DIRETRIZES
+  // ════════════════════════════════════════════════
+  var criticos = vs.map(dadosVend).filter(function(d){return d.proj<90;});
+  var alto_churn = DB.posChurn.filter(function(p){return nv(p.churnRate)>15;});
+  var planosAtivos = (DB.planos||[]).filter(function(pl){return pl.status!=='Concluído';});
+
+  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+    '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">Diretrizes — O que Fazemos Agora</div>'+
+    '<div style="display:flex;flex-direction:column;gap:clamp(8px,1.2vw,12px);margin-bottom:clamp(12px,2vw,18px)">'+
+    (criticos.length?
+      '<div style="display:flex;gap:clamp(10px,1.5vw,16px);background:rgba(255,69,96,0.08);border-radius:10px;padding:clamp(10px,1.5vw,16px);border-left:3px solid #FF4560">'+
+        '<div style="font-size:clamp(18px,2.5vw,24px)">🚨</div>'+
+        '<div><div style="font-size:clamp(9px,1.1vw,12px);font-weight:700;color:#FF4560;letter-spacing:1px;margin-bottom:3px">URGENTE — CAMPO IMEDIATO</div>'+
+        '<div style="font-size:clamp(11px,1.4vw,14px);color:#B0BBC8">'+criticos.map(function(d){return d.nome;}).join(', ')+' — projeção abaixo de 90%. Presença do supervisor necessária.</div></div>'+
+      '</div>':'')+
+    (alto_churn.length?
+      '<div style="display:flex;gap:clamp(10px,1.5vw,16px);background:rgba(255,184,0,0.08);border-radius:10px;padding:clamp(10px,1.5vw,16px);border-left:3px solid #FFB800">'+
+        '<div style="font-size:clamp(18px,2.5vw,24px)">🔴</div>'+
+        '<div><div style="font-size:clamp(9px,1.1vw,12px);font-weight:700;color:#FFB800;letter-spacing:1px;margin-bottom:3px">ALTA PRIORIDADE — CHURN</div>'+
+        '<div style="font-size:clamp(11px,1.4vw,14px);color:#B0BBC8">'+alto_churn.map(function(p){return p.nome+' ('+nv(p.churnRate).toFixed(1)+'%)';}).join(', ')+' — clientes saindo da carteira. Plano de retenção.</div></div>'+
+      '</div>':'')+
+    (crit_n>0?
+      '<div style="display:flex;gap:clamp(10px,1.5vw,16px);background:rgba(255,184,0,0.08);border-radius:10px;padding:clamp(10px,1.5vw,16px);border-left:3px solid #FFB800">'+
+        '<div style="font-size:clamp(18px,2.5vw,24px)">🏪</div>'+
+        '<div><div style="font-size:clamp(9px,1.1vw,12px);font-weight:700;color:#FFB800;letter-spacing:1px;margin-bottom:3px">TOP 50 — REATIVAÇÃO</div>'+
+        '<div style="font-size:clamp(11px,1.4vw,14px);color:#B0BBC8">'+crit_n+' clientes estratégicos em queda. Visita comercial e proposta de retorno.</div></div>'+
+      '</div>':'')+
+    '<div style="display:flex;gap:clamp(10px,1.5vw,16px);background:rgba(0,229,195,0.06);border-radius:10px;padding:clamp(10px,1.5vw,16px);border-left:3px solid #00E5C3">'+
+      '<div style="font-size:clamp(18px,2.5vw,24px)">📦</div>'+
+      '<div><div style="font-size:clamp(9px,1.1vw,12px);font-weight:700;color:#00E5C3;letter-spacing:1px;margin-bottom:3px">CONTÍNUO — MIX RENTÁVEL</div>'+
+      '<div style="font-size:clamp(11px,1.4vw,14px);color:#B0BBC8">Orientar equipe: mínimo 2 itens de alta margem por pedido. Impacto direto na margem MC.</div></div>'+
+    '</div>'+
+    (baixa?
+      '<div style="display:flex;gap:clamp(10px,1.5vw,16px);background:rgba(0,229,195,0.06);border-radius:10px;padding:clamp(10px,1.5vw,16px);border-left:3px solid #00E5C3">'+
+        '<div style="font-size:clamp(18px,2.5vw,24px)">🎯</div>'+
+        '<div><div style="font-size:clamp(9px,1.1vw,12px);font-weight:700;color:#00E5C3;letter-spacing:1px;margin-bottom:3px">ESTRATÉGICO — PREPARAÇÃO SETEMBRO</div>'+
+        '<div style="font-size:clamp(11px,1.4vw,14px);color:#B0BBC8">Identificar clientes com potencial de expansão na alta temporada e iniciar relacionamento agora.</div></div>'+
+      '</div>':'')+
+    '</div>'+
+    // Conclusão final
+    '<div style="padding:clamp(14px,2vw,20px);background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.2);border-radius:12px;text-align:center">'+
+      '<div style="font-size:clamp(9px,1.1vw,12px);letter-spacing:2px;color:#00E5C3;text-transform:uppercase;margin-bottom:8px">Resumo Executivo</div>'+
+      '<div style="font-size:clamp(12px,1.6vw,16px);color:#B0BBC8;line-height:1.8">'+
+        'Regional com faturamento de <strong style="color:#00E5C3">'+brl(fat26r)+'</strong> no ano · '+crescR.toFixed(1)+'% de crescimento<br>'+
+        'Projeção do mês <strong style="color:'+cor3(proj_r,90,70)+'">'+fP(r.proj)+'</strong> · '+
+        'Meta anual <strong style="color:'+cor3(pctMetaR,95,80)+'">'+pctMetaR.toFixed(0)+'%</strong> atingida · '+
+        'Churn médio <strong style="color:'+cor3(9-churn_med,0,-6)+'">'+churn_med.toFixed(1)+'%</strong>'+
+      '</div>'+
+    '</div>'+
+  '</div>');
+
+  // ════════════════════════════════════════════════
+  // MOTOR DA APRESENTAÇÃO
+  // ════════════════════════════════════════════════
+  var css='*{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;font-family:Inter,sans-serif;background:#060C18;color:#F0F4FF;overflow:hidden;}'+
+    '.slide{display:none;height:100vh;overflow-y:auto;padding-bottom:72px;}.slide.ativo{display:block;}'+
+    '.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:12px;padding:12px 20px;background:rgba(6,12,24,0.97);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,0.08);z-index:100;flex-wrap:wrap;}'+
+    '.nav-btn{padding:9px 20px;border-radius:8px;border:none;cursor:pointer;font-family:Inter,sans-serif;font-size:13px;font-weight:600;}'+
+    '.nav-prev{background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.15);}'+
+    '.nav-next{background:#00E5C3;color:#04080F;}'+
+    '.nav-prev:disabled,.nav-next:disabled{opacity:0.3;cursor:not-allowed;}'+
+    '.nav-info{color:#6A7A8E;font-size:12px;}'+
+    '.nav-dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;max-width:50vw;}'+
+    '.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.2);cursor:pointer;transition:all .2s;}'+
+    '.dot.on{background:#00E5C3;width:16px;border-radius:3px;}';
+
+  var cur=0;
+  var win=window.open('','_blank');
+  if(!win){toast('Permita popups no navegador.');return;}
+
+  var titulos=['Capa','Regional — Mês','Regional — Ano','Top 50','Churn e Posit.','Ranking Equipe']
+    .concat(vs.map(function(v){return v.nome.split(' ')[0];}))
+    .concat(['Diretrizes']);
+
+  function renderSlide(){
+    var nav='<nav class="nav">'+
+      '<button class="nav-btn nav-prev" onclick="prev()" '+(cur===0?'disabled':'')+'>← Anterior</button>'+
+      '<div class="nav-dots">'+slides.map(function(s,i){return'<div class="dot'+(i===cur?' on':'')+'" onclick="ir('+i+')" title="'+( titulos[i]||'Slide '+(i+1))+'"></div>';}).join('')+'</div>'+
+      '<span class="nav-info">'+(cur+1)+'/'+slides.length+' · '+(titulos[cur]||'')+'</span>'+
+      '<button class="nav-btn nav-next" onclick="prox()" '+(cur===slides.length-1?'disabled':'')+'>Próximo →</button>'+
+      '<button class="nav-btn nav-prev" onclick="window.close();" style="background:rgba(255,69,96,0.15);color:#FF4560;border:1px solid rgba(255,69,96,0.3)">✕ Fechar</button>'+
+    '</nav>';
+    win.document.body.innerHTML='<div class="slide ativo">'+slides[cur]+'</div>'+nav;
+    win.document.title='GERENCION · '+(titulos[cur]||'Slide '+(cur+1))+' · '+(cur+1)+'/'+slides.length;
+    win.scrollTo(0,0);
+  }
+
+  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>GERENCION · Apresentação</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>'+css+'</style></head><body></body></html>');
+  win.document.close();
+  win.prev=function(){if(cur>0){cur--;renderSlide();}};
+  win.prox=function(){if(cur<slides.length-1){cur++;renderSlide();}};
+  win.ir=function(i){cur=i;renderSlide();};
+  win.onkeydown=function(e){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'){if(cur<slides.length-1){cur++;renderSlide();}}
+    else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){if(cur>0){cur--;renderSlide();}}
+  };
+  renderSlide();
+  toast('Apresentação com '+slides.length+' slides — todos os dados cruzados!');
 }
+
 // NEGOCIAÇÃO
 var negProdutosData=[];var UNIDADES=['kg','fardo','cx','bombona','bag','pct','unid','balde','lata','saco','galão','caixa'];
 function addProduto(){negProdutosData.push({id:negProdutosData.length,nome:'',qtd:'',unid:'kg',tabPreco:0,tabUnid:'kg',vendPreco:0,idealPreco:0});renderProdutos();}
