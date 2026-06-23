@@ -788,7 +788,18 @@ function gerarRelatorio(){
   var baixa=(new Date().getMonth()>=4&&new Date().getMonth()<=7);
 
   // ── helpers ──────────────────────────────────────────────
-  function nv(v){var s=String(v||0).replace(/R\$\s?/g,'').replace(/%/g,'').replace(/\./g,'').replace(',','.').replace(/[^\d.\-]/g,'');return parseFloat(s)||0;}
+  function nv(v){
+    if(v===undefined||v===null)return 0;
+    if(typeof v==='number')return v;
+    var s=String(v).trim().replace(/R\$\s?/g,'').replace(/%/g,'').trim();
+    // Se tem vírgula e ponto: formato BR (1.234,56) -> remove ponto de milhar, troca vírgula
+    if(s.indexOf(',')>=0&&s.indexOf('.')>=0){s=s.replace(/\./g,'').replace(',','.');}
+    // Se tem só vírgula: decimal BR (1,5) -> troca por ponto
+    else if(s.indexOf(',')>=0){s=s.replace(',','.');}
+    // Se tem só ponto: já é decimal JS (1.5) -> não mexe
+    s=s.replace(/[^\d.\-]/g,'');
+    return parseFloat(s)||0;
+  }
   function brl(v){return'R$ '+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});}
   function pct(v){return nv(v).toFixed(1)+'%';}
   function cor3(val,bom,ruim){return val>=bom?'var(--cy)':val>=ruim?'var(--ye)':'var(--rd)';}
@@ -1087,7 +1098,18 @@ function iniciarApresentacao(){
   var baixa=(new Date().getMonth()>=4&&new Date().getMonth()<=7);
 
   // ── helpers ──────────────────────────────────────────
-  function nv(v){var s=String(v||0).replace(/R\$\s?/g,'').replace(/%/g,'').replace(/\./g,'').replace(',','.').replace(/[^\d.\-]/g,'');return parseFloat(s)||0;}
+  function nv(v){
+    if(v===undefined||v===null)return 0;
+    if(typeof v==='number')return v;
+    var s=String(v).trim().replace(/R\$\s?/g,'').replace(/%/g,'').trim();
+    // Se tem vírgula e ponto: formato BR (1.234,56) -> remove ponto de milhar, troca vírgula
+    if(s.indexOf(',')>=0&&s.indexOf('.')>=0){s=s.replace(/\./g,'').replace(',','.');}
+    // Se tem só vírgula: decimal BR (1,5) -> troca por ponto
+    else if(s.indexOf(',')>=0){s=s.replace(',','.');}
+    // Se tem só ponto: já é decimal JS (1.5) -> não mexe
+    s=s.replace(/[^\d.\-]/g,'');
+    return parseFloat(s)||0;
+  }
   function brl(v){return'R$ '+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});}
   function fP(v){return nv(v).toFixed(1)+'%';}
   function cor3(val,bom,ruim){return val>=bom?'#00E5C3':val>=ruim?'#FFB800':'#FF4560';}
