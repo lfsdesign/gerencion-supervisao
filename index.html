@@ -220,10 +220,13 @@ tr:hover td{background:rgba(255,255,255,0.02);}
         <div id="biRegPreview" style="margin-top:10px"></div>
       </div>
       <div class="card">
-        <div class="ct">2 · Vendedores — Cole a tabela da Página 1</div>
-        <div class="bn bn-ye" style="margin-bottom:10px"><span>⚡</span><div>Selecione e copie <strong>todas as linhas dos vendedores</strong> (sem cabeçalho, sem linha Total) e cole abaixo.</div></div>
-        <textarea id="biVendColar" class="inp" style="min-height:160px" placeholder="Cole aqui as linhas dos vendedores copiadas do Power BI (Página 1)"></textarea>
-        <button class="btn bp no-print" style="margin-top:8px" onclick="processarBIVendedores()">⚡ Processar Vendedores</button>
+        <div class="ct">2 · Vendedores — Cole um por um (Página 1)</div>
+        <div class="bn bn-ye" style="margin-bottom:10px"><span>⚡</span><div>Como cada vendedor é copiado separadamente, cole aqui <strong>um vendedor por vez</strong> (pode incluir o cabeçalho). Clique em <strong>Adicionar Vendedor</strong> para acumular. Faça isso para cada um dos 9 vendedores.</div></div>
+        <textarea id="biVendColar" class="inp" style="min-height:80px" placeholder="Cole aqui o cabeçalho + linha do vendedor copiados do Power BI"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <button class="btn bp no-print" onclick="adicionarVendedor()">➕ Adicionar Vendedor</button>
+          <button class="btn bs no-print" onclick="limparVendedores()">🗑 Limpar Lista</button>
+        </div>
         <div id="biVendPreview" style="margin-top:10px"></div>
       </div>
       <div class="card">
@@ -495,41 +498,124 @@ function verificarBISalvar(){
 function processarBIRegional(){
   var txt=document.getElementById('biRegColar').value.trim();
   if(!txt){toast('Cole os dados da regional primeiro.');return;}
-  var cols=txt.split('\t').map(function(c){return c.trim();}).filter(function(c){return c!=='';});
-  if(cols.length<8)cols=txt.split(/\s{2,}/).map(function(c){return c.trim();}).filter(function(c){return c!=='';});
+  // Suporta: com cabeçalho (2 linhas) ou só dados (1 linha)
+  var linhas=txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
+  var linhaDados=null;
+  if(linhas.length>=2){
+    // Tem cabeçalho — pega a última linha não-cabeçalho (a que tem números)
+    for(var i=linhas.length-1;i>=0;i--){
+      var cols=linhas[i].split('\t');
+      var temNumero=cols.some(function(c){return /\d/.test(c)&&!/^(%|OBJ|REAL|SALDO|DEV|SKU|VENDA|PREÇO|REGIONAL|VENDEDOR)/i.test(c.trim());});
+      if(temNumero){linhaDados=linhas[i];break;}
+    }
+  }
+  if(!linhaDados)linhaDados=linhas[0];
+  var cols=linhaDados.split('\t').map(function(c){return c.trim();}).filter(function(c){return c!=='';});
+  // Remove o nome da regional do início se presente
   var inicio=0;
-  if(cols[0]&&isNaN(parseFloat(cols[0].replace(',','.').replace('%','').replace(/R\$/,'')))&&!cols[0].startsWith('-'))inicio=1;
+  if(cols[0]&&!/^[-\d]/.test(cols[0].replace(/R\$\s?/,'').trim()))inicio=1;
   var v=cols.slice(inicio);
-  if(v.length<10){document.getElementById('biRegPreview').innerHTML='<div class="bn bn-rd"><span>⚠</span><div>Só '+v.length+' campo(s). Confira se copiou a linha inteira (≥12 valores separados por tab).</div></div>';return;}
+  if(v.length<10){document.getElementById('biRegPreview').innerHTML='<div class="bn bn-rd"><span>⚠</span><div>Só '+v.length+' campo(s) detectado(s). Cole a linha completa com os dados (pode incluir o cabeçalho também).</div></div>';return;}
   _biRegTemp={objFat:v[0]||'',fat:v[1]||'',proj:v[2]||'',objMarg:v[3]||'',marg:v[4]||'',objPos:v[5]||'',realPos:v[6]||'',saldoPos:v[7]||'',devR:v[8]||'',devPct:v[9]||'',sku:v[10]||'',vendaMedia:v[11]||'',precoKg:v[12]||'',data:new Date().toISOString()};
   document.getElementById('biRegPreview').innerHTML='<div style="background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.2);border-radius:8px;padding:12px 14px"><strong style="color:var(--cy);display:block;margin-bottom:8px;font-size:11px;letter-spacing:1px;text-transform:uppercase">✓ Regional processada — confira:</strong><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">'+biPrevBox('%OBJ FAT',_biRegTemp.objFat)+biPrevBox('%FAT',_biRegTemp.fat)+biPrevBox('%PROJ',_biRegTemp.proj)+biPrevBox('MARGEM',_biRegTemp.marg)+biPrevBox('OBJ POSIT',_biRegTemp.objPos)+biPrevBox('REAL POSIT',_biRegTemp.realPos)+biPrevBox('SALDO POSIT',_biRegTemp.saldoPos)+biPrevBox('DEV R$',_biRegTemp.devR)+biPrevBox('%DEV',_biRegTemp.devPct)+biPrevBox('SKU/CLI',_biRegTemp.sku)+biPrevBox('VENDA MÉD',_biRegTemp.vendaMedia)+biPrevBox('PREÇO/KG',_biRegTemp.precoKg)+'</div></div>';
   verificarBISalvar();toast('Regional processada!');
 }
-function processarBIVendedores(){
+function adicionarVendedor(){
   var txt=document.getElementById('biVendColar').value.trim();
-  if(!txt){toast('Cole os dados dos vendedores primeiro.');return;}
+  if(!txt){toast('Cole os dados do vendedor primeiro.');return;}
+
+  // Pega a linha de dados (ignora cabeçalho)
   var linhas=txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
-  var lista=[];
-  linhas.forEach(function(linha){
-    var cols=linha.split('\t').map(function(c){return c.trim();}).filter(function(c){return c!=='';});
-    if(cols.length<8)return;
-    if(/^vendedor$/i.test(cols[0])||/^total/i.test(cols[0])||/^regional/i.test(cols[0]))return;
-    var nomeCompleto=cols[0];var codMatch=nomeCompleto.match(/^(\d+)\s*[-–]\s*(.+)$/);
-    var cod=codMatch?codMatch[1].trim():'';var nome=codMatch?codMatch[2].trim():nomeCompleto.trim();
-    var nomeUP=nome.toUpperCase();
-    var vendRef=null;
-    if(cod)vendRef=VENDS.find(function(vv){return vv.cod===cod;});
-    if(!vendRef)vendRef=VENDS.find(function(vv){return vv.nome.toUpperCase()===nomeUP;});
-    if(!vendRef&&nome.length>3)vendRef=VENDS.find(function(vv){return nomeUP.indexOf(vv.nome.toUpperCase().split(' ')[0])>=0;});
-    var v=cols.slice(1);
-    lista.push({cod:cod||(vendRef?vendRef.cod:''),nome:vendRef?vendRef.nome:nome,objFat:v[0]||'',fat:v[1]||'',proj:v[2]||'',objMarg:v[3]||'',marg:v[4]||'',objPos:v[5]||'',realPos:v[6]||'',saldoPos:v[7]||'',devR:v[8]||'',devPct:v[9]||'',sku:v[10]||'',vendaMedia:v[11]||'',precoKg:v[12]||''});
-  });
-  if(!lista.length){document.getElementById('biVendPreview').innerHTML='<div class="bn bn-rd"><span>⚠</span><div>Nenhum vendedor identificado. Confira se copiou as linhas sem cabeçalho e sem linha Total.</div></div>';return;}
-  _biVendTemp=VENDS.map(function(vr){return lista.find(function(l){return l.cod===vr.cod||l.nome.toUpperCase()===vr.nome.toUpperCase();})||{cod:vr.cod,nome:vr.nome,objFat:'',fat:'',proj:'',objMarg:'',marg:'',objPos:'',realPos:'',saldoPos:'',devR:'',devPct:'',sku:'',vendaMedia:'',precoKg:''};});
-  var encontrados=_biVendTemp.filter(function(v){return v.proj!=='';}).length;
-  document.getElementById('biVendPreview').innerHTML='<div style="background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.2);border-radius:8px;padding:12px 14px"><strong style="color:var(--cy);display:block;margin-bottom:8px;font-size:11px;letter-spacing:1px;text-transform:uppercase">✓ '+encontrados+'/'+VENDS.length+' vendedores encontrados</strong><div style="display:flex;flex-direction:column;gap:4px">'+_biVendTemp.map(function(v){var ok=v.proj!=='';var proj=ok?n(v.proj):0;var cor=!ok?'var(--rd)':proj>=90?'var(--cy)':proj>=70?'var(--ye)':'var(--rd)';return'<div style="font-size:12px;color:var(--t2)"><span style="color:'+(ok?'var(--cy)':'var(--rd)')+';margin-right:6px">'+(ok?'✓':'✗')+'</span><strong style="color:var(--t)">'+v.nome+'</strong>'+(ok?' <span style="color:var(--t3)">— PROJ: <strong style="color:'+cor+'">'+v.proj+'%</strong> · MARG: '+v.marg+'%</span>':' <em style="color:var(--rd)">— não encontrado</em>')+'</div>';}).join('')+'</div></div>';
-  verificarBISalvar();toast(encontrados+' vendedor(es) processados!');
+  var linhaDados=null;
+  for(var i=linhas.length-1;i>=0;i--){
+    var cols=linhas[i].split('\t');
+    // Linha de dados começa com código numérico (ex: 017 - EDIMAR)
+    if(cols[0]&&/^\d+/.test(cols[0].trim())){linhaDados=linhas[i];break;}
+  }
+  if(!linhaDados){
+    toast('Não encontrei linha de vendedor. O formato deve ser: 017 - NOME ...');
+    return;
+  }
+
+  var cols=linhaDados.split('\t').map(function(c){return c.trim();});
+  var nomeCompleto=cols[0];
+  var codMatch=nomeCompleto.match(/^(\d+)\s*[-–]\s*(.+)$/);
+  var cod=codMatch?codMatch[1].trim():'';
+  var nome=codMatch?codMatch[2].trim():nomeCompleto;
+
+  // Achar vendedor no array VENDS pelo código
+  var vendRef=null;
+  if(cod)vendRef=VENDS.find(function(vv){return vv.cod===cod;});
+  if(!vendRef)vendRef=VENDS.find(function(vv){return vv.nome.toUpperCase()===nome.toUpperCase();});
+
+  var v=cols.slice(1);
+  var vend={
+    cod:cod||(vendRef?vendRef.cod:''),
+    nome:vendRef?vendRef.nome:nome,
+    objFat:v[0]||'',fat:v[1]||'',proj:v[2]||'',
+    objMarg:v[3]||'',marg:v[4]||'',
+    objPos:v[5]||'',realPos:v[6]||'',saldoPos:v[7]||'',
+    devR:v[8]||'',devPct:v[9]||'',
+    sku:v[10]||'',vendaMedia:v[11]||'',precoKg:v[12]||''
+  };
+
+  // Adiciona ou substitui no array temporário (por código)
+  var existeIdx=_biVendTemp.findIndex(function(vt){return vt.cod===vend.cod;});
+  if(existeIdx>=0){
+    _biVendTemp[existeIdx]=vend;
+    toast('✓ '+vend.nome+' atualizado!');
+  } else {
+    _biVendTemp.push(vend);
+    toast('✓ '+vend.nome+' adicionado! ('+_biVendTemp.length+'/'+VENDS.length+')');
+  }
+
+  // Limpa o campo para o próximo
+  document.getElementById('biVendColar').value='';
+
+  // Reordena na sequência do VENDS
+  _biVendTemp=VENDS.map(function(vr){
+    return _biVendTemp.find(function(vt){return vt.cod===vr.cod||vt.nome.toUpperCase()===vr.nome.toUpperCase();})||null;
+  }).filter(function(v){return v!==null;});
+
+  renderListaVendedores();
+  verificarBISalvar();
 }
+
+function limparVendedores(){
+  if(!confirm('Limpar a lista de vendedores?'))return;
+  _biVendTemp=[];
+  renderListaVendedores();
+  verificarBISalvar();
+  toast('Lista de vendedores limpa.');
+}
+
+function renderListaVendedores(){
+  var el=document.getElementById('biVendPreview');
+  if(!el)return;
+  if(!_biVendTemp.length){el.innerHTML='';return;}
+  var faltam=VENDS.filter(function(vr){return!_biVendTemp.find(function(vt){return vt.cod===vr.cod;});});
+  el.innerHTML='<div style="background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.2);border-radius:8px;padding:12px 14px">'+
+    '<strong style="color:var(--cy);display:block;margin-bottom:8px;font-size:11px;letter-spacing:1px;text-transform:uppercase">'+
+    '✓ '+_biVendTemp.length+'/'+VENDS.length+' vendedores adicionados</strong>'+
+    '<div style="display:flex;flex-direction:column;gap:4px">'+
+    _biVendTemp.map(function(v){
+      var proj=parseFloat((v.proj||'0').replace(',','.'));
+      var cor=proj>=90?'var(--cy)':proj>=70?'var(--ye)':'var(--rd)';
+      return'<div style="font-size:12px;color:var(--t2)">'+
+        '<span style="color:var(--cy);margin-right:6px">✓</span>'+
+        '<strong style="color:var(--t)">'+v.nome+'</strong>'+
+        ' <span style="color:var(--t3)">— PROJ: <strong style="color:'+cor+'">'+v.proj+'</strong> · MARG: '+v.marg+'</span>'+
+        '</div>';
+    }).join('')+
+    (faltam.length>0?
+      '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--b);font-size:11px;color:var(--t3)">'+
+      'Faltam: '+faltam.map(function(vr){return vr.nome;}).join(', ')+'</div>':
+      '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--b);font-size:11px;color:var(--cy)">✓ Todos os vendedores adicionados!</div>')+
+    '</div></div>';
+}
+
+function processarBIVendedores(){adicionarVendedor();}
+
 function processarBIChurn(){
   var txt=document.getElementById('biChurnColar').value.trim();
   if(!txt){toast('Cole os dados de Churn primeiro.');return;}
