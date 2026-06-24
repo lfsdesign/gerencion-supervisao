@@ -312,9 +312,82 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <div id="lupaFatResultado"></div>
     </div>
     <div id="lupaTop50" class="pg">
-      <div class="ph"><div class="pt">Lupa · Top 50 Clientes</div><div class="ps">Cole a tabela do Power BI</div></div>
-      <div class="bn bn-cy"><span>ℹ</span><div>Cole a tabela do <strong>Top 50</strong>. O sistema separa quem está crescendo, em risco e em queda.</div></div>
-      <div class="card"><div class="ct">Colar Tabela Top 50</div><textarea id="lupaTop50Colar" class="inp" style="min-height:160px" placeholder="Cole aqui a tabela do Top 50 copiada do Power BI"></textarea><button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaTop50()">Processar Top 50</button></div>
+      <div class="ph"><div class="pt">Lupa · Top 50 Clientes</div><div class="ps">Cole os 4 módulos do BI Gestor — Regional e por Vendedor, Ano Atual e Anterior</div></div>
+      <div class="bn bn-cy"><span>ℹ</span><div>Alimente os 4 blocos abaixo. O sistema cruza automaticamente os dados entre anos e por vendedor, identificando quem cresceu, quem caiu e quem mudou de posição no ranking.</div></div>
+
+      <!-- BLOCO 1: TOP 50 REGIONAL ANO ATUAL -->
+      <div class="card">
+        <div class="ct">1 · Top 50 Regional — Ano Atual</div>
+        <div class="bn bn-ye" style="margin-bottom:10px"><span>📋</span><div>No BI Gestor clique na aba <strong>Top 50 Regional - Ano Atual</strong>. Selecione e copie a tabela inteira e cole abaixo. Já vem com a coluna Vendedor — o sistema separa automaticamente.</div></div>
+        <textarea id="lupaTop50Colar" class="inp" style="min-height:120px" placeholder="Cole aqui o Top 50 Regional Ano Atual copiado do BI Gestor"></textarea>
+        <button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaTop50()">⚡ Processar Regional Atual</button>
+        <div id="lupaTop50Status" style="margin-top:8px;font-size:12px;color:var(--t3)"></div>
+      </div>
+
+      <!-- BLOCO 2: TOP 50 REGIONAL ANO ANTERIOR -->
+      <div class="card">
+        <div class="ct">2 · Top 50 Regional — Ano Anterior</div>
+        <div class="bn bn-ye" style="margin-bottom:10px"><span>📋</span><div>No BI Gestor clique na aba <strong>Top 50 Regional - Ano Anterior</strong>. Selecione e copie a tabela inteira e cole abaixo. Não tem coluna Vendedor — o sistema usa apenas para comparação de ranking.</div></div>
+        <textarea id="top50RegAntColar" class="inp" style="min-height:120px" placeholder="Cole aqui o Top 50 Regional Ano Anterior copiado do BI Gestor"></textarea>
+        <button class="btn bp no-print" style="margin-top:8px" onclick="processarTop50RegAnt()">⚡ Processar Regional Anterior</button>
+        <div id="top50RegAntStatus" style="margin-top:8px;font-size:12px;color:var(--t3)"></div>
+      </div>
+
+      <!-- BLOCO 3: TOP 50 VENDEDOR ANO ATUAL -->
+      <div class="card">
+        <div class="ct">3 · Top 50 Vendedor — Ano Atual</div>
+        <div class="bn bn-ye" style="margin-bottom:10px"><span>📋</span><div>No BI Gestor clique na aba <strong>Top 50 Vendedor - Ano Atual</strong>. Filtre por vendedor lá em cima, copie a tabela e cole abaixo. Clique em <strong>Adicionar</strong>. Repita para cada um dos 9 vendedores.</div></div>
+        <div class="fg" style="margin-bottom:8px">
+          <label class="fl">Vendedor</label>
+          <select id="top50VendAtualSel" class="inp">
+            <option value="">Selecione o vendedor...</option>
+            <option value="017">017 - Edimar Barbosa</option>
+            <option value="081">081 - Adson Bruno</option>
+            <option value="118">118 - Eduardo Rezende</option>
+            <option value="122">122 - Matheus Paiotti</option>
+            <option value="167">167 - Eduardo Britto</option>
+            <option value="249">249 - Vinicius Barao</option>
+            <option value="295">295 - Cristian Vianna</option>
+            <option value="429">429 - Victor Hugo</option>
+            <option value="459">459 - Carlos Bordignon</option>
+          </select>
+        </div>
+        <textarea id="top50VendAtualColar" class="inp" style="min-height:120px" placeholder="Cole aqui o Top 50 do vendedor selecionado (aba Top 50 Vendedor - Ano Atual)"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <button class="btn bp no-print" onclick="processarTop50VendAtual()">➕ Adicionar Vendedor</button>
+          <button class="btn bs no-print" onclick="limparTop50VendAtual()">🗑 Limpar Lista</button>
+        </div>
+        <div id="top50VendAtualStatus" style="margin-top:8px;font-size:12px;color:var(--t3)"></div>
+      </div>
+
+      <!-- BLOCO 4: TOP 50 VENDEDOR ANO ANTERIOR -->
+      <div class="card">
+        <div class="ct">4 · Top 50 Vendedor — Ano Anterior</div>
+        <div class="bn bn-ye" style="margin-bottom:10px"><span>📋</span><div>No BI Gestor clique na aba <strong>Top 50 Vendedor - Ano Anterior</strong>. Filtre por vendedor, copie e cole abaixo. Clique em <strong>Adicionar</strong>. Repita para cada um dos 9 vendedores.</div></div>
+        <div class="fg" style="margin-bottom:8px">
+          <label class="fl">Vendedor</label>
+          <select id="top50VendAntSel" class="inp">
+            <option value="">Selecione o vendedor...</option>
+            <option value="017">017 - Edimar Barbosa</option>
+            <option value="081">081 - Adson Bruno</option>
+            <option value="118">118 - Eduardo Rezende</option>
+            <option value="122">122 - Matheus Paiotti</option>
+            <option value="167">167 - Eduardo Britto</option>
+            <option value="249">249 - Vinicius Barao</option>
+            <option value="295">295 - Cristian Vianna</option>
+            <option value="429">429 - Victor Hugo</option>
+            <option value="459">459 - Carlos Bordignon</option>
+          </select>
+        </div>
+        <textarea id="top50VendAntColar" class="inp" style="min-height:120px" placeholder="Cole aqui o Top 50 do vendedor selecionado (aba Top 50 Vendedor - Ano Anterior)"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <button class="btn bp no-print" onclick="processarTop50VendAnt()">➕ Adicionar Vendedor</button>
+          <button class="btn bs no-print" onclick="limparTop50VendAnt()">🗑 Limpar Lista</button>
+        </div>
+        <div id="top50VendAntStatus" style="margin-top:8px;font-size:12px;color:var(--t3)"></div>
+      </div>
+
+      <!-- RESULTADO CRUZADO -->
       <div id="lupaTop50Filtros" style="display:none;margin-bottom:14px">
         <div class="g3">
           <div class="fg"><label class="fl">Filtrar por Vendedor</label><select id="lupaTop50FiltroVend" class="inp" onchange="renderLupaTop50()"><option value="">Todos</option></select></div>
@@ -322,7 +395,8 @@ tr:hover td{background:rgba(255,255,255,0.02);}
           <div class="fg"><label class="fl">Ordenar por</label><select id="lupaTop50Ordem" class="inp" onchange="renderLupaTop50()"><option value="rank">Ranking</option><option value="queda">Maior Queda</option><option value="alta">Maior Crescimento</option><option value="fat">Maior Faturamento</option></select></div>
         </div>
       </div>
-      <div id="lupaTop50Resumo"></div><div id="lupaTop50Lista"></div>
+      <div id="lupaTop50Resumo"></div>
+      <div id="lupaTop50Lista"></div>
     </div>
     <div id="lupaSss" class="pg">
       <div class="ph"><div class="pt">Lupa · SSS Cadastrado</div><div class="ps">Same Store Sales — crescimento dos clientes já existentes</div></div>
@@ -659,10 +733,10 @@ var DB={
     contexto:'Região dos Lagos (RJ) — alta sazonalidade de setembro a abril. Na baixa temporada (maio a agosto) os clientes reduzem volume significativamente enquanto as metas permanecem. O principal desafio é manter a base ativa, reduzir churn e preparar a equipe para a explosão da alta temporada.'},
   biAtual:{regional:{},vendedores:[]},biAnterior:{regional:{},vendedores:[]},
   posChurn:[],campos:[],planos:[],planosVendedor:{},clientes:[],aniversarios:[],
-  lupaFatRegional:{},lupaFatVendedores:[],lupaTop50:[],lupaSss:[],lupaIndic:[]
+  lupaFatRegional:{},lupaFatVendedores:[],lupaTop50:[],lupaTop50VendAtual:{},lupaTop50RegAnt:[],lupaTop50VendAnt:{},lupaSss:[],lupaIndic:[]
 };
 function salvar(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
-function carregar(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);if(!DB.lupaTop50)DB.lupaTop50=[];if(!DB.lupaFatVendedores)DB.lupaFatVendedores=[];if(!DB.lupaFatRegional)DB.lupaFatRegional={};if(!DB.lupaSss)DB.lupaSss=[];if(!DB.lupaIndic)DB.lupaIndic=[];if(!DB.planosVendedor)DB.planosVendedor={};}}catch(e){}}
+function carregar(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);if(!DB.lupaTop50)DB.lupaTop50=[];if(!DB.lupaFatVendedores)DB.lupaFatVendedores=[];if(!DB.lupaFatRegional)DB.lupaFatRegional={};if(!DB.lupaSss)DB.lupaSss=[];if(!DB.lupaIndic)DB.lupaIndic=[];if(!DB.planosVendedor)DB.planosVendedor={};if(!DB.lupaTop50VendAtual)DB.lupaTop50VendAtual={};if(!DB.lupaTop50RegAnt)DB.lupaTop50RegAnt=[];if(!DB.lupaTop50VendAnt)DB.lupaTop50VendAnt={};}}catch(e){}}
 function n(v){return parseFloat((v||'0').toString().replace(',','.'))||0;}
 function brl(v){return'R$ '+Math.abs(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});}
 function fPct(v){return(v||0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';}
@@ -2123,6 +2197,233 @@ function dadosVendGlobal(v, lt_arr) {
   };
 }
 
+// ============================================================
+// TOP 50 — 4 MÓDULOS
+// ============================================================
+// ============================================================
+// TOP 50 — 4 MÓDULOS: RegAtual, RegAnt, VendAtual, VendAnt
+// ============================================================
+
+function parsearLinhaTop50(cols, temVendedor) {
+  // Formato com vendedor: Rank2026|Rank2025|Vendedor|CodCliente|Fat2026|Fat2025|%Cres|MedioMes|Sku|Semaforo
+  // Formato sem vendedor: Rank2026|Rank2025|CodCliente|Fat2026|Fat2025|%Cres|MedioMes|Sku|Semaforo
+  if(temVendedor) {
+    return {
+      rank2026: cols[0], rank2025: cols[1],
+      vendedor: cols[2] ? cols[2].replace(/^\d+\s*-\s*/, '').trim() : '',
+      vendedorCompleto: cols[2] || '',
+      cliente: cols[3] || '',
+      fat2026: nLupa(cols[4]), fat2025: nLupa(cols[5]),
+      cresc: nLupa(cols[6]),
+      medioMes: nLupa(cols[7]),
+      skuMedia: nLupa(cols[8]),
+      semaforo: (cols[9] || '').trim()
+    };
+  } else {
+    return {
+      rank2026: cols[0], rank2025: cols[1],
+      vendedor: '', vendedorCompleto: '',
+      cliente: cols[2] || '',
+      fat2026: nLupa(cols[3]), fat2025: nLupa(cols[4]),
+      cresc: nLupa(cols[5]),
+      medioMes: nLupa(cols[6]),
+      skuMedia: nLupa(cols[7]),
+      semaforo: (cols[8] || '').trim()
+    };
+  }
+}
+
+function parsearTabelaTop50(txt, temVendedor) {
+  var linhas = txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
+  var lista = [];
+  linhas.forEach(function(linha) {
+    var cols = linha.split('\t').map(function(c){return c.trim();});
+    if(cols.length < 6) return;
+    if(/^ranking/i.test(cols[0]) || /^total/i.test(cols[0])) return;
+    if(isNaN(parseInt(cols[0]))) return; // pula linhas sem ranking numérico
+    var item = parsearLinhaTop50(cols, temVendedor);
+    if(item.fat2026 > 0 || item.cliente) lista.push(item);
+  });
+  return lista;
+}
+
+// ── REGIONAL ANO ANTERIOR ────────────────────────────────
+function processarTop50RegAnt() {
+  var txt = document.getElementById('top50RegAntColar').value.trim();
+  if(!txt) { toast('Cole os dados do Top 50 Regional Ano Anterior.'); return; }
+  var lista = parsearTabelaTop50(txt, false);
+  if(!lista.length) { toast('Não consegui identificar os clientes. Verifique o formato.'); return; }
+  DB.lupaTop50RegAnt = lista;
+  salvar();
+  document.getElementById('top50RegAntStatus').innerHTML =
+    '<span style="color:var(--cy)">✓ '+lista.length+' clientes processados</span>';
+  toast(lista.length+' clientes do Regional Anterior processados!');
+}
+
+// ── TOP 50 VENDEDOR ANO ATUAL ────────────────────────────
+function processarTop50VendAtual() {
+  var sel = document.getElementById('top50VendAtualSel');
+  var txt = document.getElementById('top50VendAtualColar').value.trim();
+  if(!sel.value) { toast('Selecione o vendedor primeiro.'); return; }
+  if(!txt) { toast('Cole os dados do Top 50 do vendedor.'); return; }
+
+  var cod = sel.value;
+  var nomeVend = sel.options[sel.selectedIndex].text;
+  var lista = parsearTabelaTop50(txt, false);
+  if(!lista.length) { toast('Não consegui identificar os clientes.'); return; }
+
+  // Adicionar vendedor a cada linha
+  lista.forEach(function(item) {
+    item.vendedor = nomeVend.replace(/^\d+\s*-\s*/, '').trim();
+    item.vendedorCompleto = nomeVend;
+    item.codVendedor = cod;
+  });
+
+  if(!DB.lupaTop50VendAtual) DB.lupaTop50VendAtual = {};
+  DB.lupaTop50VendAtual[cod] = lista;
+  salvar();
+
+  // Atualizar status
+  var qtd = Object.keys(DB.lupaTop50VendAtual).length;
+  var nomes = Object.keys(DB.lupaTop50VendAtual).map(function(c) {
+    return VENDS.find(function(v){return v.cod===c;});
+  }).filter(Boolean).map(function(v){return v.nome.split(' ')[0];});
+
+  document.getElementById('top50VendAtualStatus').innerHTML =
+    '<span style="color:var(--cy)">✓ '+qtd+'/9 vendedores: '+nomes.join(', ')+'</span>';
+
+  // Limpar campo e resetar select
+  document.getElementById('top50VendAtualColar').value = '';
+  sel.value = '';
+  toast('✓ '+nomeVend.replace(/^\d+\s*-\s*/,'').trim()+' adicionado! ('+qtd+'/9)');
+}
+
+function limparTop50VendAtual() {
+  if(!confirm('Limpar todos os Top 50 Vendedor Atual?')) return;
+  DB.lupaTop50VendAtual = {};
+  salvar();
+  document.getElementById('top50VendAtualStatus').innerHTML = '';
+  toast('Lista limpa.');
+}
+
+// ── TOP 50 VENDEDOR ANO ANTERIOR ────────────────────────
+function processarTop50VendAnt() {
+  var sel = document.getElementById('top50VendAntSel');
+  var txt = document.getElementById('top50VendAntColar').value.trim();
+  if(!sel.value) { toast('Selecione o vendedor primeiro.'); return; }
+  if(!txt) { toast('Cole os dados do Top 50 do vendedor.'); return; }
+
+  var cod = sel.value;
+  var nomeVend = sel.options[sel.selectedIndex].text;
+  var lista = parsearTabelaTop50(txt, false);
+  if(!lista.length) { toast('Não consegui identificar os clientes.'); return; }
+
+  lista.forEach(function(item) {
+    item.vendedor = nomeVend.replace(/^\d+\s*-\s*/, '').trim();
+    item.vendedorCompleto = nomeVend;
+    item.codVendedor = cod;
+  });
+
+  if(!DB.lupaTop50VendAnt) DB.lupaTop50VendAnt = {};
+  DB.lupaTop50VendAnt[cod] = lista;
+  salvar();
+
+  var qtd = Object.keys(DB.lupaTop50VendAnt).length;
+  var nomes = Object.keys(DB.lupaTop50VendAnt).map(function(c) {
+    return VENDS.find(function(v){return v.cod===c;});
+  }).filter(Boolean).map(function(v){return v.nome.split(' ')[0];});
+
+  document.getElementById('top50VendAntStatus').innerHTML =
+    '<span style="color:var(--cy)">✓ '+qtd+'/9 vendedores: '+nomes.join(', ')+'</span>';
+
+  document.getElementById('top50VendAntColar').value = '';
+  sel.value = '';
+  toast('✓ '+nomeVend.replace(/^\d+\s*-\s*/,'').trim()+' adicionado! ('+qtd+'/9)');
+}
+
+function limparTop50VendAnt() {
+  if(!confirm('Limpar todos os Top 50 Vendedor Anterior?')) return;
+  DB.lupaTop50VendAnt = {};
+  salvar();
+  document.getElementById('top50VendAntStatus').innerHTML = '';
+  toast('Lista limpa.');
+}
+
+// ── CRUZAMENTO INTELIGENTE ───────────────────────────────
+function cruzarTop50(cliente, cod_cliente) {
+  // Busca o cliente nos 4 módulos e retorna análise cruzada
+  var regAt  = DB.lupaTop50 || [];
+  var regAnt = DB.lupaTop50RegAnt || [];
+  var vendAt = DB.lupaTop50VendAtual || {};
+  var vendAnt= DB.lupaTop50VendAnt || {};
+
+  var emRegAt  = regAt.find(function(c){return c.cliente===cliente||c.cliente===cod_cliente;});
+  var emRegAnt = regAnt.find(function(c){return c.cliente===cliente||c.cliente===cod_cliente;});
+
+  var resultado = {
+    rankRegAt:  emRegAt  ? emRegAt.rank2026  : null,
+    rankRegAnt: emRegAnt ? emRegAnt.rank2026 : null,
+    emVendAt: false, emVendAnt: false,
+    vendedor: emRegAt ? emRegAt.vendedor : ''
+  };
+
+  // Verificar se está no Top50 do vendedor (atual e anterior)
+  if(emRegAt && emRegAt.vendedorCompleto) {
+    var codV = emRegAt.vendedorCompleto.match(/^(\d+)/);
+    if(codV && vendAt[codV[1]]) {
+      resultado.emVendAt = vendAt[codV[1]].some(function(c){return c.cliente===cliente;});
+    }
+    if(codV && vendAnt[codV[1]]) {
+      resultado.emVendAnt = vendAnt[codV[1]].some(function(c){return c.cliente===cliente;});
+    }
+  }
+
+  return resultado;
+}
+
+// ── NARRATIVA CRUZADA DO TOP50 ───────────────────────────
+function narrativaTop50Cliente(c) {
+  var nomeCliente = c.cliente.split('-').slice(1).join('-').trim() || c.cliente;
+  var cresc = c.cresc || 0;
+  var sem = c.semaforo || '';
+
+  var frase = nomeCliente;
+  if(c.vendedor) frase += ', cliente do ' + c.vendedor + ',';
+
+  // Evolução de ranking
+  if(c.rank2025 && c.rank2025 !== c.rank2026) {
+    var rankAt  = parseInt(c.rank2026) || 0;
+    var rankAnt = parseInt(c.rank2025) || 0;
+    if(rankAt > 0 && rankAnt > 0) {
+      if(rankAt < rankAnt) {
+        frase += ' subiu do ' + rankAnt + 'º para o ' + rankAt + 'º lugar no ranking regional';
+      } else if(rankAt > rankAnt) {
+        frase += ' caiu do ' + rankAnt + 'º para o ' + rankAt + 'º lugar no ranking regional';
+      }
+    }
+  }
+
+  // Faturamento e crescimento
+  frase += ' — faturou ' + brl(c.fat2026) + ' este ano';
+  if(c.fat2025 > 0) {
+    if(cresc > 0) frase += ', crescimento de ' + Math.abs(cresc).toFixed(1) + '% vs ano anterior';
+    else frase += ', queda de ' + Math.abs(cresc).toFixed(1) + '% vs ano anterior';
+  } else {
+    frase += ' (cliente novo, sem histórico anterior)';
+  }
+  frase += '.';
+
+  // Verificar se está no Top50 do vendedor
+  var cruz = cruzarTop50(c.cliente, c.cliente);
+  if(cruz.emVendAt && !cruz.emVendAnt) {
+    frase += ' Entrou no Top 50 do vendedor este ano.';
+  } else if(!cruz.emVendAt && cruz.emVendAnt) {
+    frase += ' Saiu do Top 50 do vendedor em relação ao ano anterior — atenção.';
+  }
+
+  return frase;
+}
+
 // NEGOCIAÇÃO
 var negProdutosData=[];var UNIDADES=['kg','fardo','cx','bombona','bag','pct','unid','balde','lata','saco','galão','caixa'];
 function addProduto(){negProdutosData.push({id:negProdutosData.length,nome:'',qtd:'',unid:'kg',tabPreco:0,tabUnid:'kg',vendPreco:0,idealPreco:0});renderProdutos();}
@@ -2247,12 +2548,50 @@ function classificarLupaCliente(c){
 
 function fraseLupaCliente(c){
   var cls=classificarLupaCliente(c);
-  if(!c.temHistorico){var f=c.cliente.split('-').slice(1).join('-').trim()||c.cliente;return f+', cliente do '+c.vendedor+', é uma venda nova este ano — faturou '+fBRL(c.fat2026)+' sem histórico de comparação.';}
-  var nomeCliente=c.cliente.split('-').slice(1).join('-').trim()||c.cliente;var frase=nomeCliente+', cliente do '+c.vendedor+', ';
-  if(cls==='forte'){frase+='cresceu '+fPct1(Math.abs(c.cresc))+' — de '+fBRL(c.fat2025)+' para '+fBRL(c.fat2026)+'. Resultado forte.';}
-  else if(cls==='risco'){frase+=c.cresc>=0?('cresceu apenas '+fPct1(c.cresc)):('caiu '+fPct1(Math.abs(c.cresc)));frase+=' — de '+fBRL(c.fat2025)+' para '+fBRL(c.fat2026)+'. Está em zona de risco.';}
-  else{frase+='caiu '+fPct1(Math.abs(c.cresc))+' — de '+fBRL(c.fat2025)+' para '+fBRL(c.fat2026)+'. Maior alerta da carteira.';}
-  if(c.acao)frase+=' AÇÃO: '+c.acao;return frase;
+  var nomeCliente=c.cliente.split('-').slice(1).join('-').trim()||c.cliente;
+
+  // Evolução de ranking (cruzamento com ano anterior)
+  var rankAt=parseInt(c.rank2026)||0;
+  var rankAnt=parseInt(c.rank2025)||0;
+  var evolRank='';
+  if(rankAt>0&&rankAnt>0&&rankAt!==rankAnt){
+    if(rankAt<rankAnt)evolRank=' (subiu do '+rankAnt+'º para o '+rankAt+'º no ranking)';
+    else evolRank=' (caiu do '+rankAnt+'º para o '+rankAt+'º no ranking)';
+  } else if(rankAt>0&&(!rankAnt||c.rank2025==='S/Venda LY')){
+    evolRank=' (cliente novo no ranking)';
+  }
+
+  if(!c.temHistorico){
+    return nomeCliente+(c.vendedor?', cliente do '+c.vendedor:'')+evolRank+', é uma venda nova este ano — faturou '+fBRL(c.fat2026)+' sem histórico de comparação.';
+  }
+
+  var frase=nomeCliente+(c.vendedor?', cliente do '+c.vendedor:'')+evolRank+', ';
+
+  if(cls==='forte'){
+    frase+='cresceu '+fPct1(Math.abs(c.cresc))+' — de '+fBRL(c.fat2025)+' para '+fBRL(c.fat2026)+'. Resultado forte, carteira saudável.';
+  } else if(cls==='risco'){
+    frase+=c.cresc>=0?('cresceu apenas '+fPct1(c.cresc)):('caiu '+fPct1(Math.abs(c.cresc)));
+    frase+=' — de '+fBRL(c.fat2025)+' para '+fBRL(c.fat2026)+'. Está em zona de risco, requer atenção.';
+  } else {
+    frase+='caiu '+fPct1(Math.abs(c.cresc))+' — de '+fBRL(c.fat2025)+' para '+fBRL(c.fat2026)+'. Maior alerta da carteira — ação imediata necessária.';
+  }
+
+  // Verificar se está no Top50 do vendedor (cruzamento)
+  if(c.vendedorCompleto){
+    var codV=c.vendedorCompleto.match(/^(\d+)/);
+    if(codV){
+      var vendAt=DB.lupaTop50VendAtual&&DB.lupaTop50VendAtual[codV[1]];
+      var vendAnt=DB.lupaTop50VendAnt&&DB.lupaTop50VendAnt[codV[1]];
+      var noVendAt=vendAt&&vendAt.some(function(x){return x.cliente===c.cliente;});
+      var noVendAnt=vendAnt&&vendAnt.some(function(x){return x.cliente===c.cliente;});
+      if(noVendAt&&!noVendAnt) frase+=' Entrou no Top 50 do vendedor este ano.';
+      else if(!noVendAt&&noVendAnt) frase+=' Saiu do Top 50 do vendedor vs ano anterior — sinal de queda relevante na carteira.';
+      else if(noVendAt&&noVendAnt) frase+=' Está no Top 50 do vendedor nos dois anos.';
+    }
+  }
+
+  if(c.acao)frase+=' AÇÃO: '+c.acao;
+  return frase;
 }
 
 function salvarAcaoLupaCliente(idx,valor){if(!DB.lupaTop50[idx])return;DB.lupaTop50[idx].acao=valor;salvar();toast('Ação salva!');}
