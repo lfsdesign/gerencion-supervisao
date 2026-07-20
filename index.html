@@ -2488,12 +2488,12 @@ function processarLupaTop50(){
   linhas.forEach(function(linha){
     var cols=linha.split(/\t/).map(function(c){return c.trim();});
     if(cols.length<8)return;if(/^ranking/i.test(cols[0]))return;
-    var rank2026=cols[0],rank2025=cols[1],vendCompleto=cols[2],clienteCompleto=cols[3];
-    var fat2026=nLupa(cols[4]),fat2025=nLupa(cols[5]),cresc=cols[6],medioMes=nLupa(cols[7]);
+    var rank2026=cols[0],rank2025=cols[1],clienteCompleto=cols[2],vendCompleto=cols[3];
+    var fat2026=nLupa(cols[4]),fat2025=nLupa(cols[5]),medioMes=nLupa(cols[6]);
     var skuMedia=cols[8]?nLupa(cols[8]):0;var semaforo=cols[9]||'';
     if(!fat2026)return;
     var vendNome=vendCompleto;var vendMatch=vendCompleto.match(/^\d+\s*-\s*(.+)$/);if(vendMatch)vendNome=vendMatch[1].trim();
-    var crescVal=nLupa(cresc);var temVendaAnterior=fat2025>0;
+    var crescVal=fat2025>0?((fat2026-fat2025)/fat2025)*100:0;var temVendaAnterior=fat2025>0;
     lista.push({rank2026:rank2026,rank2025:rank2025,vendedor:vendNome,vendedorCompleto:vendCompleto,cliente:clienteCompleto,fat2026:fat2026,fat2025:fat2025,cresc:crescVal,temHistorico:temVendaAnterior,medioMes:medioMes,skuMedia:skuMedia,semaforo:semaforo.trim(),acao:'',causa:''});
   });
   if(!lista.length){toast('Não consegui identificar nenhum cliente.');return;}
