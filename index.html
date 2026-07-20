@@ -293,7 +293,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <div class="ph"><div class="pt">Lupa · Faturamento (YTD)</div><div class="ps">Cole os dados do BI Gestor — Regional e por Vendedor</div></div>
       <div class="bn bn-cy"><span>ℹ</span><div>Cole a linha da <strong>tabela Regional</strong> do BI. Depois cole a <strong>tabela de Vendedores</strong> inteira. O sistema gera a frase pronta (NOTA) para falar na apresentação.</div></div>
       <div class="card"><div class="ct">Colar Tabela Regional</div><textarea id="lupaFatRegColar" class="inp" style="min-height:60px" placeholder="Cole aqui a linha da regional copiada do Power BI"></textarea><button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaFatRegional()">Processar Regional</button></div>
-      <div class="card"><div class="ct">Colar Tabela de Vendedores</div><textarea id="lupaFatVendColar" class="inp" style="min-height:140px" placeholder="Cole aqui a tabela inteira de vendedores copiada do Power BI"></textarea><button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaFatVendedores()">Processar Vendedores</button></div>
+      <div class="card"><div class="ct">Colar Tabela de Vendedores</div><textarea id="lupaFatVendColar" class="inp" style="min-height:140px" placeholder="Cole aqui a tabela inteira de vendedores copiada do Power BI"></textarea><button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaFatVendedores()">Processar Vendedores</button> <button type="button" class="btn-backup no-print" style="margin-top:8px" onclick="if(confirm('Limpar todos os vendedores já processados nesta tela?')){DB.lupaFatVendedores=[];salvar();renderLupaFat();toast('Lista de vendedores limpa.');}">Limpar Lista</button></div>
       <div id="lupaFatResultado"></div>
     </div>
     <div id="lupaTop50" class="pg">
@@ -1101,7 +1101,8 @@ function gerarRelatorio(){
   var pctMetaR= metaR>0?(fat26r/metaR*100):0;
   var lt = DB.lupaTop50||[];
   var forte_n = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Forte')>=0;}).length;
-  var risco_n = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Risco')>=0&&c.semaforo.indexOf('Alto')<0;}).length;
+  var atencao_n = lt.filter(function(c){return c.semaforo&&(c.semaforo.indexOf('Atenção')>=0||c.semaforo.indexOf('Atencao')>=0);}).length;
+  var risco_n = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Risco')>=0&&c.semaforo.indexOf('Alto')<0&&c.semaforo.indexOf('Atenção')<0&&c.semaforo.indexOf('Atencao')<0;}).length;
   var crit_n  = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Alto Risco')>=0;}).length;
   var fat_top50 = lt.reduce(function(s,c){return s+(c.fat2026||0);},0);
   var pct_top50 = fat26r>0?(fat_top50/fat26r*100):0;
@@ -1293,8 +1294,9 @@ function gerarRelatorio(){
 
   // TOP 50 REGIONAL
   html+='<div class="rb"><div class="rs">Top 50 Clientes — Saúde da Carteira Estratégica</div>';
-  html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">';
+  html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">';
   html+=card('Forte (≥20%)',String(forte_n),'clientes crescendo','var(--cy)');
+  html+=card('Atenção',String(atencao_n),'no limite','#FFA500');
   html+=card('Risco (0–15%)',String(risco_n),'crescimento fraco','var(--ye)');
   html+=card('Alto Risco',String(crit_n),'clientes em queda','var(--rd)');
   html+='</div>';
@@ -1493,7 +1495,8 @@ function iniciarApresentacao(){
   var pctMetaR = metaR>0?(fat26r/metaR*100):0;
   var lt = DB.lupaTop50||[];
   var forte_n  = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Forte')>=0;}).length;
-  var risco_n  = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Risco')>=0&&c.semaforo.indexOf('Alto')<0;}).length;
+  var atencao_n = lt.filter(function(c){return c.semaforo&&(c.semaforo.indexOf('Atenção')>=0||c.semaforo.indexOf('Atencao')>=0);}).length;
+  var risco_n  = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Risco')>=0&&c.semaforo.indexOf('Alto')<0&&c.semaforo.indexOf('Atenção')<0&&c.semaforo.indexOf('Atencao')<0;}).length;
   var crit_n   = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Alto Risco')>=0;}).length;
   var fat_top  = lt.reduce(function(s,c){return s+(c.fat2026||0);},0);
   var pct_top  = fat26r>0?(fat_top/fat26r*100):0;
@@ -1693,9 +1696,10 @@ function iniciarApresentacao(){
 
   slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
     '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">Top 50 Clientes — Carteira Estratégica</div>'+
-    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(14px,2vw,20px)">'+
+    '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(14px,2vw,20px)">'+
       sBox('Total Top 50',String(lt.length),'clientes estratégicos','#00E5C3')+
       sBox('Forte (≥20%)',String(forte_n),'crescendo','#00E5C3')+
+      sBox('Atenção',String(atencao_n),'no limite','#FFA500')+
       sBox('Risco (0–15%)',String(risco_n),'crescimento fraco','#FFB800')+
       sBox('Alto Risco',String(crit_n),'em queda','#FF4560')+
     '</div>'+
@@ -2430,10 +2434,7 @@ function processarLupaFatVendedores(){
   var linhas=txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
   var lista=[];
   linhas.forEach(function(linha){var cols=linha.split(/\t/).map(function(c){return c.trim();}).filter(function(c){return c!=='';});if(cols.length<8)return;if(/^vendedor$/i.test(cols[0])||/^total$/i.test(cols[0]))return;lista.push({nome:cols[0],fat2025:nLupa(cols[1]),fat2026:nLupa(cols[2]),cresc:nLupa(cols[3]),tgt26:nLupa(cols[4]),gap:nLupa(cols[5]),sku25:nLupa(cols[6]),sku26:nLupa(cols[7]),cresSku:nLupa(cols[8]),mcPct:nLupa(cols[9]),vendaMedia:nLupa(cols[10])});});
-  if(!lista.length){toast('Não consegui identificar nenhum vendedor.');return;}
-  var totalFat2026=lista.reduce(function(s,v){return s+v.fat2026;},0);
-  lista.forEach(function(v){v.participacao=totalFat2026>0?(v.fat2026/totalFat2026)*100:0;});
-  DB.lupaFatVendedores=lista;salvar();renderLupaFat();toast(lista.length+' vendedor(es) processado(s)!');
+  if(!lista.length){toast('Não consegui identificar nenhum vendedor.');return;}var existentes=DB.lupaFatVendedores||[];lista.forEach(function(novo){var i=existentes.findIndex(function(v){return v.nome===novo.nome;});if(i>=0)existentes[i]=novo;else existentes.push(novo);});var totalFat2026=existentes.reduce(function(s,v){return s+v.fat2026;},0);existentes.forEach(function(v){v.participacao=totalFat2026>0?(v.fat2026/totalFat2026)*100:0;});DB.lupaFatVendedores=existentes;salvar();renderLupaFat();document.getElementById('lupaFatVendColar').value='';toast(lista.length+' vendedor(es) adicionado(s)! Total na lista: '+existentes.length+'.');
 }
 
 function fraseLupaRegional(r){
