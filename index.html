@@ -148,15 +148,11 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
     <div class="sb-nav">
       <div class="nav-grp">Visão Geral</div>
-      <button class="nb on" onclick="ir('dashboard',this)">◈ Dashboard</button>
-      <button class="nb" onclick="ir('saude',this)">❤ Saúde da Regional</button>
+      <button class="nb on" onclick="ir('dashboard',this)">◈ Panorama</button>
       <button class="nb" onclick="ir('bi',this)">⊕ Lançar BI</button>
       <button class="nb" onclick="ir('comparativo',this)">⇅ Comparativo Mensal</button>
       <div class="nav-grp">Equipe</div>
-      <button class="nb" onclick="ir('equipe',this)">◉ Análise da Equipe</button>
-      <button class="nb" onclick="ir('scores',this)">★ Score dos Vendedores</button>
-      <button class="nb" onclick="ir('positivacao',this)">◎ Positivação</button>
-      <button class="nb" onclick="ir('churn',this)">⚠ Churn</button>
+      <button class="nb" onclick="ir('equipe',this)">◉ Equipe</button>
       <div class="nav-grp">Estratégia</div>
       <button class="nb" onclick="ir('campo',this)">🚗 Campo</button>
       <button class="nb" onclick="ir('plano',this)">◆ Plano de Ação</button>
@@ -180,12 +176,12 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <button class="nb" onclick="ir('negociacao',this)">🤝 Negociação</button>
       <div class="nav-grp">Dados</div>
       <button type="button" class="btn-backup" onclick="exportarDados()">Exportar Dados</button>
-      <button type="button" class="btn-backup" onclick="importarDados()">Importar Dados</button>
+      <button type="button" class="btn-backup" onclick="importarDados()">Importar Dados</button><button type="button" class="btn-backup" onclick="sair()">Sair</button>
     </div>
   </div>
   <div id="main">
     <div id="dashboard" class="pg on">
-      <div class="ph"><div class="pt">Dashboard</div><div class="ps" id="dashData"></div></div>
+      <div class="ph"><div class="pt">Panorama</div><div class="ps" id="dashData"></div></div>
       <div id="sazBanner"></div>
       <div class="stats s4">
         <div class="stat" id="stProj"><div class="st-l">Projeção Regional</div><div class="st-v" id="dProj">—</div><div class="st-s">Meta: 100% · Premiação ≥90%</div></div>
@@ -204,10 +200,6 @@ tr:hover td{background:rgba(255,255,255,0.02);}
         <div class="card"><div class="ct">Alertas Preditivos</div><div id="alertBox"><div class="empty">Nenhum alerta.</div></div></div>
       </div>
       <div class="card"><div class="ct">Ranking da Equipe — Score Geral</div><div id="rankBox"><div class="empty">Lance os dados do BI.</div></div></div>
-    </div>
-    <div id="saude" class="pg">
-      <div class="ph"><div class="pt">Saúde da Regional</div><div class="ps">Índice geral de performance — Norte Fluminense</div></div>
-      <div id="saudeBox"><div class="empty">Lance os dados do BI.</div></div>
     </div>
     <!-- NOVO MÓDULO LANÇAR BI: COLAR E PARSEAR -->
     <div id="bi" class="pg">
@@ -245,13 +237,6 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
     <div id="comparativo" class="pg"><div class="ph"><div class="pt">Comparativo Mensal</div><div class="ps">Evolução completa mês a mês — todos os indicadores</div></div><div id="compBox"><div class="empty">Lance o BI pelo menos duas vezes para ver o comparativo.</div></div></div>
     <div id="equipe" class="pg"><div class="ph"><div class="pt">Análise da Equipe</div><div class="ps">Diagnóstico individual com alertas preditivos</div></div><div id="equipeBox"><div class="empty">Lance os dados do BI.</div></div></div>
-    <div id="scores" class="pg">
-      <div class="ph"><div class="pt">Score dos Vendedores</div><div class="ps">Índice de performance 0 a 100 — visão instantânea da equipe</div></div>
-      <div class="bn bn-cy"><span>★</span><div>Pesos: <strong>Projeção 40pts · Positivação 25pts · Churn 20pts · Margem 10pts · Devolução 5pts</strong>. Score ≥70 = saudável.</div></div>
-      <div id="scoresBox"><div class="empty">Lance os dados do BI.</div></div>
-    </div>
-    <div id="positivacao" class="pg"><div class="ph"><div class="pt">Positivação</div><div class="ps">Clientes positivados e não positivados por vendedor</div></div><div id="posBox"><div class="empty">Lance os dados de positivação.</div></div></div>
-    <div id="churn" class="pg"><div class="ph"><div class="pt">Churn</div><div class="ps">Taxa de perda de clientes — quem está perdendo e por quê</div></div><div id="churnBox"><div class="empty">Lance os dados de churn.</div></div></div>
     <div id="campo" class="pg">
       <div class="ph"><div class="pt">Acompanhamento de Campo</div><div class="ps">Registros de visitas, oportunidades e próximos passos</div></div>
       <div class="card"><div class="ct">Novo Registro</div>
@@ -463,7 +448,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
         3. Gera diagnósticos, alertas, narrativas e sugestões de ação<br>
         4. Você prepara a apresentação com seu plano<br>
         5. A diretoria vê uma apresentação profissional e coerente<br><br>
-        <strong>Onde os dados ficam salvos?</strong> No próprio dispositivo (localStorage do navegador). Use sempre o mesmo dispositivo ou exporte/importe regularmente.<br><br>
+        <strong>Onde os dados ficam salvos?</strong> Na nuvem (Supabase), protegidos por login. Você acessa do celular ou do PC e os dados sincronizam automaticamente.<br><br>
         <strong>O sistema funciona offline?</strong> Sim, após o primeiro carregamento funciona sem internet.</div>
         <div class="tut-dica">💡 Quando você baixa uma versão nova do arquivo HTML, seus dados NÃO somem — eles ficam no browser. Mas sempre exporte antes de trocar de dispositivo.</div>
       </div>
@@ -717,7 +702,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
   </div>
 </div>
 
-<script>
+<div id="loginWrap" style="display:none;position:fixed;inset:0;z-index:9999;background:#060C18;align-items:center;justify-content:center;flex-direction:column;padding:24px;"><div style="width:100%;max-width:360px;"><div style="font-size:22px;font-weight:800;letter-spacing:6px;color:#00E5C3;text-align:center;">GERENCION</div><div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#6A7A8E;text-align:center;margin-top:6px;">Supervis&#227;o &middot; Acesso restrito</div><div style="background:#0A1020;border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:22px;margin-top:24px;"><label style="font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#B0BBC8;display:block;margin-bottom:5px;">E-mail</label><input id="logEmail" type="email" autocomplete="username" onkeydown="if(event.key==='Enter')entrar()" style="width:100%;padding:11px 12px;background:#0F1628;border:1px solid rgba(255,255,255,0.09);border-radius:8px;color:#F0F4FF;font-family:Inter,sans-serif;font-size:14px;outline:none;margin-bottom:14px;"><label style="font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#B0BBC8;display:block;margin-bottom:5px;">Senha</label><input id="logPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')entrar()" style="width:100%;padding:11px 12px;background:#0F1628;border:1px solid rgba(255,255,255,0.09);border-radius:8px;color:#F0F4FF;font-family:Inter,sans-serif;font-size:14px;outline:none;margin-bottom:16px;"><button onclick="entrar()" style="width:100%;padding:12px;background:#00E5C3;color:#04080F;border:none;border-radius:8px;font-family:Inter,sans-serif;font-weight:700;font-size:14px;cursor:pointer;">Entrar</button><div id="logMsg" style="font-size:12px;color:#FF4560;text-align:center;margin-top:12px;min-height:16px;"></div></div></div></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
 var VENDS=[
   {cod:'017',nome:'Edimar Barbosa'},{cod:'081',nome:'Adson Bruno'},
   {cod:'118',nome:'Eduardo Rezende'},{cod:'122',nome:'Matheus Paiotti'},
@@ -725,7 +710,7 @@ var VENDS=[
   {cod:'295',nome:'Cristian Vianna'},{cod:'429',nome:'Victor Hugo'},
   {cod:'459',nome:'Carlos Bordignon'}
 ];
-var KEY='GRC_V2';var DEV_LIM=0.65;
+var KEY='GRC_V2';var SUPA_URL='https://lxexngljgoyjcqgoyvjt.supabase.co';var SUPA_KEY='sb_publishable_FH_jIKCzgh3dcOAT13eSNA_EHClOyve';var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);var USER=null;var _saveT=null;var DEV_LIM=0.65;
 var DB={
   perfil:{empresa:'Arcofoods',regional:'Norte Fluminense',supervisor:'Leandro Felipe',
     cargo:'Supervisor de Vendas - Arcofoods',
@@ -735,8 +720,8 @@ var DB={
   posChurn:[],campos:[],planos:[],planosVendedor:{},clientes:[],aniversarios:[],
   lupaFatRegional:{},lupaFatVendedores:[],lupaTop50:[],lupaTop50VendAtual:{},lupaTop50RegAnt:[],lupaTop50VendAnt:{},lupaSss:[],lupaIndic:[]
 };
-function salvar(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
-function carregar(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);if(!DB.lupaTop50)DB.lupaTop50=[];if(!DB.lupaFatVendedores)DB.lupaFatVendedores=[];if(!DB.lupaFatRegional)DB.lupaFatRegional={};if(!DB.lupaSss)DB.lupaSss=[];if(!DB.lupaIndic)DB.lupaIndic=[];if(!DB.planosVendedor)DB.planosVendedor={};if(!DB.lupaTop50VendAtual)DB.lupaTop50VendAtual={};if(!DB.lupaTop50RegAnt)DB.lupaTop50RegAnt=[];if(!DB.lupaTop50VendAnt)DB.lupaTop50VendAnt={};}}catch(e){}}
+function salvar(){if(!USER)return;clearTimeout(_saveT);_saveT=setTimeout(function(){sb.from('supervisao_estado').upsert({user_id:USER.id,estado:DB},{onConflict:'user_id'}).then(function(r){if(r&&r.error)toast('Falha ao salvar na nuvem.');});},600);}
+function aplicarDefaults(){if(!DB.lupaTop50)DB.lupaTop50=[];if(!DB.lupaFatVendedores)DB.lupaFatVendedores=[];if(!DB.lupaFatRegional)DB.lupaFatRegional={};if(!DB.lupaSss)DB.lupaSss=[];if(!DB.lupaIndic)DB.lupaIndic=[];if(!DB.planosVendedor)DB.planosVendedor={};if(!DB.lupaTop50VendAtual)DB.lupaTop50VendAtual={};if(!DB.lupaTop50RegAnt)DB.lupaTop50RegAnt=[];if(!DB.lupaTop50VendAnt)DB.lupaTop50VendAnt={};}function carregarNuvem(){return sb.from('supervisao_estado').select('estado').eq('user_id',USER.id).maybeSingle().then(function(r){if(r.data&&r.data.estado&&Object.keys(r.data.estado).length){DB=r.data.estado;aplicarDefaults();return;}try{var s=localStorage.getItem('GRC_V2');if(s){var old=JSON.parse(s);if(old&&Object.keys(old).length){DB=old;aplicarDefaults();return sb.from('supervisao_estado').upsert({user_id:USER.id,estado:DB},{onConflict:'user_id'});}}}catch(e){}aplicarDefaults();});}function entrar(){var em=(document.getElementById('logEmail').value||'').trim(),pw=document.getElementById('logPass').value||'';var msg=document.getElementById('logMsg');msg.style.color='#B0BBC8';msg.textContent='Entrando...';sb.auth.signInWithPassword({email:em,password:pw}).then(function(r){if(r.error){msg.style.color='#FF4560';msg.textContent='E-mail ou senha incorretos.';return;}location.reload();});}function sair(){sb.auth.signOut().then(function(){location.reload();});}
 function n(v){return parseFloat((v||'0').toString().replace(',','.'))||0;}
 function brl(v){return'R$ '+Math.abs(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});}
 function fPct(v){return(v||0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';}
@@ -769,7 +754,7 @@ function ir(id,btn){
 }
 function abrirMenu(){document.getElementById('sidebar').classList.add('aberto');document.getElementById('overlay').classList.add('on');}
 function fecharMenu(){document.getElementById('sidebar').classList.remove('aberto');document.getElementById('overlay').classList.remove('on');}
-window.onload=function(){carregar();init();};
+window.onload=function(){var ap=document.getElementById('app');ap.style.display='none';sb.auth.getSession().then(function(r){var session=r.data&&r.data.session;if(!session){document.getElementById('loginWrap').style.display='flex';return;}USER=session.user;document.getElementById('loginWrap').style.display='none';ap.style.display='';carregarNuvem().then(function(){init();});});};
 function init(){
   var p=DB.perfil;
   document.getElementById('pvEmp').textContent=p.empresa||'Arcofoods';
@@ -974,7 +959,7 @@ function salvarBICompleto(){
   buildForms();salvar();renderTudo();toast('BI salvo com sucesso! ✓');
   ir('dashboard',document.querySelector('.nb'));
 }
-function renderTudo(){renderDash();renderSaude();renderEquipe();renderScores();renderComp();renderPos();renderChurn();renderCampoLista();renderPlanos();renderClientes();renderAniv();if(DB.biAtual&&DB.biAtual.vendedores&&DB.biAtual.vendedores.length>0)renderPlanosVendedor();}
+function renderTudo(){renderDash();renderEquipe();renderComp();renderCampoLista();renderPlanos();renderClientes();renderAniv();if(DB.biAtual&&DB.biAtual.vendedores&&DB.biAtual.vendedores.length>0)renderPlanosVendedor();}
 function renderDash(){
   var r=DB.biAtual.regional,vs=DB.biAtual.vendedores;
   var mes=new Date().getMonth(),baixa=(mes>=4&&mes<=7);
@@ -1032,26 +1017,8 @@ function renderDash(){
   var sorted=scores2.slice().sort(function(a,b){return b.sc-a.sc;});
   rank.innerHTML='<div class="tw"><table><thead><tr><th>#</th><th>Vendedor</th><th>Score</th><th>Status</th><th>%PROJ</th><th>%Marg</th><th>Posit</th><th>%DEV</th><th>Churn</th></tr></thead><tbody>'+sorted.map(function(x,i){var v=x.v,pc=x.pc,sc=x.sc;return'<tr><td style="color:var(--t2)">'+(i+1)+'</td><td style="font-weight:600">'+v.nome+'</td><td><strong style="color:'+scoreCor(sc)+';font-size:15px">'+sc+'</strong></td><td>'+scoreBadge(sc)+'</td><td style="color:'+(n(v.proj)>=85?'var(--cy)':n(v.proj)>=70?'var(--ye)':'var(--rd)')+'">'+fP(v.proj)+'</td><td style="color:'+(n(v.marg)>=n(v.objMarg||17.5)?'var(--cy)':'var(--ye)')+'">'+fP(v.marg)+'</td><td>'+fmt(v.realPos)+'/'+fmt(v.objPos)+'</td><td style="color:'+(Math.abs(n(v.devPct))>DEV_LIM?'var(--rd)':'var(--t2)')+'">'+fP(v.devPct)+'</td><td style="color:'+(n(pc.churnRate)>15?'var(--rd)':n(pc.churnRate)>9?'var(--ye)':'var(--t2)')+'">'+fmt(pc.churnRate)+'%</td></tr>';}).join('')+'</tbody></table></div>';
 }
-function renderSaude(){
-  var el=document.getElementById('saudeBox'),vs=DB.biAtual.vendedores;
-  if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
-  var scores=vs.map(function(v,i){return calcScore(v,DB.posChurn[i]||{});});
-  var scoreM=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
-  var cor=scoreCor(scoreM),lbl=scoreLbl(scoreM);
-  var desc=scoreM>=70?'A regional está performando bem.':scoreM>=50?'Atenção. Identifique os vendedores em queda.':'Situação crítica. Intervenção imediata.';
-  el.innerHTML='<div class="saude-box" style="background:linear-gradient(135deg,rgba('+(scoreM>=70?'0,229,195':scoreM>=50?'255,184,0':'255,69,96')+',0.08),var(--s1));border:2px solid '+cor+'"><div class="saude-titulo" style="color:'+cor+'">ÍNDICE DE SAÚDE — NORTE FLUMINENSE</div><div class="saude-valor" style="color:'+cor+'">'+scoreM+'</div><div style="font-size:13px;color:var(--t2);margin-top:4px">de 100 pontos · '+lbl+'</div><div class="saude-desc" style="color:var(--t2)">'+desc+'</div></div><div class="card"><div class="ct">Score Individual</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">'+vs.map(function(v,i){var sc=scores[i];return'<div style="text-align:center;background:var(--s2);border-radius:10px;padding:12px 8px;border:1px solid var(--b)"><div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:8px">'+v.nome.split(' ')[0]+'</div><div style="font-size:28px;font-weight:700;color:'+scoreCor(sc)+'">'+sc+'</div><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:'+scoreCor(sc)+';margin-top:4px">'+scoreLbl(sc)+'</div></div>';}).join('')+'</div></div>';
-}
-function renderScores(){
-  var el=document.getElementById('scoresBox'),vs=DB.biAtual.vendedores;
-  if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
-  var dados=vs.map(function(v,i){var pc=DB.posChurn[i]||{};return{v:v,pc:pc,sc:calcScore(v,pc)};}).sort(function(a,b){return b.sc-a.sc;});
-  el.innerHTML=dados.map(function(x){
-    var v=x.v,pc=x.pc,sc=x.sc,cor=scoreCor(sc),objMarg=n(v.objMarg)||17.5;
-    var totPos=(n(pc.positivados)+n(pc.naoPositivados)),txPos=totPos>0?((n(pc.positivados)/totPos)*100).toFixed(1):0;
-    function si(lbl,max,val,suf,pts){var vv=fmt(val)+(val!==undefined&&val!==''?suf:''),ok=pts>0;return'<div class="vm"><div class="vm-l">'+lbl+'</div><div style="font-size:13px;font-weight:700;color:'+(ok?'var(--cy)':'var(--rd)')+'">'+vv+'</div><div style="font-size:10px;color:'+(ok?'var(--cy)':'var(--rd)')+';margin-top:2px">'+pts+'/'+max+'</div></div>';}
-    return'<div class="vc"><div class="vc-top"><div style="display:flex;align-items:center;gap:14px"><div style="width:60px;height:60px;border-radius:50%;border:3px solid '+cor+';display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0"><div style="font-size:20px;font-weight:700;color:'+cor+';line-height:1">'+sc+'</div><div style="font-size:8px;color:'+cor+';letter-spacing:1px">pts</div></div><div><div class="vc-nome">'+v.nome+'</div><div class="vc-cod">COD '+v.cod+'</div></div></div>'+scoreBadge(sc)+'</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">'+si('Projeção','40pts',v.proj,'%',n(v.proj)>=110?40:n(v.proj)>=100?35:n(v.proj)>=90?20:n(v.proj)>=80?8:0)+si('Margem','10pts',v.marg,'%',n(v.marg)>=objMarg?10:n(v.marg)>=15.5?7:n(v.marg)>=objMarg*0.85?3:0)+si('Positivação','25pts',txPos,'%',txPos>=90?25:txPos>=75?18:txPos>=60?10:txPos>=45?4:0)+si('Devolução','5pts',v.devPct,'%',Math.abs(n(v.devPct))<=DEV_LIM?5:Math.abs(n(v.devPct))<=DEV_LIM*2?2:0)+si('Churn','20pts',pc.churnRate,'%',n(pc.churnRate)<=9?20:n(pc.churnRate)<=15?10:n(pc.churnRate)<=20?4:0)+'</div></div>';
-  }).join('');
-}
+
+
 function renderEquipe(){
   var el=document.getElementById('equipeBox'),vs=DB.biAtual.vendedores;
   if(!vs||vs.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
@@ -1486,12 +1453,12 @@ function abrirJanela(titulo,html){
 function enviarWhatsApp(){var el=document.getElementById('relArea');if(!el||el.querySelector('.empty')){toast('Gere o relatório primeiro.');return;}abrirJanela('Relatório Executivo',el.innerHTML);toast('Relatório aberto! Imprimir → Salvar PDF → WhatsApp.');}
 function enviarEmail(){enviarWhatsApp();}
 function salvarPerfil(){DB.perfil={empresa:document.getElementById('pfEmp').value,regional:document.getElementById('pfReg').value,supervisor:document.getElementById('pfSup').value,cargo:document.getElementById('pfCargo').value,assinatura:document.getElementById('pfAss').value,contexto:document.getElementById('pfCtx').value};salvar();document.getElementById('pvEmp').textContent=DB.perfil.empresa||'—';document.getElementById('pvReg').textContent=DB.perfil.regional||'—';document.getElementById('pvSup').textContent=DB.perfil.supervisor||'—';toast('Perfil salvo!');}
-function resetar(){if(confirm('Resetar todos os dados? Esta ação não pode ser desfeita.')){localStorage.removeItem(KEY);location.reload();}}
-function exportarDados(){try{salvar();var payload=localStorage.getItem(KEY);if(!payload){toast('Nenhum dado para exportar.');return;}var blob=new Blob([payload],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;var data=new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');a.download='gerencion-dados-'+data+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);toast('Arquivo baixado!');}catch(e){toast('Erro ao exportar.');}}
-function importarDados(){var input=document.createElement('input');input.type='file';input.accept='.json';input.onchange=function(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(ev){try{var texto=ev.target.result;JSON.parse(texto);localStorage.setItem(KEY,texto);toast('Dados importados! Recarregando...');setTimeout(function(){location.reload();},1200);}catch(err){toast('Arquivo inválido.');}};reader.readAsText(file);};input.click();}
+function resetar(){if(confirm('Resetar todos os dados? Esta ação não pode ser desfeita.')){if(USER){sb.from('supervisao_estado').delete().eq('user_id',USER.id).then(function(){location.reload();});}else{location.reload();}}}
+function exportarDados(){try{salvar();var payload=JSON.stringify(DB);var blob=new Blob([payload],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;var data=new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');a.download='gerencion-dados-'+data+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);toast('Arquivo baixado!');}catch(e){toast('Erro ao exportar.');}}
+function importarDados(){var input=document.createElement('input');input.type='file';input.accept='.json';input.onchange=function(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(ev){try{var obj=JSON.parse(ev.target.result);DB=obj;aplicarDefaults();salvar();toast('Dados importados! Recarregando...');setTimeout(function(){location.reload();},1200);}catch(err){toast('Arquivo inválido.');}};reader.readAsText(file);};input.click();}
 (function(){var urlParams=new URLSearchParams(window.location.search),bq=urlParams.get('backup');if(bq){try{var d=decodeURIComponent(bq);localStorage.setItem('GRC_V2',d);window.location.href=window.location.origin+window.location.pathname;}catch(e){}}})();
-function renderPos(){var el=document.getElementById('posBox');if(!el)return;if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de positivação.</div>';return;}var tp=0,tn=0;DB.posChurn.forEach(function(p){tp+=parseInt(p.positivados||0);tn+=parseInt(p.naoPositivados||0);});var tx=tp+tn>0?((tp/(tp+tn))*100).toFixed(1):0;el.innerHTML='<div class="stats s3" style="margin-bottom:14px"><div class="stat"><div class="st-l">Positivados</div><div class="st-v">'+tp+'</div></div><div class="stat dg"><div class="st-l">Não Positivados</div><div class="st-v">'+tn+'</div></div><div class="stat '+(parseFloat(tx)>=70?'':'wn')+'"><div class="st-l">Taxa</div><div class="st-v">'+tx+'%</div></div></div><div class="tw"><table><thead><tr><th>Vendedor</th><th>Positivados</th><th>Não Posit</th><th>Taxa</th><th>Situação</th></tr></thead><tbody>'+DB.posChurn.map(function(p){var tot=parseInt(p.positivados||0)+parseInt(p.naoPositivados||0),tx=tot>0?((parseInt(p.positivados||0)/tot)*100).toFixed(1):0,np=parseInt(p.naoPositivados||0);return'<tr><td style="font-weight:600">'+p.nome+'</td><td style="color:var(--cy)">'+fmt(p.positivados)+'</td><td style="color:var(--rd)">'+fmt(p.naoPositivados)+'</td><td>'+tx+'%</td><td>'+(np>20?'<span class="badge bdg">URGENTE</span>':np>10?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+'</td></tr>';}).join('')+'</tbody></table></div>';}
-function renderChurn(){var el=document.getElementById('churnBox');if(!el)return;if(!DB.posChurn||DB.posChurn.length===0){el.innerHTML='<div class="empty">Lance os dados de churn.</div>';return;}var com=DB.posChurn.filter(function(p){return p.churnRate!=='';});if(com.length===0){el.innerHTML='<div class="empty">Nenhum dado de churn lançado.</div>';return;}el.innerHTML='<div class="g2">'+com.map(function(p){var c=n(p.churnRate);return'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-weight:700">'+p.nome+'</div>'+(c>15?'<span class="badge bdg">CRÍTICO</span>':c>9?'<span class="badge bwn">ATENÇÃO</span>':'<span class="badge bok">OK</span>')+'</div><div style="font-size:44px;font-weight:700;color:'+(c>15?'var(--rd)':c>9?'var(--ye)':'var(--cy)')+';line-height:1">'+c.toFixed(1)+'%</div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-top:4px">CHURN RATE</div></div>';}).join('')+'</div>';}
+
+
 function iniciarApresentacao(){
   var vs=DB.biAtual.vendedores;
   if(!vs||vs.length===0){toast('Lance os dados do BI primeiro.');return;}
@@ -2527,11 +2494,11 @@ function processarLupaTop50(){
     if(!fat2026)return;
     var vendNome=vendCompleto;var vendMatch=vendCompleto.match(/^\d+\s*-\s*(.+)$/);if(vendMatch)vendNome=vendMatch[1].trim();
     var crescVal=nLupa(cresc);var temVendaAnterior=fat2025>0;
-    lista.push({rank2026:rank2026,rank2025:rank2025,vendedor:vendNome,vendedorCompleto:vendCompleto,cliente:clienteCompleto,fat2026:fat2026,fat2025:fat2025,cresc:crescVal,temHistorico:temVendaAnterior,medioMes:medioMes,skuMedia:skuMedia,semaforo:semaforo.trim(),acao:''});
+    lista.push({rank2026:rank2026,rank2025:rank2025,vendedor:vendNome,vendedorCompleto:vendCompleto,cliente:clienteCompleto,fat2026:fat2026,fat2025:fat2025,cresc:crescVal,temHistorico:temVendaAnterior,medioMes:medioMes,skuMedia:skuMedia,semaforo:semaforo.trim(),acao:'',causa:''});
   });
   if(!lista.length){toast('Não consegui identificar nenhum cliente.');return;}
-  var antigos={};(DB.lupaTop50||[]).forEach(function(c){if(c.acao)antigos[c.cliente+'|'+c.vendedor]=c.acao;});
-  lista.forEach(function(c){var k=c.cliente+'|'+c.vendedor;if(antigos[k])c.acao=antigos[k];});
+  var antigos={};(DB.lupaTop50||[]).forEach(function(c){antigos[c.cliente+'|'+c.vendedor]={acao:c.acao||'',causa:c.causa||''};});
+  lista.forEach(function(c){var k=c.cliente+'|'+c.vendedor;if(antigos[k]){c.acao=antigos[k].acao;c.causa=antigos[k].causa;}});
   DB.lupaTop50=lista;salvar();
   var sel=document.getElementById('lupaTop50FiltroVend');
   if(sel){var vends=Array.from(new Set(lista.map(function(c){return c.vendedor;}))).sort();sel.innerHTML='<option value="">Todos</option>'+vends.map(function(v){return'<option value="'+v+'">'+v+'</option>';}).join('');}
@@ -2594,7 +2561,7 @@ function fraseLupaCliente(c){
   return frase;
 }
 
-function salvarAcaoLupaCliente(idx,valor){if(!DB.lupaTop50[idx])return;DB.lupaTop50[idx].acao=valor;salvar();toast('Ação salva!');}
+function salvarAcaoLupaCliente(idx,valor){if(!DB.lupaTop50[idx])return;DB.lupaTop50[idx].acao=valor;salvar();toast('Ação salva!');}function salvarCausaLupaCliente(idx,valor){if(!DB.lupaTop50[idx])return;DB.lupaTop50[idx].causa=valor;salvar();renderLupaTop50();}var LUPA_CAUSAS=[{v:'ruptura',lbl:'Ruptura / disponibilidade',bucket:'empresa'},{v:'preco',lbl:'Competitividade de preço',bucket:'empresa'},{v:'concorrencia',lbl:'Nova concorrência (linha seca)',bucket:'mercado'},{v:'retracao',lbl:'Retração de consumo do cliente',bucket:'mercado'},{v:'sazonal',lbl:'Cliente sazonal / inativo',bucket:'mercado'},{v:'relacionamento',lbl:'Relacionamento / ação comercial',bucket:'equipe'}];function lupaCausaBucket(v){for(var i=0;i<LUPA_CAUSAS.length;i++){if(LUPA_CAUSAS[i].v===v)return LUPA_CAUSAS[i].bucket;}return null;}function causaRaizHTML(dados){var caidos=dados.filter(function(c){return c.temHistorico&&(c.fat2025-c.fat2026)>0;});if(!caidos.length)return'';var totalQueda=caidos.reduce(function(s,c){return s+(c.fat2025-c.fat2026);},0);var classif=caidos.filter(function(c){return c.causa;});var quedaClassif=classif.reduce(function(s,c){return s+(c.fat2025-c.fat2026);},0);var porCausa={},porBucket={equipe:0,empresa:0,mercado:0};LUPA_CAUSAS.forEach(function(x){porCausa[x.v]=0;});classif.forEach(function(c){var q=c.fat2025-c.fat2026;porCausa[c.causa]=(porCausa[c.causa]||0)+q;var b=lupaCausaBucket(c.causa);if(b)porBucket[b]+=q;});var base=quedaClassif||1;var barras=LUPA_CAUSAS.map(function(x){var q=porCausa[x.v]||0;var pct=Math.round(q/base*100);var cor=x.bucket==='empresa'?'var(--rd)':x.bucket==='mercado'?'var(--ye)':'var(--cy)';return'<div style="display:grid;grid-template-columns:1fr 88px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--b)"><div><div style="font-size:12px;color:var(--t)">'+x.lbl+'</div><div style="height:8px;background:var(--s2);border-radius:6px;margin-top:5px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+cor+';border-radius:6px"></div></div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--t)">'+pct+'%</div><div style="font-size:10px;color:var(--t3)">'+fBRL(q)+'</div></div></div>';}).join('');function balde(l,val,cor){var pct=Math.round(val/base*100);return'<div class="stat"><div class="st-l">'+l+'</div><div class="st-v" style="font-size:22px;color:'+cor+'">'+pct+'%</div><div class="st-s">'+fBRL(val)+'</div></div>';}var falta=caidos.length-classif.length;var aviso=falta>0?'<div class="bn bn-ye" style="margin-bottom:12px"><span>⚡</span><div>'+falta+' cliente(s) que caíram ainda sem causa. Classifique abaixo para a análise ficar completa.</div></div>':'';return'<div class="card"><div class="ct">Causa-Raiz da Queda — Top '+dados.length+'</div>'+aviso+'<div style="font-size:12px;color:var(--t2);margin-bottom:10px">Queda classificada: <strong style="color:var(--rd)">'+fBRL(quedaClassif)+'</strong> de '+fBRL(totalQueda)+' em queda</div>'+barras+'<div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t2);margin:16px 0 8px">Leitura — de onde vem a queda</div><div class="stats s3">'+balde('Ação da equipe',porBucket.equipe,'var(--cy)')+balde('Decisão conjunta',porBucket.empresa,'var(--ye)')+balde('Estrutural de mercado',porBucket.mercado,'var(--t2)')+'</div></div>';}
 
 function renderLupaTop50(){
   var elResumo=document.getElementById('lupaTop50Resumo'),elLista=document.getElementById('lupaTop50Lista');
@@ -2616,13 +2583,13 @@ function renderLupaTop50(){
   var totalFat2026=dados.reduce(function(s,c){return s+c.fat2026;},0);
   var totalFat2025=dados.reduce(function(s,c){return s+c.fat2025;},0);
   var crescGeral=totalFat2025>0?((totalFat2026-totalFat2025)/totalFat2025)*100:0;
-  elResumo.innerHTML='<div class="stats s4" style="margin-bottom:14px"><div class="stat"><div class="st-l">Faturamento Top '+dados.length+'</div><div class="st-v" style="font-size:20px">'+fBRL(totalFat2026)+'</div><div class="st-s">'+fPct1(crescGeral)+' vs ano anterior</div></div><div class="stat"><div class="st-l">🟢 Forte / Crescendo</div><div class="st-v">'+forte+'</div></div><div class="stat wn"><div class="st-l">🟡 Risco / Atenção</div><div class="st-v">'+risco+'</div></div><div class="stat dg"><div class="st-l">🔴 Alto Risco / Queda</div><div class="st-v">'+critico+'</div></div></div>';
+  elResumo.innerHTML='<div class="stats s4" style="margin-bottom:14px"><div class="stat"><div class="st-l">Faturamento Top '+dados.length+'</div><div class="st-v" style="font-size:20px">'+fBRL(totalFat2026)+'</div><div class="st-s">'+fPct1(crescGeral)+' vs ano anterior</div></div><div class="stat"><div class="st-l">🟢 Forte / Crescendo</div><div class="st-v">'+forte+'</div></div><div class="stat wn"><div class="st-l">🟡 Risco / Atenção</div><div class="st-v">'+risco+'</div></div><div class="stat dg"><div class="st-l">🔴 Alto Risco / Queda</div><div class="st-v">'+critico+'</div></div></div>'+causaRaizHTML(dados);
   elLista.innerHTML=filtrados.map(function(c){
     var idx=c._idx;var cls=classificarLupaCliente(c);var cor=cls==='forte'?'var(--cy)':cls==='risco'?'var(--ye)':'var(--rd)';
     var badge=cls==='forte'?'<span class="badge bok">FORTE</span>':cls==='risco'?'<span class="badge bwn">RISCO</span>':'<span class="badge bdg">ALTO RISCO</span>';
     var mostrarAcao=(cls==='risco'||cls==='critico');
     var html='<div class="vc" style="border-left:3px solid '+cor+'"><div class="vc-top"><div><div class="vc-nome">#'+c.rank2026+' — '+c.cliente+'</div><div class="vc-cod">'+c.vendedorCompleto+'</div></div>'+badge+'</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px"><div class="vm"><div class="vm-l">Fat 2026</div><div class="vm-v">'+fBRL(c.fat2026)+'</div></div><div class="vm"><div class="vm-l">Fat 2025</div><div class="vm-v">'+(c.temHistorico?fBRL(c.fat2025):'—')+'</div></div><div class="vm"><div class="vm-l">% Cresc</div><div class="vm-v '+(c.cresc>=0?'ok':'dg')+'">'+(c.temHistorico?fPct1(c.cresc):'novo')+'</div></div><div class="vm"><div class="vm-l">Médio/Mês</div><div class="vm-v">'+fBRL(c.medioMes)+'</div></div></div><div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:'+(mostrarAcao?'10px':'0')+'"><strong style="color:var(--cy);display:block;margin-bottom:4px;font-size:9px;letter-spacing:1px;text-transform:uppercase">NOTA:</strong>'+fraseLupaCliente(c)+'</div>';
-    if(mostrarAcao){html+='<div class="fg" style="margin-bottom:0"><label class="fl">O que estamos fazendo para recuperar este cliente</label><textarea class="inp" style="min-height:50px" placeholder="Ex: visita agendada, oferta especial enviada..." onchange="salvarAcaoLupaCliente('+idx+',this.value)">'+(c.acao||'')+'</textarea></div>';}
+    if(mostrarAcao){html+='<div class="fg"><label class="fl">Causa da queda</label><select class="inp" onchange="salvarCausaLupaCliente('+idx+',this.value)"><option value="">Selecione a causa...</option>'+LUPA_CAUSAS.map(function(x){return'<option value="'+x.v+'"'+(c.causa===x.v?' selected':'')+'>'+x.lbl+'</option>';}).join('')+'</select></div><div class="fg" style="margin-bottom:0"><label class="fl">O que estamos fazendo para recuperar este cliente</label><textarea class="inp" style="min-height:50px" placeholder="Ex: visita agendada, oferta especial enviada..." onchange="salvarAcaoLupaCliente('+idx+',this.value)">'+(c.acao||'')+'</textarea></div>';}
     html+='</div>';return html;
   }).join('');
 }
