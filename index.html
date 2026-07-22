@@ -149,7 +149,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     <div class="sb-nav">
       <div class="nav-grp">Visão Geral</div>
       <button class="nb on" onclick="ir('dashboard',this)">◈ Panorama</button>
-      <button class="nb" onclick="ir('bi',this)">⊕ Lançar BI</button>
+      <button class="nb" onclick="ir('alimentar',this)">📥 Alimentar Dados</button><button class="nb" onclick="ir('bi',this)">⊕ Lançar BI</button>
       <button class="nb" onclick="ir('comparativo',this)">⇅ Comparativo Mensal</button>
       <div class="nav-grp">Equipe</div>
       <button class="nb" onclick="ir('equipe',this)">◉ Equipe</button>
@@ -202,7 +202,28 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <div class="card"><div class="ct">Ranking da Equipe — Score Geral</div><div id="rankBox"><div class="empty">Lance os dados do BI.</div></div></div>
     </div>
     <!-- NOVO MÓDULO LANÇAR BI: COLAR E PARSEAR -->
-    <div id="bi" class="pg">
+    <div id="alimentar" class="pg"><div class="ph"><div class="pt">Alimentar Dados</div><div class="ps">Todas as colagens do BI numa tela só — de cima para baixo, uma vez por mês</div></div><div id="anivAlerta"></div>
+<div class="card"><div class="ct">Progresso do mês</div><div id="alimStatus"></div></div>
+<div class="card"><div class="ct">1 · BI Mensal</div>
+<div class="bn bn-cy"><span>📋</span><div>Cole os 3 blocos do BI Gestor e clique em Salvar BI ao final.</div></div>
+<div class="fg"><label class="fl">1.1 · Regional</label><textarea class="inp" id="alRegional" style="min-height:70px" placeholder="Cole o bloco Regional do BI"></textarea><button class="btn bp bsm" onclick="alimFeed('alRegional','biRegColar',processarBIRegional)">Processar Regional</button></div>
+<div class="fg"><label class="fl">1.2 · Vendedores</label><textarea class="inp" id="alVend" style="min-height:70px" placeholder="Cole o bloco de Vendedores do BI"></textarea><button class="btn bp bsm" onclick="alimFeed('alVend','biVendColar',processarBIVendedores)">Processar Vendedores</button></div>
+<div class="fg"><label class="fl">1.3 · Positivação / Churn</label><textarea class="inp" id="alChurn" style="min-height:70px" placeholder="Cole o bloco de Positivação/Churn do BI"></textarea><button class="btn bp bsm" onclick="alimFeed('alChurn','biChurnColar',processarBIChurn)">Processar Posit./Churn</button></div>
+<button class="btn bp" onclick="salvarBICompleto();renderAlimentar();">💾 Salvar BI do Mês</button></div>
+<div class="card"><div class="ct">2 · Lupa · Faturamento</div>
+<div class="fg"><label class="fl">2.1 · Regional</label><textarea class="inp" id="alFatReg" style="min-height:70px" placeholder="Cole o faturamento da regional"></textarea><button class="btn bp bsm" onclick="alimFeed('alFatReg','lupaFatRegColar',processarLupaFatRegional)">Processar</button></div>
+<div class="fg"><label class="fl">2.2 · Por vendedor <span style="color:var(--t3);font-weight:400">— cole um por vez, vai somando</span></label><textarea class="inp" id="alFatVend" style="min-height:70px" placeholder="Cole o faturamento de um vendedor e processe; repita para os demais"></textarea><button class="btn bp bsm" onclick="alimFeed('alFatVend','lupaFatVendColar',processarLupaFatVendedores)">Adicionar Vendedor</button></div></div>
+<div class="card"><div class="ct">3 · Lupa · Top 50</div>
+<div class="bn bn-ye"><span>⚡</span><div>O bloco 3.1 é o que gera a análise de Causa-Raiz. Copie direto do BI (nunca por print).</div></div>
+<div class="fg"><label class="fl">3.1 · Regional — Ano Atual</label><textarea class="inp" id="alT50Reg" style="min-height:70px" placeholder="Cole o Top 50 Regional Ano Atual"></textarea><button class="btn bp bsm" onclick="alimFeed('alT50Reg','lupaTop50Colar',processarLupaTop50)">Processar</button></div>
+<div class="fg"><label class="fl">3.2 · Regional — Ano Anterior</label><textarea class="inp" id="alT50RegAnt" style="min-height:70px" placeholder="Cole o Top 50 Regional Ano Anterior"></textarea><button class="btn bp bsm" onclick="alimFeed('alT50RegAnt','top50RegAntColar',processarTop50RegAnt)">Processar</button></div>
+<div class="fg"><label class="fl">3.3 · Vendedor — Ano Atual</label><select class="inp" id="alT50VendSel" style="margin-bottom:6px"></select><textarea class="inp" id="alT50Vend" style="min-height:70px" placeholder="Selecione o vendedor acima e cole o Top 50 dele"></textarea><button class="btn bp bsm" onclick="alimFeedSel('alT50Vend','top50VendAtualColar','alT50VendSel','top50VendAtualSel',processarTop50VendAtual)">Adicionar Vendedor</button></div>
+<div class="fg"><label class="fl">3.4 · Vendedor — Ano Anterior</label><select class="inp" id="alT50VendAntSel" style="margin-bottom:6px"></select><textarea class="inp" id="alT50VendAnt" style="min-height:70px" placeholder="Selecione o vendedor acima e cole o Top 50 dele"></textarea><button class="btn bp bsm" onclick="alimFeedSel('alT50VendAnt','top50VendAntColar','alT50VendAntSel','top50VendAntSel',processarTop50VendAnt)">Adicionar Vendedor</button></div></div>
+<div class="card"><div class="ct">4 · Complementares <span style="color:var(--t3);font-size:11px;font-weight:400">— opcionais</span></div>
+<div class="fg"><label class="fl">4.1 · SSS</label><textarea class="inp" id="alSss" style="min-height:60px" placeholder="Cole o SSS"></textarea><button class="btn bp bsm" onclick="alimFeed('alSss','lupaSssColar',processarLupaSss)">Processar</button></div>
+<div class="fg"><label class="fl">4.2 · Indicadores</label><textarea class="inp" id="alIndic" style="min-height:60px" placeholder="Cole os Indicadores"></textarea><button class="btn bp bsm" onclick="alimFeed('alIndic','lupaIndicColar',processarLupaIndic)">Processar</button></div></div>
+</div>
+<div id="bi" class="pg">
       <div class="ph"><div class="pt">Lançar BI</div><div class="ps">Cole os dados do Power BI — Regional, Vendedores e Churn</div></div>
       <div class="bn bn-cy"><span>ℹ</span><div>Cole cada tabela diretamente do Power BI — sem preencher campo por campo. <strong>Página 1</strong> para Regional e Vendedores. <strong>Página 7</strong> para Churn. Processe cada bloco e clique em Salvar no final.</div></div>
       <div class="card">
@@ -407,7 +428,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
           <div class="fg"><label class="fl">Tipo</label><select id="aTipo" class="inp"><option>Vendedor</option><option>Cliente</option><option>Outro</option></select></div>
           <div class="fg"><label class="fl">Mensagem personalizada (opcional)</label><input id="aMsg" class="inp" placeholder="Deixe em branco para mensagem padrão"></div>
         </div>
-        <button class="btn bp" onclick="salvarAniv()">Salvar</button>
+        <button class="btn bp" onclick="salvarAniv()">Salvar</button><button class="btn bs" style="margin-left:8px" onclick="exportarAnivICS()">📅 Exportar p/ Calendário</button><button class="btn bs" style="margin-left:8px" onclick="copiarMsgGrupo()">💬 Msg do Grupo (hoje)</button>
       </div>
       <div id="listaAniv"></div>
     </div>
@@ -959,7 +980,7 @@ function salvarBICompleto(){
   buildForms();salvar();renderTudo();toast('BI salvo com sucesso! ✓');
   ir('dashboard',document.querySelector('.nb'));
 }
-function renderTudo(){renderDash();renderEquipe();renderComp();renderCampoLista();renderPlanos();renderClientes();renderAniv();if(DB.biAtual&&DB.biAtual.vendedores&&DB.biAtual.vendedores.length>0)renderPlanosVendedor();}
+function renderTudo(){renderDash();renderEquipe();renderComp();renderCampoLista();renderAlimentar();renderAnivAlerta();renderPlanos();renderClientes();renderAniv();if(DB.biAtual&&DB.biAtual.vendedores&&DB.biAtual.vendedores.length>0)renderPlanosVendedor();}
 function renderDash(){
   var r=DB.biAtual.regional,vs=DB.biAtual.vendedores;
   var mes=new Date().getMonth(),baixa=(mes>=4&&mes<=7);
@@ -1055,6 +1076,44 @@ function salvarCliente(){var nome=document.getElementById('cliNome').value.trim(
 function renderClientes(){var el=document.getElementById('listaClientes');if(!DB.clientes.length){el.innerHTML='<div class="empty">Nenhum cliente cadastrado.</div>';return;}el.innerHTML=DB.clientes.map(function(c,i){var sc=c.status==='Em risco'?'bdg':c.status==='Estratégico'||c.status==='Expansão'?'bok':c.status==='Oportunidade'?'bwn':'bnt';return'<div class="ic"><div class="ih"><div><div class="in">'+c.nome+'</div>'+(c.cidade?'<div style="font-size:11px;color:var(--t2);margin-top:2px">'+c.cidade+(c.vendedor?' · '+c.vendedor:'')+'</div>':'')+'</div><div style="display:flex;gap:6px;align-items:center">'+(c.status?'<span class="badge '+sc+'">'+c.status+'</span>':'')+'<button class="btn bd bsm" onclick="remover(\'clientes\','+i+')">×</button></div></div>'+(c.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6">'+c.obs+'</div>':'')+'</div>';}).join('');}
 var MSGS=['🎂 Feliz aniversário, {nome}! Que seu novo ciclo seja repleto de saúde e conquistas. Grande abraço! 🙏\n\n{ass}','🎉 Parabéns pelo seu dia, {nome}! Desejo muita saúde, paz e felicidade! 💪\n\n{ass}','🎊 Feliz aniversário, {nome}! Que Deus abençoe sua vida com saúde e realizações! 🌟\n\n{ass}'];
 function buildMsg(a,idx){var ass=DB.perfil.assinatura||'Leandro Felipe\nSupervisor de Vendas - Arcofoods',base=a.msg&&a.msg.trim()?a.msg:MSGS[idx%MSGS.length];return base.replace('{nome}',a.nome).replace('{ass}',ass);}
+function alimFeed(src,dst,fn){var e=document.getElementById(src);if(!e||!e.value.trim()){toast('Cole os dados primeiro.');return;}var d=document.getElementById(dst);if(!d){toast('Campo de destino não encontrado.');return;}d.value=e.value;try{fn();e.value='';}catch(err){toast('Erro ao processar.');}renderAlimentar();}
+function alimFeedSel(src,dst,selSrc,selDst,fn){var sv=document.getElementById(selSrc);if(!sv||!sv.value){toast('Selecione o vendedor primeiro.');return;}var d2=document.getElementById(selDst);if(d2)d2.value=sv.value;alimFeed(src,dst,fn);}
+function renderAlimentar(){var el=document.getElementById('alimStatus');if(!el)return;
+var vs=(DB.biAtual&&DB.biAtual.vendedores)||[];
+['alT50VendSel','alT50VendAntSel'].forEach(function(id){var s2=document.getElementById(id);if(!s2)return;var cur=s2.value;s2.innerHTML='<option value="">Selecione o vendedor...</option>'+vs.map(function(v){var c=(v.nome||'').match(/^(\d+)/);return'<option value="'+(c?c[1]:v.nome)+'">'+v.nome+'</option>';}).join('');if(cur)s2.value=cur;});
+function it(ok,l,d){return'<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b)"><span style="font-size:15px">'+(ok?'✅':'⬜')+'</span><div style="flex:1"><div style="font-size:13px;color:var(--t)">'+l+'</div><div style="font-size:11px;color:var(--t3)">'+d+'</div></div></div>';}
+var nT50=(DB.lupaTop50||[]).length,nVA=Object.keys(DB.lupaTop50VendAtual||{}).length,nVAnt=Object.keys(DB.lupaTop50VendAnt||{}).length,nFV=(DB.lupaFatVendedores||[]).length;
+var caidos=(DB.lupaTop50||[]).filter(function(c){return c.temHistorico&&(c.fat2025-c.fat2026)>0;});
+var semCausa=caidos.filter(function(c){return !c.causa;}).length;
+el.innerHTML=it(vs.length>0,'BI Mensal',vs.length?vs.length+' vendedor(es) carregado(s)':'Pendente')+
+it(Object.keys(DB.lupaFatRegional||{}).length>0,'Lupa · Faturamento Regional','')+
+it(nFV>0,'Lupa · Faturamento por Vendedor',nFV?nFV+' vendedor(es)':'Pendente')+
+it(nT50>0,'Top 50 Regional — Ano Atual',nT50?nT50+' cliente(s)':'Pendente')+
+it((DB.lupaTop50RegAnt||[]).length>0,'Top 50 Regional — Ano Anterior','')+
+it(nVA>0,'Top 50 Vendedor — Ano Atual',nVA?nVA+' vendedor(es)':'Pendente')+
+it(nVAnt>0,'Top 50 Vendedor — Ano Anterior',nVAnt?nVAnt+' vendedor(es)':'Pendente')+
+(caidos.length?it(semCausa===0,'Causas classificadas',semCausa?semCausa+' cliente(s) em queda sem causa':'Todas as quedas classificadas'):'');}
+function anivProximos(dias){var h=new Date(),hd=h.getFullYear(),hm=h.getMonth(),hdia=h.getDate(),hoje=new Date(hd,hm,hdia),out=[];
+(DB.aniversarios||[]).forEach(function(a,i){if(!a.data)return;var d=new Date(a.data+'T12:00'),n=new Date(hd,d.getMonth(),d.getDate());if(n<hoje)n.setFullYear(hd+1);var df=Math.round((n-hoje)/86400000);if(df<=dias)out.push({a:a,i:i,dias:df});});
+return out.sort(function(x,y){return x.dias-y.dias;});}
+function renderAnivAlerta(){var el=document.getElementById('anivAlerta');if(!el)return;var p=anivProximos(7);if(!p.length){el.innerHTML='';return;}
+el.innerHTML='<div class="card" style="border-color:rgba(0,229,195,.3)"><div class="ct">🎂 Aniversários desta semana</div>'+p.map(function(o){
+var q=o.dias===0?'<span class="badge bok">Hoje!</span>':o.dias===1?'<span class="badge bnt">Amanhã</span>':'<span class="badge bnt">em '+o.dias+' dias</span>';
+return'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--b)"><div><div style="font-size:14px;color:var(--t)">'+o.a.nome+'</div><div style="font-size:11px;color:var(--t3)">'+(o.a.tipo||'')+'</div></div>'+q+'</div>';}).join('')+
+'<button class="btn bp bsm" style="margin-top:10px" onclick="ir(\'aniversarios\',null)">Ver aniversariantes</button></div>';}
+function copiarMsgGrupo(){var p=anivProximos(0);if(!p.length){toast('Ninguém faz aniversário hoje.');return;}
+var txt=p.map(function(o){var n=o.a.nome.split(' ')[0];return'🎉 Hoje é aniversário do(a) '+o.a.nome+'!\n\nParabéns, '+n+'! Que este novo ano seja de muitas conquistas e realizações. Obrigado por fazer parte desta equipe. 🎂👏';}).join('\n\n---\n\n');
+if(navigator.clipboard){navigator.clipboard.writeText(txt).then(function(){toast('Mensagem copiada! Cole no grupo.');},function(){prompt('Copie a mensagem:',txt);});}else{prompt('Copie a mensagem:',txt);}}
+function exportarAnivICS(){var lista=(DB.aniversarios||[]).filter(function(a){return a.data;});if(!lista.length){toast('Nenhum aniversariante com data cadastrada.');return;}
+function p2(n){return(n<10?'0':'')+n;}
+var L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Gerencion//Aniversarios//PT','CALSCALE:GREGORIAN'];
+lista.forEach(function(a,i){var d=new Date(a.data+'T12:00'),mm=p2(d.getMonth()+1),dd=p2(d.getDate()),yy=new Date().getFullYear();
+var ini=yy+mm+dd,fim=new Date(yy,d.getMonth(),d.getDate()+1),fimS=fim.getFullYear()+p2(fim.getMonth()+1)+p2(fim.getDate());
+L.push('BEGIN:VEVENT','UID:gerencion-aniv-'+i+'-'+ini+'@gerencion','DTSTART;VALUE=DATE:'+ini,'DTEND;VALUE=DATE:'+fimS,'RRULE:FREQ=YEARLY','SUMMARY:🎂 Aniversário — '+a.nome+(a.tipo?' ('+a.tipo+')':''),'DESCRIPTION:Lembrete do Gerencion Supervisão.'+(a.tel?' Tel: '+a.tel:''),'BEGIN:VALARM','TRIGGER:-P2D','ACTION:DISPLAY','DESCRIPTION:Aniversário de '+a.nome+' em 2 dias','END:VALARM','BEGIN:VALARM','TRIGGER:-PT9H','ACTION:DISPLAY','DESCRIPTION:Hoje é aniversário de '+a.nome,'END:VALARM','END:VEVENT');});
+L.push('END:VCALENDAR');
+var blob=new Blob([L.join('\r\n')],{type:'text/calendar;charset=utf-8'}),url=URL.createObjectURL(blob),el=document.createElement('a');
+el.href=url;el.download='aniversarios-gerencion.ics';document.body.appendChild(el);el.click();document.body.removeChild(el);URL.revokeObjectURL(url);
+toast(lista.length+' aniversário(s) exportado(s)! Abra o arquivo para importar no calendário.');}
 function salvarAniv(){var nome=document.getElementById('aNome').value.trim();if(!nome){toast('Informe o nome.');return;}DB.aniversarios.push({nome:nome,data:document.getElementById('aData').value,tel:document.getElementById('aTel').value,email:document.getElementById('aEmail').value,tipo:document.getElementById('aTipo').value,msg:document.getElementById('aMsg').value});salvar();['aNome','aData','aTel','aEmail','aMsg'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('aTipo').selectedIndex=0;renderAniv();toast('Aniversariante salvo!');}
 function renderAniv(){
   var hoje=new Date(),hd=hoje.getFullYear(),hm=hoje.getMonth(),hdia=hoje.getDate();
