@@ -1060,9 +1060,9 @@ var MSGS=['🎂 Feliz aniversário, {nome}! Que seu novo ciclo seja repleto de s
 function buildMsg(a,idx){var ass=DB.perfil.assinatura||'Leandro Felipe\nSupervisor de Vendas - Arcofoods',base=a.msg&&a.msg.trim()?a.msg:MSGS[idx%MSGS.length];return base.replace('{nome}',a.nome).replace('{ass}',ass);}
 var ALIM_ABERTO={},ALIM_TXT={};
 var ALIM_BLOCOS=[
-{id:'a1',g:'A',t:'1 · Regional Norte Fluminense',src:'BI VENDAS — Página 1',hint:'Cole a linha da Regional',dst:'biRegColar',fn:'processarBIRegional',chk:function(){return Object.keys((DB.biAtual&&DB.biAtual.regional)||{}).length>0;},info:function(){return 'Regional carregada';}},
-{id:'a2',g:'A',t:'2 · Vendedores',src:'BI VENDAS — Página 1',hint:'Cole um por um (vai somando)',dst:'biVendColar',fn:'processarBIVendedores',chk:function(){return ((DB.biAtual&&DB.biAtual.vendedores)||[]).length>0;},info:function(){return ((DB.biAtual&&DB.biAtual.vendedores)||[]).length+' vendedor(es)';}},
-{id:'a3',g:'A',t:'3 · Churn',src:'BI VENDAS — Página 7',hint:'Cole a tabela inteira',dst:'biChurnColar',fn:'processarBIChurn',chk:function(){return (DB.posChurn||[]).length>0;},info:function(){return (DB.posChurn||[]).length+' registro(s)';}},
+{id:'a1',g:'A',t:'1 · Regional Norte Fluminense',src:'BI VENDAS — Página 1',hint:'Cole a linha da Regional',dst:'biRegColar',fn:'processarBIRegional',chk:function(){return _biRegTemp!==null||Object.keys((DB.biAtual&&DB.biAtual.regional)||{}).length>0;},info:function(){return _biRegTemp!==null?'Processada — falta salvar':'Regional carregada';}},
+{id:'a2',g:'A',t:'2 · Vendedores',src:'BI VENDAS — Página 1',hint:'Cole um por um (vai somando)',dst:'biVendColar',fn:'processarBIVendedores',chk:function(){return _biVendTemp.length>0||((DB.biAtual&&DB.biAtual.vendedores)||[]).length>0;},info:function(){return _biVendTemp.length>0?_biVendTemp.length+' vendedor(es) — falta salvar':((DB.biAtual&&DB.biAtual.vendedores)||[]).length+' vendedor(es)';}},
+{id:'a3',g:'A',t:'3 · Churn',src:'BI VENDAS — Página 7',hint:'Cole a tabela inteira',dst:'biChurnColar',fn:'processarBIChurn',chk:function(){return _biChurnTemp.length>0||(DB.posChurn||[]).length>0;},info:function(){return _biChurnTemp.length>0?_biChurnTemp.length+' registro(s) — falta salvar':(DB.posChurn||[]).length+' registro(s)';}},
 {id:'b1',g:'B',t:'Faturamento YTD · Tabela Regional',src:'BI GESTOR — Lupa Faturamento',hint:'Cole a linha da tabela Regional',dst:'lupaFatRegColar',fn:'processarLupaFatRegional',chk:function(){return Object.keys(DB.lupaFatRegional||{}).length>0;},info:function(){return 'Regional carregada';}},
 {id:'b2',g:'B',t:'Faturamento YTD · Tabela de Vendedores',src:'BI GESTOR — Lupa Faturamento',hint:'Cole um vendedor por vez (vai somando)',dst:'lupaFatVendColar',fn:'processarLupaFatVendedores',chk:function(){return (DB.lupaFatVendedores||[]).length>0;},info:function(){return (DB.lupaFatVendedores||[]).length+' vendedor(es)';}},
 {id:'b3',g:'B',t:'Top 50 Regional — Ano Atual',src:'BI GESTOR — Lupa Top 50',hint:'⚡ É este bloco que gera a Causa-Raiz. Copie direto do BI (nunca por print).',dst:'lupaTop50Colar',fn:'processarLupaTop50',chk:function(){return (DB.lupaTop50||[]).length>0;},info:function(){return (DB.lupaTop50||[]).length+' cliente(s)';}},
@@ -1080,8 +1080,18 @@ var ta=document.getElementById('al_ta_'+id);if(!ta||!ta.value.trim()){toast('Col
 if(b.sel){var sv=document.getElementById('al_sel_'+id);if(!sv||!sv.value){toast('Selecione o vendedor primeiro.');return;}var ds=document.getElementById(b.sel);if(ds)ds.value=sv.value;}
 var d=document.getElementById(b.dst);if(!d){toast('Campo de destino não encontrado.');return;}
 d.value=ta.value;
+var antes=false;try{antes=b.chk();}catch(e){}
 try{window[b.fn]();}catch(e){toast('Erro ao processar. Confira o formato.');return;}
+var ok=false;try{ok=b.chk();}catch(e){}
+if(!ok&&!antes){renderAlimentar();return;}
 ALIM_TXT[id]='';ALIM_ABERTO[id]=false;renderAlimentar();}
+function alimSalvarBI(){
+['a1','a2','a3'].forEach(function(id){var b=alimGet(id);if(!b)return;
+var ta=document.getElementById('al_ta_'+id);if(!ta||!ta.value.trim())return;
+var d=document.getElementById(b.dst);if(!d)return;d.value=ta.value;
+try{window[b.fn]();ALIM_TXT[id]='';}catch(e){}});
+if(_biRegTemp===null&&_biVendTemp.length===0&&_biChurnTemp.length===0){toast('Cole e processe ao menos a Regional ou os Vendedores.');renderAlimentar();return;}
+salvarBICompleto();ALIM_ABERTO={};renderAlimentar();}
 function alimBloco(b){var feito=false;try{feito=b.chk();}catch(e){}
 var aberto=ALIM_ABERTO[b.id]===true||!feito;
 if(feito&&!aberto){
@@ -1102,7 +1112,7 @@ var A=ALIM_BLOCOS.filter(function(b){return b.g==='A';}),B=ALIM_BLOCOS.filter(fu
 var h='<div class="card"><div class="ct">BI VENDAS <span style="color:var(--t3);font-size:11px;font-weight:400">— Power BI · Páginas 1 e 7</span></div>';
 h+='<div class="bn bn-cy"><span>ℹ</span><div>Cole cada tabela diretamente do Power BI. Página 1 para Regional e Vendedores. Página 7 para Churn. Ao final, clique em Confirmar e Salvar.</div></div>';
 h+=A.map(alimBloco).join('');
-h+='<button type="button" class="btn bp" style="margin-top:6px" onclick="salvarBICompleto();renderAlimentar();">💾 Confirmar e Salvar BI</button></div>';
+h+='<button type="button" class="btn bp" style="margin-top:6px" onclick="alimSalvarBI()">💾 Confirmar e Salvar BI</button></div>';
 h+='<div class="card"><div class="ct">BI GESTOR <span style="color:var(--t3);font-size:11px;font-weight:400">— módulos da Lupa</span></div>';
 h+=B.map(alimBloco).join('')+'</div>';
 body.innerHTML=h;
