@@ -921,7 +921,38 @@ function renderListaVendedores(){
     '</div></div>';
 }
 
-function processarBIVendedores(){adicionarVendedor();}
+function processarBIVendedores(){
+  var el=document.getElementById('biVendColar');var txt=el?el.value.trim():'';
+  if(!txt){toast('Cole os dados dos vendedores primeiro.');return;}
+  var linhas=txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
+  var add=0;
+  linhas.forEach(function(linha){
+    var cols=linha.split('\t').map(function(c){return c.trim();});
+    if(!cols[0]||!/^\d/.test(cols[0]))return;
+    if(/^total/i.test(cols[0]))return;
+    var nomeCompleto=cols[0];
+    var codMatch=nomeCompleto.match(/^(\d+)\s*[-\u2013]\s*(.+)$/);
+    var cod=codMatch?codMatch[1].trim():'';
+    var nome=codMatch?codMatch[2].trim():nomeCompleto;
+    var vendRef=null;
+    if(cod)vendRef=VENDS.find(function(vv){return vv.cod===cod;});
+    if(!vendRef)vendRef=VENDS.find(function(vv){return vv.nome.toUpperCase()===nome.toUpperCase();});
+    var v=cols.slice(1);
+    var vend={cod:cod||(vendRef?vendRef.cod:''),nome:vendRef?vendRef.nome:nome,
+      objFat:v[0]||'',fat:v[1]||'',proj:v[2]||'',objMarg:v[3]||'',marg:v[4]||'',
+      objPos:v[5]||'',realPos:v[6]||'',saldoPos:v[7]||'',devR:v[8]||'',devPct:v[9]||'',
+      sku:v[10]||'',vendaMedia:v[11]||'',precoKg:v[12]||''};
+    var idx=-1;
+    if(vend.cod)idx=_biVendTemp.findIndex(function(vt){return vt.cod===vend.cod;});
+    if(idx<0)idx=_biVendTemp.findIndex(function(vt){return (vt.nome||'').toUpperCase()===(vend.nome||'').toUpperCase();});
+    if(idx>=0)_biVendTemp[idx]=vend;else _biVendTemp.push(vend);
+    add++;
+  });
+  if(!add){toast('Nao encontrei linhas de vendedor. Formato: 017 - NOME ...');return;}
+  if(el)el.value='';
+  renderListaVendedores();verificarBISalvar();
+  toast(add+' vendedor(es) processado(s). Total: '+_biVendTemp.length);
+}
 
 function processarBIChurn(){
   var txt=document.getElementById('biChurnColar').value.trim();
