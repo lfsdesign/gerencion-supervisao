@@ -1095,11 +1095,11 @@ var ALIM_BLOCOS=[
 {id:'a2',g:'A',t:'2 · Vendedores',src:'BI VENDAS — Página 1',hint:'Cole um por um (vai somando)',dst:'biVendColar',fn:'processarBIVendedores',chk:function(){return _biVendTemp.length>0||((DB.biAtual&&DB.biAtual.vendedores)||[]).length>0;},info:function(){return _biVendTemp.length>0?_biVendTemp.length+' vendedor(es) — falta salvar':((DB.biAtual&&DB.biAtual.vendedores)||[]).length+' vendedor(es)';}},
 {id:'a3',g:'A',t:'3 · Churn',src:'BI VENDAS — Página 7',hint:'Cole a tabela inteira',dst:'biChurnColar',fn:'processarBIChurn',chk:function(){return _biChurnTemp.length>0||(DB.posChurn||[]).length>0;},info:function(){return _biChurnTemp.length>0?_biChurnTemp.length+' registro(s) — falta salvar':(DB.posChurn||[]).length+' registro(s)';}},
 {id:'b1',g:'B',t:'Faturamento YTD · Tabela Regional',src:'BI GESTOR — Lupa Faturamento',hint:'Cole a linha da tabela Regional',dst:'lupaFatRegColar',fn:'processarLupaFatRegional',chk:function(){return Object.keys(DB.lupaFatRegional||{}).length>0;},info:function(){return 'Regional carregada';}},
-{id:'b2',g:'B',t:'Faturamento YTD · Tabela de Vendedores',src:'BI GESTOR — Lupa Faturamento',hint:'Cole um vendedor por vez (vai somando)',dst:'lupaFatVendColar',fn:'processarLupaFatVendedores',chk:function(){return (DB.lupaFatVendedores||[]).length>0;},info:function(){var l=DB.lupaFatVendedores||[];if(!l.length)return '0 vendedor(es)';return l.length+': '+l.map(function(v){return (v.nome||'').replace(/^\d+\s*-\s*/,'').split(' ')[0];}).join(', ');}},
+{id:'b2',g:'B',t:'Faturamento YTD · Tabela de Vendedores',src:'BI GESTOR — Lupa Faturamento',hint:'Cole um vendedor por vez (vai somando)',dst:'lupaFatVendColar',fn:'processarLupaFatVendedores',chk:function(){return (DB.lupaFatVendedores||[]).length>0;},info:function(){return (DB.lupaFatVendedores||[]).length+' vendedor(es)';},nomes:function(){return (DB.lupaFatVendedores||[]).map(function(v){return v.nome;});}},
 {id:'b3',g:'B',t:'Top 50 Regional — Ano Atual',src:'BI GESTOR — Lupa Top 50',hint:'⚡ É este bloco que gera a Causa-Raiz. Copie direto do BI (nunca por print).',dst:'lupaTop50Colar',fn:'processarLupaTop50',chk:function(){return (DB.lupaTop50||[]).length>0;},info:function(){return (DB.lupaTop50||[]).length+' cliente(s)';}},
 {id:'b4',g:'B',t:'Top 50 Regional — Ano Anterior',src:'BI GESTOR — Lupa Top 50',hint:'Usado só para comparar ranking',dst:'top50RegAntColar',fn:'processarTop50RegAnt',chk:function(){return (DB.lupaTop50RegAnt||[]).length>0;},info:function(){return (DB.lupaTop50RegAnt||[]).length+' cliente(s)';}},
-{id:'b5',g:'B',t:'Top 50 Vendedor — Ano Atual',src:'BI GESTOR — Lupa Top 50',hint:'Selecione o vendedor, cole e adicione. Repita para cada um.',dst:'top50VendAtualColar',sel:'top50VendAtualSel',fn:'processarTop50VendAtual',chk:function(){return Object.keys(DB.lupaTop50VendAtual||{}).length>0;},info:function(){return alimNomesVend(DB.lupaTop50VendAtual);}},
-{id:'b6',g:'B',t:'Top 50 Vendedor — Ano Anterior',src:'BI GESTOR — Lupa Top 50',hint:'Selecione o vendedor, cole e adicione. Repita para cada um.',dst:'top50VendAntColar',sel:'top50VendAntSel',fn:'processarTop50VendAnt',chk:function(){return Object.keys(DB.lupaTop50VendAnt||{}).length>0;},info:function(){return alimNomesVend(DB.lupaTop50VendAnt);}},
+{id:'b5',g:'B',t:'Top 50 Vendedor — Ano Atual',src:'BI GESTOR — Lupa Top 50',hint:'Selecione o vendedor, cole e adicione. Repita para cada um.',dst:'top50VendAtualColar',sel:'top50VendAtualSel',fn:'processarTop50VendAtual',chk:function(){return Object.keys(DB.lupaTop50VendAtual||{}).length>0;},info:function(){return Object.keys(DB.lupaTop50VendAtual||{}).length+' vendedor(es)';},nomes:function(){return Object.keys(DB.lupaTop50VendAtual||{}).map(alimNomeVend);}},
+{id:'b6',g:'B',t:'Top 50 Vendedor — Ano Anterior',src:'BI GESTOR — Lupa Top 50',hint:'Selecione o vendedor, cole e adicione. Repita para cada um.',dst:'top50VendAntColar',sel:'top50VendAntSel',fn:'processarTop50VendAnt',chk:function(){return Object.keys(DB.lupaTop50VendAnt||{}).length>0;},info:function(){return Object.keys(DB.lupaTop50VendAnt||{}).length+' vendedor(es)';},nomes:function(){return Object.keys(DB.lupaTop50VendAnt||{}).map(alimNomeVend);}},
 {id:'b7',g:'B',t:'SSS Cadastrado',src:'BI GESTOR — Lupa SSS',hint:'Opcional',dst:'lupaSssColar',fn:'processarLupaSss',chk:function(){return (DB.lupaSss||[]).length>0;},info:function(){return (DB.lupaSss||[]).length+' registro(s)';}},
 {id:'b8',g:'B',t:'Indicadores',src:'BI GESTOR — Lupa Indicadores',hint:'Opcional',dst:'lupaIndicColar',fn:'processarLupaIndic',chk:function(){return (DB.lupaIndic||[]).length>0;},info:function(){return (DB.lupaIndic||[]).length+' registro(s)';}}
 ];
@@ -1107,12 +1107,21 @@ function alimNomesVend(obj){obj=obj||{};var ks=Object.keys(obj);if(!ks.length)re
 var nomes=ks.map(function(c){var l=obj[c];var nm=(l&&l[0]&&(l[0].vendedor||l[0].vendedorCompleto))||'';nm=(''+nm).replace(/^\d+\s*-\s*/,'').trim();
 if(!nm){var r=VENDS.find(function(v){return v.cod===c;});nm=r?r.nome:c;}return nm.split(' ')[0];});
 return ks.length+': '+nomes.join(', ');}
+function alimNomeVend(cod){cod=String(cod);var vs=(DB.biAtual&&DB.biAtual.vendedores)||[];
+for(var i=0;i<vs.length;i++){var c=vs[i].cod||((vs[i].nome||'').match(/^(\d+)/)||[])[1];if(String(c)===cod)return cod+' - '+(vs[i].nome||'').replace(/^\d+\s*-\s*/,'');}
+for(var j=0;j<VENDS.length;j++){if(VENDS[j].cod===cod)return cod+' - '+VENDS[j].nome;}
+return cod;}
 function alimGet(id){for(var i=0;i<ALIM_BLOCOS.length;i++)if(ALIM_BLOCOS[i].id===id)return ALIM_BLOCOS[i];return null;}
 function alimReabrir(id){ALIM_ABERTO[id]=true;renderAlimentar();}
 function alimFechar(id){ALIM_ABERTO[id]=false;ALIM_TXT[id]='';renderAlimentar();}
 function alimProcessar(id){var b=alimGet(id);if(!b)return;
 var ta=document.getElementById('al_ta_'+id);if(!ta||!ta.value.trim()){toast('Cole os dados primeiro.');return;}
-if(b.sel){var sv=document.getElementById('al_sel_'+id);if(!sv||!sv.value){toast('Selecione o vendedor primeiro.');return;}var ds=document.getElementById(b.sel);if(ds)ds.value=sv.value;}
+if(b.sel){var sv=document.getElementById('al_sel_'+id);if(!sv||!sv.value){toast('Selecione o vendedor primeiro.');return;}
+var ds=document.getElementById(b.sel);
+if(ds){var achou=false;for(var k=0;k<ds.options.length;k++){if(ds.options[k].value===sv.value){achou=true;break;}}
+if(!achou){var op=document.createElement('option');op.value=sv.value;op.text=sv.options[sv.selectedIndex].text;ds.appendChild(op);}
+ds.value=sv.value;
+if(ds.value!==sv.value){toast('Nao consegui selecionar o vendedor.');return;}}}
 var d=document.getElementById(b.dst);if(!d){toast('Campo de destino não encontrado.');return;}
 d.value=ta.value;
 var antes=false;try{antes=b.chk();}catch(e){}
@@ -1127,16 +1136,19 @@ var d=document.getElementById(b.dst);if(!d)return;d.value=ta.value;
 try{window[b.fn]();ALIM_TXT[id]='';}catch(e){}});
 if(_biRegTemp===null&&_biVendTemp.length===0&&_biChurnTemp.length===0){toast('Cole e processe ao menos a Regional ou os Vendedores.');renderAlimentar();return;}
 salvarBICompleto();ALIM_ABERTO={};renderAlimentar();}
+function alimChips(b){if(!b.nomes)return '';var ns=[];try{ns=b.nomes();}catch(e){}if(!ns.length)return '';
+return '<div style="display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 2px">'+ns.map(function(n){return '<span style="font-size:10px;color:var(--t2);background:var(--s2);border:1px solid var(--b);border-radius:20px;padding:2px 9px">'+n+'</span>';}).join('')+'</div>';}
 function alimBloco(b){var feito=false;try{feito=b.chk();}catch(e){}
 var aberto=ALIM_ABERTO[b.id]===true||!feito;
 if(feito&&!aberto){
 return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid rgba(0,229,195,.3);background:rgba(0,229,195,.06);border-radius:10px;padding:10px 14px;margin-bottom:8px">'+
-'<div style="display:flex;align-items:center;gap:9px"><span style="font-size:14px">✅</span><div><div style="font-size:13px;color:var(--t)">'+b.t+'</div><div style="font-size:11px;color:var(--cy)">'+b.info()+'</div></div></div>'+
+'<div style="display:flex;align-items:center;gap:9px"><span style="font-size:14px">✅</span><div><div style="font-size:13px;color:var(--t)">'+b.t+'</div><div style="font-size:11px;color:var(--cy)">'+b.info()+'</div>'+alimChips(b)+'</div></div>'+
 '<button type="button" class="btn-backup" style="display:inline-block;width:auto;margin:0;font-size:11px;padding:5px 12px;white-space:nowrap" onclick="alimReabrir(\''+b.id+'\')">Atualizar</button></div>';}
 var h='<div style="border:1px solid var(--b);background:var(--s1);border-radius:10px;padding:14px;margin-bottom:8px">';
 h+='<div style="font-size:14px;font-weight:600;color:var(--t)">'+b.t+'</div>';
 h+='<div style="font-size:11px;color:var(--cy);margin:4px 0 6px">📍 '+b.src+'</div>';
 if(feito)h+='<div style="font-size:11px;color:var(--cy);background:rgba(0,229,195,.07);border:1px solid rgba(0,229,195,.2);border-radius:6px;padding:7px 10px;margin-bottom:8px">Já alimentado (<strong>'+(function(){try{return b.info();}catch(e){return '';}})()+'</strong>). Os dados atuais continuam valendo — cole novos só se quiser substituir.</div>';
+if(feito)h+=alimChips(b);
 if(b.hint)h+='<div style="font-size:11px;color:var(--t3);margin-bottom:8px">'+b.hint+'</div>';
 if(b.sel)h+='<select class="inp" id="al_sel_'+b.id+'" style="margin-bottom:6px"></select>';
 h+='<textarea class="inp" id="al_ta_'+b.id+'" style="min-height:64px" placeholder="Cole aqui" oninput="ALIM_TXT[\''+b.id+'\']=this.value"></textarea>';
@@ -1154,7 +1166,8 @@ h+=B.map(alimBloco).join('')+'</div>';
 body.innerHTML=h;
 var vs=(DB.biAtual&&DB.biAtual.vendedores)||[];
 ALIM_BLOCOS.forEach(function(b){if(!b.sel)return;var el=document.getElementById('al_sel_'+b.id);if(!el)return;
-el.innerHTML='<option value="">Selecione o vendedor...</option>'+vs.map(function(v){var c=(v.nome||'').match(/^(\d+)/);return'<option value="'+(c?c[1]:v.nome)+'">'+v.nome+'</option>';}).join('');});
+var fonte=vs.length?vs:VENDS;
+el.innerHTML='<option value="">Selecione o vendedor...</option>'+fonte.map(function(v){var c=v.cod||((v.nome||'').match(/^(\d+)/)||[])[1]||'';var nm=(v.nome||'').replace(/^\d+\s*-\s*/,'');return'<option value="'+(c||nm)+'">'+(c?c+' - ':'')+nm+'</option>';}).join('');});
 ALIM_BLOCOS.forEach(function(b){var t=document.getElementById('al_ta_'+b.id);if(t&&ALIM_TXT[b.id])t.value=ALIM_TXT[b.id];});
 var el=document.getElementById('alimStatus');if(!el)return;
 var tot=ALIM_BLOCOS.length,fe=0,falta=[];
