@@ -204,24 +204,20 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     <!-- NOVO MÓDULO LANÇAR BI: COLAR E PARSEAR -->
     <div id="alimentar" class="pg"><div class="ph"><div class="pt">Alimentar Dados</div><div class="ps">Todas as colagens do BI numa tela só — de cima para baixo, uma vez por mês</div></div><div id="anivAlerta"></div>
 <div class="card"><div class="ct">Progresso do mês</div><div id="alimStatus"></div></div>
-<div class="card"><div class="ct">1 · BI Mensal</div>
-<div class="bn bn-cy"><span>📋</span><div>Cole os 3 blocos do BI Gestor e clique em Salvar BI ao final.</div></div>
-<div class="fg"><label class="fl">1.1 · Regional</label><textarea class="inp" id="alRegional" style="min-height:70px" placeholder="Cole o bloco Regional do BI"></textarea><button class="btn bp bsm" onclick="alimFeed('alRegional','biRegColar',processarBIRegional)">Processar Regional</button></div>
-<div class="fg"><label class="fl">1.2 · Vendedores</label><textarea class="inp" id="alVend" style="min-height:70px" placeholder="Cole o bloco de Vendedores do BI"></textarea><button class="btn bp bsm" onclick="alimFeed('alVend','biVendColar',processarBIVendedores)">Processar Vendedores</button></div>
-<div class="fg"><label class="fl">1.3 · Positivação / Churn</label><textarea class="inp" id="alChurn" style="min-height:70px" placeholder="Cole o bloco de Positivação/Churn do BI"></textarea><button class="btn bp bsm" onclick="alimFeed('alChurn','biChurnColar',processarBIChurn)">Processar Posit./Churn</button></div>
-<button class="btn bp" onclick="salvarBICompleto();renderAlimentar();">💾 Salvar BI do Mês</button></div>
-<div class="card"><div class="ct">2 · Lupa · Faturamento</div>
-<div class="fg"><label class="fl">2.1 · Regional</label><textarea class="inp" id="alFatReg" style="min-height:70px" placeholder="Cole o faturamento da regional"></textarea><button class="btn bp bsm" onclick="alimFeed('alFatReg','lupaFatRegColar',processarLupaFatRegional)">Processar</button></div>
-<div class="fg"><label class="fl">2.2 · Por vendedor <span style="color:var(--t3);font-weight:400">— cole um por vez, vai somando</span></label><textarea class="inp" id="alFatVend" style="min-height:70px" placeholder="Cole o faturamento de um vendedor e processe; repita para os demais"></textarea><button class="btn bp bsm" onclick="alimFeed('alFatVend','lupaFatVendColar',processarLupaFatVendedores)">Adicionar Vendedor</button></div></div>
-<div class="card"><div class="ct">3 · Lupa · Top 50</div>
-<div class="bn bn-ye"><span>⚡</span><div>O bloco 3.1 é o que gera a análise de Causa-Raiz. Copie direto do BI (nunca por print).</div></div>
-<div class="fg"><label class="fl">3.1 · Regional — Ano Atual</label><textarea class="inp" id="alT50Reg" style="min-height:70px" placeholder="Cole o Top 50 Regional Ano Atual"></textarea><button class="btn bp bsm" onclick="alimFeed('alT50Reg','lupaTop50Colar',processarLupaTop50)">Processar</button></div>
-<div class="fg"><label class="fl">3.2 · Regional — Ano Anterior</label><textarea class="inp" id="alT50RegAnt" style="min-height:70px" placeholder="Cole o Top 50 Regional Ano Anterior"></textarea><button class="btn bp bsm" onclick="alimFeed('alT50RegAnt','top50RegAntColar',processarTop50RegAnt)">Processar</button></div>
-<div class="fg"><label class="fl">3.3 · Vendedor — Ano Atual</label><select class="inp" id="alT50VendSel" style="margin-bottom:6px"></select><textarea class="inp" id="alT50Vend" style="min-height:70px" placeholder="Selecione o vendedor acima e cole o Top 50 dele"></textarea><button class="btn bp bsm" onclick="alimFeedSel('alT50Vend','top50VendAtualColar','alT50VendSel','top50VendAtualSel',processarTop50VendAtual)">Adicionar Vendedor</button></div>
-<div class="fg"><label class="fl">3.4 · Vendedor — Ano Anterior</label><select class="inp" id="alT50VendAntSel" style="margin-bottom:6px"></select><textarea class="inp" id="alT50VendAnt" style="min-height:70px" placeholder="Selecione o vendedor acima e cole o Top 50 dele"></textarea><button class="btn bp bsm" onclick="alimFeedSel('alT50VendAnt','top50VendAntColar','alT50VendAntSel','top50VendAntSel',processarTop50VendAnt)">Adicionar Vendedor</button></div></div>
-<div class="card"><div class="ct">4 · Complementares <span style="color:var(--t3);font-size:11px;font-weight:400">— opcionais</span></div>
-<div class="fg"><label class="fl">4.1 · SSS</label><textarea class="inp" id="alSss" style="min-height:60px" placeholder="Cole o SSS"></textarea><button class="btn bp bsm" onclick="alimFeed('alSss','lupaSssColar',processarLupaSss)">Processar</button></div>
-<div class="fg"><label class="fl">4.2 · Indicadores</label><textarea class="inp" id="alIndic" style="min-height:60px" placeholder="Cole os Indicadores"></textarea><button class="btn bp bsm" onclick="alimFeed('alIndic','lupaIndicColar',processarLupaIndic)">Processar</button></div></div>
+<div class="card"><div class="ct">1 · Top 50 Clientes</div>
+<div class="bn bn-ye"><span>⚡</span><div>O <strong>3.1 Regional Ano Atual</strong> é o que gera a análise de Causa-Raiz e os slides de Top 50. Copie a tabela direto do BI Gestor (nunca por print).</div></div>
+<div class="fg" id="ab_t50reg"><label class="fl">1.1 · Top 50 Regional — Ano Atual</label><div style="font-size:11px;color:var(--t3);margin-bottom:5px">📍 BI Gestor › Top 50 Regional (ano atual) — cole a tabela inteira</div><textarea class="inp" id="alT50Reg" style="min-height:70px" placeholder="Cole o Top 50 Regional Ano Atual"></textarea><button class="btn bp bsm" onclick="alimFeed('alT50Reg','lupaTop50Colar',processarLupaTop50)">Processar</button><div class="alim-done" style="display:none"></div></div>
+<div class="fg" id="ab_t50regant"><label class="fl">1.2 · Top 50 Regional — Ano Anterior <span style="color:var(--t3);font-weight:400">— opcional (comparativo)</span></label><div style="font-size:11px;color:var(--t3);margin-bottom:5px">📍 BI Gestor › Top 50 Regional (ano anterior)</div><textarea class="inp" id="alT50RegAnt" style="min-height:70px" placeholder="Cole o Top 50 Regional Ano Anterior"></textarea><button class="btn bp bsm" onclick="alimFeed('alT50RegAnt','top50RegAntColar',processarTop50RegAnt)">Processar</button><div class="alim-done" style="display:none"></div></div>
+<div class="fg" id="ab_t50vend"><label class="fl">1.3 · Top 50 por Vendedor — Ano Atual <span style="color:var(--t3);font-weight:400">— um por vez</span></label><div style="font-size:11px;color:var(--t3);margin-bottom:5px">📍 BI Gestor › Top 50 do vendedor. Selecione o vendedor abaixo e cole o Top 50 dele; repita para cada um.</div><select class="inp" id="alT50VendSel" style="margin-bottom:6px"></select><textarea class="inp" id="alT50Vend" style="min-height:70px" placeholder="Selecione o vendedor acima e cole o Top 50 dele"></textarea><button class="btn bp bsm" onclick="alimFeedSel('alT50Vend','top50VendAtualColar','alT50VendSel','top50VendAtualSel',processarTop50VendAtual)">Adicionar Vendedor</button><div class="alim-done" style="display:none"></div></div>
+<div class="fg" id="ab_t50vendant"><label class="fl">1.4 · Top 50 por Vendedor — Ano Anterior <span style="color:var(--t3);font-weight:400">— opcional</span></label><div style="font-size:11px;color:var(--t3);margin-bottom:5px">📍 BI Gestor › Top 50 do vendedor (ano anterior)</div><select class="inp" id="alT50VendAntSel" style="margin-bottom:6px"></select><textarea class="inp" id="alT50VendAnt" style="min-height:70px" placeholder="Selecione o vendedor acima e cole o Top 50 dele"></textarea><button class="btn bp bsm" onclick="alimFeedSel('alT50VendAnt','top50VendAntColar','alT50VendAntSel','top50VendAntSel',processarTop50VendAnt)">Adicionar Vendedor</button><div class="alim-done" style="display:none"></div></div></div>
+<div class="card"><div class="ct">2 · Faturamento</div>
+<div class="fg" id="ab_fatreg"><label class="fl">2.1 · Faturamento Regional</label><div style="font-size:11px;color:var(--t3);margin-bottom:5px">📍 BI Gestor › Faturamento da regional (linha Norte Fluminense)</div><textarea class="inp" id="alFatReg" style="min-height:70px" placeholder="Cole o faturamento da regional"></textarea><button class="btn bp bsm" onclick="alimFeed('alFatReg','lupaFatRegColar',processarLupaFatRegional)">Processar</button><div class="alim-done" style="display:none"></div></div>
+<div class="fg" id="ab_fatvend"><label class="fl">2.2 · Faturamento por Vendedor <span style="color:var(--t3);font-weight:400">— um por vez, vai somando</span></label><div style="font-size:11px;color:var(--t3);margin-bottom:5px">📍 BI Gestor › Faturamento do vendedor. Cole um e processe; repita para os demais.</div><textarea class="inp" id="alFatVend" style="min-height:70px" placeholder="Cole o faturamento de um vendedor e processe; repita para os demais"></textarea><button class="btn bp bsm" onclick="alimFeed('alFatVend','lupaFatVendColar',processarLupaFatVendedores)">Adicionar Vendedor</button><div class="alim-done" style="display:none"></div></div></div>
+<div class="card"><div class="ct">3 · SSS</div>
+<div class="fg" id="ab_sss"><label class="fl">3.1 · SSS Cadastrado</label><div style="font-size:11px;color:var(--t3);margin-bottom:5px">📍 BI Gestor › SSS Cadastrado — cole a tabela inteira</div><textarea class="inp" id="alSss" style="min-height:70px" placeholder="Cole o SSS"></textarea><button class="btn bp bsm" onclick="alimFeed('alSss','lupaSssColar',processarLupaSss)">Processar</button><div class="alim-done" style="display:none"></div></div></div>
+<div class="card"><div class="ct">4 · Indicadores</div>
+<div class="fg" id="ab_indic"><label class="fl">4.1 · Indicadores (SKU / MC / Venda Média)</label><div style="font-size:11px;color:var(--t3);margin-bottom:5px">📍 BI Gestor › Indicadores — cole a tabela inteira</div><textarea class="inp" id="alIndic" style="min-height:70px" placeholder="Cole os Indicadores"></textarea><button class="btn bp bsm" onclick="alimFeed('alIndic','lupaIndicColar',processarLupaIndic)">Processar</button><div class="alim-done" style="display:none"></div></div></div>
+<div class="bn bn-cy" style="margin-top:4px"><span>💡</span><div>O <strong>BI mensal</strong> (Regional, Vendedores e Churn) é lançado no menu <strong>⊕ Lançar BI</strong>.</div></div>
 </div>
 <div id="bi" class="pg">
       <div class="ph"><div class="pt">Lançar BI</div><div class="ps">Cole os dados do Power BI — Regional, Vendedores e Churn</div></div>
@@ -1081,6 +1077,22 @@ var MSGS=['🎂 Feliz aniversário, {nome}! Que seu novo ciclo seja repleto de s
 function buildMsg(a,idx){var ass=DB.perfil.assinatura||'Leandro Felipe\nSupervisor de Vendas - Arcofoods',base=a.msg&&a.msg.trim()?a.msg:MSGS[idx%MSGS.length];return base.replace('{nome}',a.nome).replace('{ass}',ass);}
 function alimFeed(src,dst,fn){var e=document.getElementById(src);if(!e||!e.value.trim()){toast('Cole os dados primeiro.');return;}var d=document.getElementById(dst);if(!d){toast('Campo de destino não encontrado.');return;}d.value=e.value;try{fn();e.value='';}catch(err){toast('Erro ao processar.');}renderAlimentar();}
 function alimFeedSel(src,dst,selSrc,selDst,fn){var sv=document.getElementById(selSrc);if(!sv||!sv.value){toast('Selecione o vendedor primeiro.');return;}var d2=document.getElementById(selDst);if(d2)d2.value=sv.value;alimFeed(src,dst,fn);}
+function alimMark(id,ok,msg){
+  var b=document.getElementById(id);if(!b)return;
+  var d=b.querySelector('.alim-done');var ta=b.querySelector('textarea');var bt=b.querySelector('button');var sel=b.querySelector('select');
+  if(ok){
+    b.style.borderLeft='3px solid #00E5C3';b.style.background='rgba(0,229,195,0.06)';b.style.borderRadius='10px';b.style.padding='10px 12px';b.style.marginBottom='10px';
+    if(ta)ta.style.display='none';if(bt)bt.style.display='none';if(sel)sel.style.display='none';
+    if(d){d.style.display='block';d.style.color='#00E5C3';d.style.fontSize='12px';d.style.fontWeight='600';d.style.marginTop='4px';d.style.cursor='pointer';
+      d.innerHTML='\u2705 '+msg+' <span style="color:#6A7A8E;font-weight:400;text-decoration:underline">\u00b7 refazer</span>';
+      d.onclick=function(){b.style.borderLeft='';b.style.background='';b.style.padding='';if(ta)ta.style.display='';if(bt)bt.style.display='';if(sel)sel.style.display='';d.style.display='none';};
+    }
+  }else{
+    b.style.borderLeft='';b.style.background='';b.style.padding='';
+    if(ta)ta.style.display='';if(bt)bt.style.display='';if(sel)sel.style.display='';
+    if(d)d.style.display='none';
+  }
+}
 function renderAlimentar(){var el=document.getElementById('alimStatus');if(!el)return;
 var vs=(DB.biAtual&&DB.biAtual.vendedores)||[];
 ['alT50VendSel','alT50VendAntSel'].forEach(function(id){var s2=document.getElementById(id);if(!s2)return;var cur=s2.value;s2.innerHTML='<option value="">Selecione o vendedor...</option>'+vs.map(function(v){var c=(v.nome||'').match(/^(\d+)/);return'<option value="'+(c?c[1]:v.nome)+'">'+v.nome+'</option>';}).join('');if(cur)s2.value=cur;});
@@ -1095,7 +1107,16 @@ it(nT50>0,'Top 50 Regional — Ano Atual',nT50?nT50+' cliente(s)':'Pendente')+
 it((DB.lupaTop50RegAnt||[]).length>0,'Top 50 Regional — Ano Anterior','')+
 it(nVA>0,'Top 50 Vendedor — Ano Atual',nVA?nVA+' vendedor(es)':'Pendente')+
 it(nVAnt>0,'Top 50 Vendedor — Ano Anterior',nVAnt?nVAnt+' vendedor(es)':'Pendente')+
-(caidos.length?it(semCausa===0,'Causas classificadas',semCausa?semCausa+' cliente(s) em queda sem causa':'Todas as quedas classificadas'):'');}
+(caidos.length?it(semCausa===0,'Causas classificadas',semCausa?semCausa+' cliente(s) em queda sem causa':'Todas as quedas classificadas'):'');
+  alimMark('ab_t50reg',(DB.lupaTop50||[]).length>0,(DB.lupaTop50||[]).length+' clientes processados');
+  alimMark('ab_t50regant',(DB.lupaTop50RegAnt||[]).length>0,'Ano anterior processado');
+  alimMark('ab_t50vend',Object.keys(DB.lupaTop50VendAtual||{}).length>0,Object.keys(DB.lupaTop50VendAtual||{}).length+' vendedor(es)');
+  alimMark('ab_t50vendant',Object.keys(DB.lupaTop50VendAnt||{}).length>0,Object.keys(DB.lupaTop50VendAnt||{}).length+' vendedor(es)');
+  alimMark('ab_fatreg',Object.keys(DB.lupaFatRegional||{}).length>0,'Faturamento regional processado');
+  alimMark('ab_fatvend',(DB.lupaFatVendedores||[]).length>0,(DB.lupaFatVendedores||[]).length+' vendedor(es)');
+  alimMark('ab_sss',(DB.lupaSss||[]).length>0,(DB.lupaSss||[]).length+' vendedor(es)');
+  alimMark('ab_indic',(DB.lupaIndic||[]).length>0,(DB.lupaIndic||[]).length+' vendedor(es)');
+}
 function anivProximos(dias){var h=new Date(),hd=h.getFullYear(),hm=h.getMonth(),hdia=h.getDate(),hoje=new Date(hd,hm,hdia),out=[];
 (DB.aniversarios||[]).forEach(function(a,i){if(!a.data)return;var d=new Date(a.data+'T12:00'),n=new Date(hd,d.getMonth(),d.getDate());if(n<hoje)n.setFullYear(hd+1);var df=Math.round((n-hoje)/86400000);if(df<=dias)out.push({a:a,i:i,dias:df});});
 return out.sort(function(x,y){return x.dias-y.dias;});}
