@@ -1792,6 +1792,27 @@ function iniciarApresentacao(){
   '</div>');
 
   // ════════════════════════════════════════════════
+  // SLIDE 4.5 — CAUSA-RAIZ DA QUEDA
+  var craCaidos=lt.filter(function(c){return c.temHistorico&&(c.fat2025-c.fat2026)>0;});
+  var craClassif=craCaidos.filter(function(c){return c.causa;});
+  if(craCaidos.length&&craClassif.length){
+    var craBase=craClassif.reduce(function(s,c){return s+(c.fat2025-c.fat2026);},0)||1;
+    var craBucket={equipe:0,empresa:0,mercado:0};
+    craClassif.forEach(function(c){var q=c.fat2025-c.fat2026;var b=lupaCausaBucket(c.causa);if(b)craBucket[b]+=q;});
+    var pE=Math.round(craBucket.equipe/craBase*100),pM=Math.round(craBucket.mercado/craBase*100),pC=Math.round(craBucket.empresa/craBase*100);
+    var pExt=pM+pC;
+    slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+      '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#FFB800;margin-bottom:clamp(8px,1.4vw,16px);text-transform:uppercase">Causa-Raiz da Queda \u2014 De Onde Vem</div>'+
+      '<div style="font-size:clamp(12px,1.5vw,16px);color:#8592A6;margin-bottom:clamp(16px,2.4vw,26px)">Classifica\u00e7\u00e3o cliente a cliente dos '+craClassif.length+' clientes do Top 50 que ca\u00edram</div>'+
+      '<div class="stats s3">'+
+        sBox('Estrutural de mercado',pM+'%',fBRL(craBucket.mercado),'#8592A6')+
+        sBox('Decis\u00e3o conjunta',pC+'%',fBRL(craBucket.empresa),'#FFB800')+
+        sBox('A\u00e7\u00e3o da equipe',pE+'%',fBRL(craBucket.equipe),'#00E5C3')+
+      '</div>'+
+      '<div style="margin-top:clamp(18px,2.6vw,30px);background:rgba(255,184,0,0.06);border:1px solid rgba(255,184,0,0.25);border-left:4px solid #FFB800;border-radius:12px;padding:clamp(14px,2vw,22px);font-size:clamp(13px,1.6vw,19px);color:#D6DEE8;line-height:1.6"><strong style="color:#FFB800">'+pExt+'%</strong> da queda classificada vem de fatores <strong>fora da execu\u00e7\u00e3o de campo</strong> (mercado + decis\u00e3o conjunta). A a\u00e7\u00e3o da equipe responde por '+pE+'%.</div>'+
+    '</div>');
+  }
+
   // SLIDE 5 — CHURN + POSITIVAÇÃO
   // ════════════════════════════════════════════════
   slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
