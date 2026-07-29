@@ -308,86 +308,20 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
     <div id="lupaFat" class="pg">
       <div class="ph"><div class="pt">Lupa · Faturamento (YTD)</div><div class="ps">Cole os dados do BI Gestor — Regional e por Vendedor</div></div>
-      <div class="bn bn-cy"><span>ℹ</span><div>Cole a linha da <strong>tabela Regional</strong> do BI. Depois cole a <strong>tabela de Vendedores</strong> inteira. O sistema gera a frase pronta (NOTA) para falar na apresentação.</div></div>
-      <div class="card"><div class="ct">Colar Tabela Regional</div><textarea id="lupaFatRegColar" class="inp" style="min-height:60px" placeholder="Cole aqui a linha da regional copiada do Power BI"></textarea><button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaFatRegional()">Processar Regional</button></div>
-      <div class="card"><div class="ct">Colar Tabela de Vendedores</div><textarea id="lupaFatVendColar" class="inp" style="min-height:140px" placeholder="Cole aqui a tabela inteira de vendedores copiada do Power BI"></textarea><button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaFatVendedores()">Processar Vendedores</button> <button type="button" class="btn-backup no-print" style="margin-top:8px" onclick="if(confirm('Limpar todos os vendedores já processados nesta tela?')){DB.lupaFatVendedores=[];salvar();renderLupaFat();toast('Lista de vendedores limpa.');}">Limpar Lista</button></div>
+      <div class="bn bn-cy no-print"><span>👁</span><div>Tela de <strong>visualização</strong>. Para alimentar ou atualizar estes dados, use o menu <strong>📥 Alimentar Dados</strong>.</div></div>
+      <textarea id="lupaFatRegColar" style="display:none"></textarea>
+      <textarea id="lupaFatVendColar" style="display:none"></textarea>
       <div id="lupaFatResultado"></div>
     </div>
     <div id="lupaTop50" class="pg">
       <div class="ph"><div class="pt">Lupa · Top 50 Clientes</div><div class="ps">Cole os 4 módulos do BI Gestor — Regional e por Vendedor, Ano Atual e Anterior</div></div>
-      <div class="bn bn-cy"><span>ℹ</span><div>Alimente os 4 blocos abaixo. O sistema cruza automaticamente os dados entre anos e por vendedor, identificando quem cresceu, quem caiu e quem mudou de posição no ranking.</div></div>
-
-      <!-- BLOCO 1: TOP 50 REGIONAL ANO ATUAL -->
-      <div class="card">
-        <div class="ct">1 · Top 50 Regional — Ano Atual</div>
-        <div class="bn bn-ye" style="margin-bottom:10px"><span>📋</span><div>No BI Gestor clique na aba <strong>Top 50 Regional - Ano Atual</strong>. Selecione e copie a tabela inteira e cole abaixo. Já vem com a coluna Vendedor — o sistema separa automaticamente.</div></div>
-        <textarea id="lupaTop50Colar" class="inp" style="min-height:120px" placeholder="Cole aqui o Top 50 Regional Ano Atual copiado do BI Gestor"></textarea>
-        <button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaTop50()">⚡ Processar Regional Atual</button>
-        <div id="lupaTop50Status" style="margin-top:8px;font-size:12px;color:var(--t3)"></div>
-      </div>
-
-      <!-- BLOCO 2: TOP 50 REGIONAL ANO ANTERIOR -->
-      <div class="card">
-        <div class="ct">2 · Top 50 Regional — Ano Anterior</div>
-        <div class="bn bn-ye" style="margin-bottom:10px"><span>📋</span><div>No BI Gestor clique na aba <strong>Top 50 Regional - Ano Anterior</strong>. Selecione e copie a tabela inteira e cole abaixo. Não tem coluna Vendedor — o sistema usa apenas para comparação de ranking.</div></div>
-        <textarea id="top50RegAntColar" class="inp" style="min-height:120px" placeholder="Cole aqui o Top 50 Regional Ano Anterior copiado do BI Gestor"></textarea>
-        <button class="btn bp no-print" style="margin-top:8px" onclick="processarTop50RegAnt()">⚡ Processar Regional Anterior</button>
-        <div id="top50RegAntStatus" style="margin-top:8px;font-size:12px;color:var(--t3)"></div>
-      </div>
-
-      <!-- BLOCO 3: TOP 50 VENDEDOR ANO ATUAL -->
-      <div class="card">
-        <div class="ct">3 · Top 50 Vendedor — Ano Atual</div>
-        <div class="bn bn-ye" style="margin-bottom:10px"><span>📋</span><div>No BI Gestor clique na aba <strong>Top 50 Vendedor - Ano Atual</strong>. Filtre por vendedor lá em cima, copie a tabela e cole abaixo. Clique em <strong>Adicionar</strong>. Repita para cada um dos 9 vendedores.</div></div>
-        <div class="fg" style="margin-bottom:8px">
-          <label class="fl">Vendedor</label>
-          <select id="top50VendAtualSel" class="inp">
-            <option value="">Selecione o vendedor...</option>
-            <option value="017">017 - Edimar Barbosa</option>
-            <option value="081">081 - Adson Bruno</option>
-            <option value="118">118 - Eduardo Rezende</option>
-            <option value="122">122 - Matheus Paiotti</option>
-            <option value="167">167 - Eduardo Britto</option>
-            <option value="249">249 - Vinicius Barao</option>
-            <option value="295">295 - Cristian Vianna</option>
-            <option value="429">429 - Victor Hugo</option>
-            <option value="459">459 - Carlos Bordignon</option>
-          </select>
-        </div>
-        <textarea id="top50VendAtualColar" class="inp" style="min-height:120px" placeholder="Cole aqui o Top 50 do vendedor selecionado (aba Top 50 Vendedor - Ano Atual)"></textarea>
-        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-          <button class="btn bp no-print" onclick="processarTop50VendAtual()">➕ Adicionar Vendedor</button>
-          <button class="btn bs no-print" onclick="limparTop50VendAtual()">🗑 Limpar Lista</button>
-        </div>
-        <div id="top50VendAtualStatus" style="margin-top:8px;font-size:12px;color:var(--t3)"></div>
-      </div>
-
-      <!-- BLOCO 4: TOP 50 VENDEDOR ANO ANTERIOR -->
-      <div class="card">
-        <div class="ct">4 · Top 50 Vendedor — Ano Anterior</div>
-        <div class="bn bn-ye" style="margin-bottom:10px"><span>📋</span><div>No BI Gestor clique na aba <strong>Top 50 Vendedor - Ano Anterior</strong>. Filtre por vendedor, copie e cole abaixo. Clique em <strong>Adicionar</strong>. Repita para cada um dos 9 vendedores.</div></div>
-        <div class="fg" style="margin-bottom:8px">
-          <label class="fl">Vendedor</label>
-          <select id="top50VendAntSel" class="inp">
-            <option value="">Selecione o vendedor...</option>
-            <option value="017">017 - Edimar Barbosa</option>
-            <option value="081">081 - Adson Bruno</option>
-            <option value="118">118 - Eduardo Rezende</option>
-            <option value="122">122 - Matheus Paiotti</option>
-            <option value="167">167 - Eduardo Britto</option>
-            <option value="249">249 - Vinicius Barao</option>
-            <option value="295">295 - Cristian Vianna</option>
-            <option value="429">429 - Victor Hugo</option>
-            <option value="459">459 - Carlos Bordignon</option>
-          </select>
-        </div>
-        <textarea id="top50VendAntColar" class="inp" style="min-height:120px" placeholder="Cole aqui o Top 50 do vendedor selecionado (aba Top 50 Vendedor - Ano Anterior)"></textarea>
-        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-          <button class="btn bp no-print" onclick="processarTop50VendAnt()">➕ Adicionar Vendedor</button>
-          <button class="btn bs no-print" onclick="limparTop50VendAnt()">🗑 Limpar Lista</button>
-        </div>
-        <div id="top50VendAntStatus" style="margin-top:8px;font-size:12px;color:var(--t3)"></div>
-      </div>
+            <div class="bn bn-cy no-print"><span>👁</span><div>Tela de <strong>visualização e análise</strong>. Para alimentar ou atualizar o Top 50, use o menu <strong>📥 Alimentar Dados</strong>.</div></div>
+      <textarea id="lupaTop50Colar" style="display:none"></textarea>
+      <textarea id="top50RegAntColar" style="display:none"></textarea>
+      <textarea id="top50VendAtualColar" style="display:none"></textarea>
+      <textarea id="top50VendAntColar" style="display:none"></textarea>
+      <select id="top50VendAtualSel" style="display:none"></select>
+      <select id="top50VendAntSel" style="display:none"></select>
 
       <!-- RESULTADO CRUZADO -->
       <div id="lupaTop50Filtros" style="display:none;margin-bottom:14px">
@@ -402,14 +336,14 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
     <div id="lupaSss" class="pg">
       <div class="ph"><div class="pt">Lupa · SSS Cadastrado</div><div class="ps">Same Store Sales — crescimento dos clientes já existentes</div></div>
-      <div class="bn bn-cy"><span>ℹ</span><div>Cole a tabela <strong>SSS Cadastrado</strong> do BI Gestor. O sistema gera a frase pronta por vendedor.</div></div>
-      <div class="card"><div class="ct">Colar Tabela SSS Cadastrado</div><textarea id="lupaSssColar" class="inp" style="min-height:160px" placeholder="Cole aqui a tabela inteira do SSS Cadastrado copiada do Power BI"></textarea><button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaSss()">Processar SSS</button></div>
+      <div class="bn bn-cy no-print"><span>👁</span><div>Tela de <strong>visualização</strong>. Para alimentar ou atualizar, use o menu <strong>📥 Alimentar Dados</strong>.</div></div>
+      <textarea id="lupaSssColar" style="display:none"></textarea>
       <div id="lupaSssResultado"></div>
     </div>
     <div id="lupaIndic" class="pg">
       <div class="ph"><div class="pt">Lupa · Indicadores</div><div class="ps">SKU/PDV, Margem de Contribuição e Venda Média por vendedor</div></div>
-      <div class="bn bn-cy"><span>ℹ</span><div>Cole a tabela <strong>Indicadores</strong> do BI Gestor. O sistema gera a frase pronta por vendedor.</div></div>
-      <div class="card"><div class="ct">Colar Tabela Indicadores</div><textarea id="lupaIndicColar" class="inp" style="min-height:160px" placeholder="Cole aqui a tabela inteira de Indicadores copiada do Power BI"></textarea><button class="btn bp no-print" style="margin-top:8px" onclick="processarLupaIndic()">Processar Indicadores</button></div>
+      <div class="bn bn-cy no-print"><span>👁</span><div>Tela de <strong>visualização</strong>. Para alimentar ou atualizar, use o menu <strong>📥 Alimentar Dados</strong>.</div></div>
+      <textarea id="lupaIndicColar" style="display:none"></textarea>
       <div id="lupaIndicResultado"></div>
     </div>
     <div id="aniversarios" class="pg">
