@@ -1961,17 +1961,14 @@ function iniciarApresentacao(){
         +body
       +'</div>';
     }
-    var alto=lt.filter(isAlto), risco=lt.filter(isRisco), aten=lt.filter(isAten);
-    if(alto.length||risco.length||aten.length){
+    // FOCO: apresentação mostra somente ALTO RISCO (Risco/Atenção continuam na classificação, só não viram slide)
+    var alto=lt.filter(isAlto);
+    if(alto.length){
       tierSlides(alto,'#FF4560','ALTO RISCO','Regional');
-      tierSlides(risco,'#FFB800','RISCO','Regional');
-      tierSlides(aten,'#FFA500','ATENÇÃO','Regional');
       var vendAlto=vs.filter(function(v){return lt.some(function(c){return c.vendedor&&c.vendedor.toUpperCase()===v.nome.toUpperCase()&&isAlto(c);});});
       vendAlto.forEach(function(v){
-        var meus=lt.filter(function(c){return c.vendedor&&c.vendedor.toUpperCase()===v.nome.toUpperCase();});
-        var mA=meus.filter(isAlto),mR=meus.filter(isRisco),mAt=meus.filter(isAten);
+        var mA=lt.filter(function(c){return c.vendedor&&c.vendedor.toUpperCase()===v.nome.toUpperCase()&&isAlto(c);});
         addSlide(v.nome.split(' ')[0]+' · risco',vendSlide(v,[{label:'ALTO RISCO',cor:'#FF4560',lista:mA}]));
-        if(mR.length||mAt.length)addSlide(v.nome.split(' ')[0]+' · +',vendSlide(v,[{label:'RISCO',cor:'#FFB800',lista:mR},{label:'ATENÇÃO',cor:'#FFA500',lista:mAt}]));
       });
     }
   })();
