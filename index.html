@@ -1690,11 +1690,13 @@ function iniciarApresentacao(){
   }
 
   var slides=[];
+  var titulos=[];
+  function addSlide(_t,_h){slides.push(_h);titulos.push(_t||('Slide '+slides.length));}
 
   // ════════════════════════════════════════════════
   // SLIDE 1 — CAPA
   // ════════════════════════════════════════════════
-  slides.push('<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:calc(100vh - 70px);text-align:center;padding:clamp(20px,4vw,60px)">'+
+  addSlide('Capa', '<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:calc(100vh - 70px);text-align:center;padding:clamp(20px,4vw,60px)">'+
     '<div style="font-size:clamp(10px,1.4vw,13px);letter-spacing:4px;color:#00E5C3;margin-bottom:clamp(16px,2.5vw,28px);text-transform:uppercase">'+p.empresa+' · SUPERVISÃO COMERCIAL</div>'+
     '<div style="font-size:clamp(28px,6vw,64px);font-weight:700;color:white;margin-bottom:clamp(8px,1.5vw,14px);line-height:1.05">RELATÓRIO<br>EXECUTIVO</div>'+
     '<div style="font-size:clamp(13px,2vw,20px);color:#B0BBC8;margin-bottom:clamp(4px,1vw,8px)">Regional '+( p.regional||'Norte Fluminense')+'</div>'+
@@ -1716,7 +1718,7 @@ function iniciarApresentacao(){
         '<span style="color:#D6DEE8;font-size:clamp(12px,1.5vw,17px);line-height:1.7">'+l.trim()+'</span>'+
       '</div>';
     }).join('');
-    slides.push('<div style="padding:clamp(18px,3.5vw,48px);display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 70px)">'+
+    addSlide('Contexto', '<div style="padding:clamp(18px,3.5vw,48px);display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 70px)">'+
       '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#FFB800;margin-bottom:clamp(10px,1.6vw,18px);text-transform:uppercase">Contexto de Mercado — Fatores que Explicam a Variação do Mês</div>'+
       '<div style="font-size:clamp(20px,3.4vw,38px);font-weight:700;color:white;line-height:1.15;margin-bottom:clamp(16px,2.4vw,28px)">O cenário antes dos números</div>'+
       '<div style="background:rgba(255,184,0,0.06);border:1px solid rgba(255,184,0,0.25);border-left:4px solid #FFB800;border-radius:14px;padding:clamp(14px,2.2vw,26px)">'+mercadoHtml+'</div>'+
@@ -1730,7 +1732,7 @@ function iniciarApresentacao(){
   var premStr = proj_r>=110?'🏆 PREMIAÇÃO MÁXIMA':proj_r>=100?'✅ PREMIAÇÃO BASE':proj_r>=90?'⚠ PREMIAÇÃO PARCIAL':'❌ SEM PREMIAÇÃO';
   var premCor = proj_r>=110?'#FFB800':proj_r>=100?'#00E5C3':proj_r>=90?'#FFB800':'#FF4560';
 
-  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+  addSlide('Regional — Mês', '<div style="padding:clamp(18px,3.5vw,48px)">'+
     '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,22px);text-transform:uppercase">Regional — Mês Atual</div>'+
     '<div style="display:flex;gap:clamp(8px,1.5vw,16px);align-items:center;margin-bottom:clamp(14px,2vw,20px);background:'+premCor+'15;border:1px solid '+premCor+'40;border-radius:12px;padding:clamp(10px,1.5vw,16px)">'+
       '<div style="font-size:clamp(18px,3vw,28px);font-weight:700;color:'+premCor+'">'+premStr+'</div>'+
@@ -1748,7 +1750,7 @@ function iniciarApresentacao(){
   // ════════════════════════════════════════════════
   // SLIDE 3 — REGIONAL ANO (YTD)
   // ════════════════════════════════════════════════
-  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+  addSlide('Regional — Ano', '<div style="padding:clamp(18px,3.5vw,48px)">'+
     '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,22px);text-transform:uppercase">Regional — Acumulado no Ano (YTD)</div>'+
     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(14px,2vw,20px)">'+
       sBox('Fat. 2026',brl(fat26r),'acumulado jan–jun',cor3(crescR,10,0))+
@@ -1764,12 +1766,74 @@ function iniciarApresentacao(){
   '</div>');
 
   // ════════════════════════════════════════════════
+  // SLIDE 3.5 — COMPARATIVO ANO vs ANO (jun/jul 2025 x 2026)
+  // ════════════════════════════════════════════════
+  addSlide('Ano vs Ano', (function(){
+    var G='#00E5C3',R='#FF4560',Y='#FFB800';
+    function head(){return '<div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 0.9fr;gap:6px;padding:0 0 5px;font-size:clamp(8px,1vw,10px);letter-spacing:1px;text-transform:uppercase;color:#6A7A8E"><div></div><div style="text-align:right">2025</div><div style="text-align:right">2026</div><div style="text-align:right">Δ</div></div>';}
+    function row(i,a,b,d,c){return '<div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 0.9fr;gap:6px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:clamp(10px,1.25vw,13px)"><div style="color:#B0BBC8">'+i+'</div><div style="text-align:right;color:#8592A6">'+a+'</div><div style="text-align:right;color:white;font-weight:600">'+b+'</div><div style="text-align:right;color:'+c+';font-weight:700">'+d+'</div></div>';}
+    function panel(t,rows){return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:clamp(12px,1.8vw,20px)"><div style="font-size:clamp(14px,2vw,20px);font-weight:700;color:white;margin-bottom:clamp(8px,1.2vw,14px)">'+t+'</div>'+head()+rows+'</div>';}
+    var jun=row('Realizado','R$ 3,46M','R$ 4,19M','+21,3%',G)+row('% Meta','94,2%','90,6%','\u22123,6pp',R)+row('Positiva\u00e7\u00e3o','90,8%','85,8%','\u22125,0pp',R)+row('SKU/PDV','15,36','18,06','+17,6%',G)+row('Venda M\u00e9dia','R$ 4.551','R$ 5.449','+19,7%',G)+row('Margem','15,94%','16,20%','+0,26pp',G)+row('% Devolu\u00e7\u00e3o','\u22120,56%','\u22121,08%','pior',Y);
+    var jul=row('Realizado','R$ 4,17M','R$ 4,64M','+11,1%',G)+row('Meta','R$ 3,97M','R$ 5,13M','+29,2%',Y)+row('% Meta','105,2%','90,5%','\u221214,7pp',R)+row('Positiva\u00e7\u00e3o','94,9%','85,7%','\u22129,3pp',R)+row('SKU/PDV','17,19','18,56','+8,0%',G)+row('Venda M\u00e9dia','R$ 5.177','R$ 6.026','+16,4%',G)+row('Margem','15,83%','16,44%','+0,61pp',G);
+    return '<div style="padding:clamp(18px,3.5vw,48px)">'
+      +'<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(4px,0.8vw,8px);text-transform:uppercase">Regional \u2014 Evolu\u00e7\u00e3o Ano vs Ano</div>'
+      +'<div style="font-size:clamp(11px,1.4vw,15px);color:#6A7A8E;margin-bottom:clamp(14px,2vw,22px)">Mesmo territ\u00f3rio \u00b7 junho e julho \u00b7 2025 vs 2026 \u00b7 neutraliza sazonalidade</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.6vw,18px)">'+panel('Junho',jun)+panel('Julho',jul)+'</div>'
+      +'<div style="margin-top:clamp(14px,2vw,22px);background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.25);border-left:4px solid #00E5C3;border-radius:12px;padding:clamp(12px,1.8vw,20px);font-size:clamp(12px,1.5vw,17px);color:#D6DEE8;line-height:1.6">'
+        +'Faturamento cresceu <strong style="color:#00E5C3">+21,3%</strong> em junho e <strong style="color:#00E5C3">+11,1%</strong> em julho, ano contra ano \u2014 mesmo com a <strong style="color:#FFB800">meta de julho subindo +29% (\u2248 R$ 1,16 mi)</strong>. SKU/PDV, venda m\u00e9dia e margem sobem nos dois meses; positiva\u00e7\u00e3o \u00e9 o ponto de aten\u00e7\u00e3o.'
+      +'</div>'
+    +'</div>';
+  })());
+
+  // ════════════════════════════════════════════════
+  // SLIDE 3.6 — TRAJETÓRIA ABRIL→JULHO (linha da regional)
+  // ════════════════════════════════════════════════
+  addSlide('Abril\u2192Julho', (function(){
+    var G='#00E5C3', M='#8592A6';
+    function spark(vals,cor){
+      var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals),rng=(mx-mn)||1;
+      var xs=[8,38,68,96];
+      var pts=vals.map(function(v,i){return xs[i]+','+(26-((v-mn)/rng)*22).toFixed(1);});
+      var poly='<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+cor+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
+      var dots=vals.map(function(v,i){var y=(26-((v-mn)/rng)*22).toFixed(1);var last=i===vals.length-1;return '<circle cx="'+xs[i]+'" cy="'+y+'" r="'+(last?3.6:2)+'" fill="'+(last?cor:'#0a1220')+'" stroke="'+cor+'" stroke-width="1.5"/>';}).join('');
+      return '<svg viewBox="0 0 104 30" preserveAspectRatio="none" style="width:100%;height:clamp(30px,4vw,44px);display:block;margin:2px 0 4px">'+poly+dots+'</svg>';
+    }
+    function meses(){return '<div style="display:flex;justify-content:space-between;font-size:clamp(8px,0.95vw,10px);color:#5A6A7E;letter-spacing:1px">'+['abr','mai','jun','jul'].map(function(m){return '<span>'+m+'</span>';}).join('')+'</div>';}
+    function painel(tit,valJul,delta,cor,vals){
+      return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:clamp(10px,1.4vw,16px)">'
+        +'<div style="font-size:clamp(9px,1.05vw,11px);letter-spacing:1px;text-transform:uppercase;color:#8592A6;margin-bottom:5px">'+tit+'</div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:6px">'
+          +'<div style="font-size:clamp(17px,2.5vw,28px);font-weight:700;color:#fff;line-height:1">'+valJul+'</div>'
+          +'<div style="font-size:clamp(9px,1.05vw,12px);font-weight:700;color:'+cor+';white-space:nowrap">'+delta+'</div>'
+        +'</div>'
+        +spark(vals,cor)+meses()
+      +'</div>';
+    }
+    var grid='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1.4vw,16px)">'
+      +painel('Faturamento','R$ 4,64M','+18,6%',G,[3.909,4.038,4.195,4.638])
+      +painel('% da Meta','90,5%','+8,7pp',G,[81.8,87.9,90.6,90.5])
+      +painel('Venda M\u00e9dia','R$ 6.026','+20,3%',G,[5011,5315,5449,6026])
+      +painel('SKU / PDV','18,56','+1,26',G,[17.30,16.45,18.06,18.56])
+      +painel('Margem','16,44%','+0,13pp',G,[16.31,16.08,16.20,16.44])
+      +painel('Positiva\u00e7\u00e3o','85,7%','\u22123,6pp',M,[89.3,86.0,85.8,85.7])
+    +'</div>';
+    return '<div style="padding:clamp(18px,3.5vw,48px)">'
+      +'<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(4px,0.8vw,8px);text-transform:uppercase">Regional \u2014 Trajet\u00f3ria</div>'
+      +'<div style="font-size:clamp(11px,1.4vw,15px);color:#6A7A8E;margin-bottom:clamp(14px,2vw,22px)">\u00daltimos quatro meses, m\u00eas a m\u00eas \u00b7 o que importa \u00e9 a dire\u00e7\u00e3o da linha</div>'
+      +grid
+      +'<div style="margin-top:clamp(14px,2vw,22px);background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.25);border-left:4px solid #00E5C3;border-radius:12px;padding:clamp(12px,1.8vw,20px);font-size:clamp(12px,1.5vw,17px);color:#D6DEE8;line-height:1.6">'
+        +'Cinco das seis frentes sobem no per\u00edodo \u2014 faturamento, meta, venda m\u00e9dia, SKU/PDV e margem. A <strong style="color:#8592A6">positiva\u00e7\u00e3o</strong> \u00e9 o ponto de aten\u00e7\u00e3o, e j\u00e1 est\u00e1 endere\u00e7ada com plano de a\u00e7\u00e3o.'
+      +'</div>'
+    +'</div>';
+  })());
+
+  // ════════════════════════════════════════════════
   // SLIDE 4 — TOP 50
   // ════════════════════════════════════════════════
   var crit_clientes = lt.filter(function(c){return c.semaforo&&c.semaforo.indexOf('Alto Risco')>=0;})
     .sort(function(a,b){return nv(a.cresc)-nv(b.cresc);}).slice(0,8);
 
-  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+  addSlide('Top 50', '<div style="padding:clamp(18px,3.5vw,48px)">'+
     '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">Top 50 Clientes — Carteira Estratégica</div>'+
     '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(14px,2vw,20px)">'+
       sBox('Total Top 50',String(lt.length),'clientes estratégicos','#00E5C3')+
@@ -1801,7 +1865,7 @@ function iniciarApresentacao(){
     craClassif.forEach(function(c){var q=c.fat2025-c.fat2026;var b=lupaCausaBucket(c.causa);if(b)craBucket[b]+=q;});
     var pE=Math.round(craBucket.equipe/craBase*100),pM=Math.round(craBucket.mercado/craBase*100),pC=Math.round(craBucket.empresa/craBase*100);
     var pExt=pM+pC;
-    slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+    addSlide('Causa-Raiz', '<div style="padding:clamp(18px,3.5vw,48px)">'+
       '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#FFB800;margin-bottom:clamp(8px,1.4vw,16px);text-transform:uppercase">Causa-Raiz da Queda \u2014 De Onde Vem</div>'+
       '<div style="font-size:clamp(12px,1.5vw,16px);color:#8592A6;margin-bottom:clamp(16px,2.4vw,26px)">Classifica\u00e7\u00e3o cliente a cliente dos '+craClassif.length+' clientes do Top 50 que ca\u00edram</div>'+
       '<div class="stats s3">'+
@@ -1813,9 +1877,86 @@ function iniciarApresentacao(){
     '</div>');
   }
 
+
+  // ════════════════════════════════════════════════
+  // NAVEGADOR DE RISCO — regional (tiers) + por vendedor
+  // ════════════════════════════════════════════════
+  (function(){
+    function isAlto(c){return c.semaforo&&c.semaforo.indexOf('Alto Risco')>=0;}
+    function isAten(c){return c.semaforo&&(c.semaforo.indexOf('Atenção')>=0||c.semaforo.indexOf('Atencao')>=0);}
+    function isRisco(c){return c.semaforo&&c.semaforo.indexOf('Risco')>=0&&!isAlto(c)&&!isAten(c);}
+    function causaLbl(v){for(var i=0;i<LUPA_CAUSAS.length;i++){if(LUPA_CAUSAS[i].v===v)return LUPA_CAUSAS[i].lbl;}return v;}
+    function bktCor(b){return b==='empresa'?'#FFB800':b==='mercado'?'#8592A6':b==='equipe'?'#00E5C3':'#6A7A8E';}
+    function nomeCliente(c){var s=c.cliente||'';var p=s.split('-');return (p.length>1?p.slice(1).join('-'):s).trim();}
+    function navCard(c,cor){
+      var nomeC=nomeCliente(c)||'—';
+      var cau=c.causa?causaLbl(c.causa):null;
+      var bcor=c.causa?bktCor(lupaCausaBucket(c.causa)):'#6A7A8E';
+      var acao=c.acao&&c.acao.trim()?c.acao.trim():null;
+      return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,1.4vw,15px) clamp(12px,1.6vw,18px);border-left:3px solid '+cor+';margin-bottom:clamp(6px,0.9vw,10px)">'
+        +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px">'
+          +'<div style="font-size:clamp(12px,1.5vw,16px);font-weight:600;color:white">'+nomeC.substring(0,42)+(c.vendedor?' <span style="font-size:clamp(9px,1vw,11px);color:#6A7A8E;font-weight:400">· '+c.vendedor+'</span>':'')+'</div>'
+          +'<div style="font-size:clamp(13px,1.7vw,18px);font-weight:700;color:'+cor+';flex-shrink:0">'+nv(c.cresc).toFixed(1)+'%</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:clamp(10px,1.2vw,13px)">'
+          +(cau?'<span style="background:'+bcor+'18;color:'+bcor+';border:1px solid '+bcor+'40;padding:2px 9px;border-radius:20px;font-weight:600">'+cau+'</span>':'<span style="background:rgba(255,69,96,0.12);color:#FF6B7D;border:1px solid rgba(255,69,96,0.3);padding:2px 9px;border-radius:20px">causa não classificada</span>')
+        +'</div>'
+        +'<div style="font-size:clamp(10px,1.25vw,13px);color:'+(acao?'#B0BBC8':'#6A7A8E')+';margin-top:7px;line-height:1.6">'+(acao?'<span style="color:#00E5C3">▸ </span>'+acao:'<em>Ação de recuperação não registrada</em>')+'</div>'
+      +'</div>';
+    }
+    function tierSlides(clientes,cor,tierLabel,escopo){
+      if(!clientes.length)return;
+      var arr=clientes.slice().sort(function(a,b){return nv(a.cresc)-nv(b.cresc);});
+      var per=6, nP=Math.ceil(arr.length/per);
+      for(var pg=0;pg<nP;pg++){
+        var chunk=arr.slice(pg*per,(pg+1)*per);
+        var suf=nP>1?' <span style="color:#6A7A8E;font-weight:400">('+(pg+1)+'/'+nP+')</span>':'';
+        var html='<div style="padding:clamp(18px,3.5vw,48px)">'
+          +'<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:'+cor+';margin-bottom:clamp(6px,1vw,12px);text-transform:uppercase">Navegador de Risco — '+escopo+'</div>'
+          +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:clamp(12px,1.8vw,20px);flex-wrap:wrap">'
+            +'<span style="font-size:clamp(16px,2.4vw,26px);font-weight:700;color:'+cor+'">'+tierLabel+'</span>'
+            +'<span style="font-size:clamp(11px,1.3vw,14px);color:#6A7A8E">'+arr.length+' cliente'+(arr.length>1?'s':'')+' · causa e ação por cliente'+suf+'</span>'
+          +'</div>'
+          +chunk.map(function(c){return navCard(c,cor);}).join('')
+        +'</div>';
+        addSlide(tierLabel+' · '+escopo+(nP>1?' '+(pg+1):''),html);
+      }
+    }
+    function vendSlide(v,grupos){
+      var body='';
+      grupos.forEach(function(g){
+        if(!g.lista.length)return;
+        var lst=g.lista.slice().sort(function(a,b){return nv(a.cresc)-nv(b.cresc);});
+        body+='<div style="display:flex;align-items:center;gap:10px;margin:clamp(10px,1.4vw,16px) 0 clamp(6px,0.9vw,10px)">'
+          +'<span style="font-size:clamp(12px,1.5vw,16px);font-weight:700;color:'+g.cor+'">'+g.label+'</span>'
+          +'<span style="height:1px;flex:1;background:'+g.cor+'25"></span>'
+          +'<span style="font-size:clamp(10px,1.1vw,12px);color:#6A7A8E">'+lst.length+'</span>'
+        +'</div>'+lst.map(function(c){return navCard(c,g.cor);}).join('');
+      });
+      return '<div style="padding:clamp(16px,3vw,42px)">'
+        +'<div style="font-size:clamp(9px,1.1vw,11px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(8px,1.2vw,14px);text-transform:uppercase">Navegador de Risco — Por Vendedor</div>'
+        +'<div style="font-size:clamp(20px,3.2vw,34px);font-weight:700;color:white;margin-bottom:clamp(6px,1vw,12px);line-height:1.1">'+v.nome+'</div>'
+        +body
+      +'</div>';
+    }
+    var alto=lt.filter(isAlto), risco=lt.filter(isRisco), aten=lt.filter(isAten);
+    if(alto.length||risco.length||aten.length){
+      tierSlides(alto,'#FF4560','ALTO RISCO','Regional');
+      tierSlides(risco,'#FFB800','RISCO','Regional');
+      tierSlides(aten,'#FFA500','ATENÇÃO','Regional');
+      var vendAlto=vs.filter(function(v){return lt.some(function(c){return c.vendedor&&c.vendedor.toUpperCase()===v.nome.toUpperCase()&&isAlto(c);});});
+      vendAlto.forEach(function(v){
+        var meus=lt.filter(function(c){return c.vendedor&&c.vendedor.toUpperCase()===v.nome.toUpperCase();});
+        var mA=meus.filter(isAlto),mR=meus.filter(isRisco),mAt=meus.filter(isAten);
+        addSlide(v.nome.split(' ')[0]+' · risco',vendSlide(v,[{label:'ALTO RISCO',cor:'#FF4560',lista:mA}]));
+        if(mR.length||mAt.length)addSlide(v.nome.split(' ')[0]+' · +',vendSlide(v,[{label:'RISCO',cor:'#FFB800',lista:mR},{label:'ATENÇÃO',cor:'#FFA500',lista:mAt}]));
+      });
+    }
+  })();
+
   // SLIDE 5 — CHURN + POSITIVAÇÃO
   // ════════════════════════════════════════════════
-  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+  addSlide('Churn e Posit.', '<div style="padding:clamp(18px,3.5vw,48px)">'+
     '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">Retenção de Clientes — Churn e Positivação</div>'+
     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(14px,2vw,20px)">'+
       sBox('Churn Médio',churn_med.toFixed(1)+'%','limite 9%',cor3(9-churn_med,0,-6))+
@@ -1844,7 +1985,7 @@ function iniciarApresentacao(){
   var dados_vends = vs.map(function(v){var d=dadosVend(v);return{d:d,st:statusVend(d)};})
     .sort(function(a,b){return b.d.proj-a.d.proj;});
 
-  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+  addSlide('Ranking Equipe', '<div style="padding:clamp(18px,3.5vw,48px)">'+
     '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">Equipe — Ranking por Projeção do Mês</div>'+
     '<div style="display:flex;flex-direction:column;gap:clamp(5px,0.8vw,8px)">'+
     dados_vends.map(function(obj,i){
@@ -1895,7 +2036,7 @@ function iniciarApresentacao(){
     if(d.top_crit>=2)alertas.push({e:'🏪',t:d.top_crit+' clientes do Top 50 em queda — ação comercial necessária.',c:'#FFB800'});
     if(alertas.length===0)alertas.push({e:'✅',t:'Todos os indicadores dentro dos parâmetros. Manter o ritmo.',c:'#00E5C3'});
 
-    slides.push('<div style="padding:clamp(16px,3vw,42px)">'+
+    addSlide(v.nome.split(' ')[0], '<div style="padding:clamp(16px,3vw,42px)">'+
       // Cabeçalho
       '<div style="font-size:clamp(9px,1.1vw,11px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(10px,1.5vw,16px);text-transform:uppercase">Diagnóstico Individual · '+(idx+1)+'/'+vs.length+'</div>'+
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:clamp(10px,1.5vw,16px);flex-wrap:wrap;gap:8px">'+
@@ -1992,7 +2133,7 @@ function iniciarApresentacao(){
   var alto_churn = DB.posChurn.filter(function(p){return nv(p.churnRate)>15;});
   var planosAtivos = (DB.planos||[]).filter(function(pl){return pl.status!=='Concluído';});
 
-  slides.push('<div style="padding:clamp(18px,3.5vw,48px)">'+
+  addSlide('Diretrizes', '<div style="padding:clamp(18px,3.5vw,48px)">'+
     '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">Diretrizes — O que Fazemos Agora</div>'+
     '<div style="display:flex;flex-direction:column;gap:clamp(8px,1.2vw,12px);margin-bottom:clamp(12px,2vw,18px)">'+
     (criticos.length?
@@ -2055,10 +2196,7 @@ function iniciarApresentacao(){
   var cur=0;
   var win=window.open('','_blank');
   if(!win){toast('Permita popups no navegador.');return;}
-
-  var titulos=['Capa','Regional — Mês','Regional — Ano','Top 50','Churn e Posit.','Ranking Equipe']
-    .concat(vs.map(function(v){return v.nome.split(' ')[0];}))
-    .concat(['Diretrizes']);
+  // titulos agora e montado incrementalmente via addSlide()
 
   function renderSlide(){
     var nav='<nav class="nav">'+
