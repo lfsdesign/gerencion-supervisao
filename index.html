@@ -1524,42 +1524,31 @@ function iniciarApresentacao(){
   //  cor: 'sobe' (verde) - 'cai' (vermelho) - 'atencao' (amarelo/cinza)
   // ═══════════════════════════════════════════════════════════════
   var COMPARATIVOS = {
+    // ═══════════════════════════════════════════════════════════════
+    //  \u270f\ufe0f  EDITE AQUI OS COMPARATIVOS  (Ano vs Ano + Trajetoria)
+    //  Todos os numeros abaixo vem da LINHA "TOTAL" oficial do BI (Norte puro).
+    //  cor da trajetoria: 'sobe' (verde) - 'atencao' (cinza)
+    // ═══════════════════════════════════════════════════════════════
     anoVsAno: {
-      subtitulo: 'Mesmo territ\u00f3rio \u00b7 junho e julho \u00b7 2025 vs 2026 \u00b7 neutraliza sazonalidade',
+      subtitulo: 'Norte Fluminense \u00b7 faturamento \u00b7 2025 vs 2026 (mesmo territ\u00f3rio, mesma carteira)',
       meses: [
-        { nome:'Junho', linhas:[
-          ['Realizado','R$ 3,46M','R$ 4,19M','+21,3%','sobe'],
-          ['% Meta','94,2%','90,6%','\u22123,6pp','cai'],
-          ['Positiva\u00e7\u00e3o','90,8%','85,8%','\u22125,0pp','cai'],
-          ['SKU/PDV','15,36','18,06','+17,6%','sobe'],
-          ['Venda M\u00e9dia','R$ 4.551','R$ 5.449','+19,7%','sobe'],
-          ['Margem','15,94%','16,20%','+0,26pp','sobe'],
-          ['% Devolu\u00e7\u00e3o','\u22120,56%','\u22121,08%','pior','atencao']
-        ]},
-        { nome:'Julho', linhas:[
-          ['Realizado','R$ 4,17M','R$ 4,64M','+11,1%','sobe'],
-          ['Meta','R$ 3,97M','R$ 5,13M','+29,2%','atencao'],
-          ['% Meta','105,2%','90,5%','\u221214,7pp','cai'],
-          ['Positiva\u00e7\u00e3o','94,9%','85,7%','\u22129,3pp','cai'],
-          ['SKU/PDV','17,19','18,56','+8,0%','sobe'],
-          ['Venda M\u00e9dia','R$ 5.177','R$ 6.026','+16,4%','sobe'],
-          ['Margem','15,83%','16,44%','+0,61pp','sobe']
-        ]}
+        { nome:'Junho', v2025:'R$ 3,46M', v2026:'R$ 4,19M', delta:'+21,3%' },
+        { nome:'Julho', v2025:'R$ 4,17M', v2026:'R$ 4,64M', delta:'+11,1%' }
       ],
-      leitura: 'Faturamento cresceu <strong style="color:#00E5C3">+21,3%</strong> em junho e <strong style="color:#00E5C3">+11,1%</strong> em julho, ano contra ano \u2014 mesmo com a <strong style="color:#FFB800">meta de julho subindo +29% (\u2248 R$ 1,16 mi)</strong>. SKU/PDV, venda m\u00e9dia e margem sobem nos dois meses; positiva\u00e7\u00e3o \u00e9 o ponto de aten\u00e7\u00e3o.'
+      reconciliacao: 'Base 2025 = Norte oficial <b>menos</b> os 2 vendedores da Leste Fluminense (Alessandro + Jaqueline), que o BI de 2025 agrupava junto por a coordena\u00e7\u00e3o ser \u00fanica. Junho: R$ 3,65 mi \u2212 R$ 190 mil = R$ 3,46 mi. Julho: R$ 4,29 mi \u2212 R$ 122 mil = R$ 4,17 mi. Norte contra Norte.'
     },
     trajetoria: {
-      subtitulo: '\u00daltimos quatro meses, m\u00eas a m\u00eas \u00b7 o que importa \u00e9 a dire\u00e7\u00e3o da linha',
+      subtitulo: '\u00daltimos quatro meses, m\u00eas a m\u00eas \u00b7 linha oficial do BI \u00b7 o que importa \u00e9 a dire\u00e7\u00e3o',
       meses: ['abr','mai','jun','jul'],
       paineis: [
         ['Faturamento','R$ 4,64M','+18,6%','sobe',[3.909,4.038,4.195,4.638]],
-        ['% da Meta','90,5%','+8,7pp','sobe',[81.8,87.9,90.6,90.5]],
-        ['Venda M\u00e9dia','R$ 6.026','+20,3%','sobe',[5011,5315,5449,6026]],
-        ['SKU / PDV','18,56','+1,26','sobe',[17.30,16.45,18.06,18.56]],
-        ['Margem','16,44%','+0,13pp','sobe',[16.31,16.08,16.20,16.44]],
-        ['Positiva\u00e7\u00e3o','85,7%','\u22123,6pp','atencao',[89.3,86.0,85.8,85.7]]
+        ['% da Meta','90,5%','+7,9pp','sobe',[82.6,87.6,90.8,90.5]],
+        ['Venda M\u00e9dia','R$ 5.783','+21,0%','sobe',[4779,5079,5211,5783]],
+        ['SKU / PDV','18,10','+1,20','sobe',[16.90,16.08,17.69,18.10]],
+        ['Margem','16,42%','+0,17pp','sobe',[16.25,16.03,16.17,16.42]],
+        ['Positiva\u00e7\u00e3o','92,8%','\u22124,3pp','atencao',[97.1,93.4,93.2,92.8]]
       ],
-      leitura: 'Cinco das seis frentes sobem no per\u00edodo \u2014 faturamento, meta, venda m\u00e9dia, SKU/PDV e margem. A <strong style="color:#8592A6">positiva\u00e7\u00e3o</strong> \u00e9 o ponto de aten\u00e7\u00e3o, e j\u00e1 est\u00e1 endere\u00e7ada com plano de a\u00e7\u00e3o.'
+      leitura: 'Faturamento, venda m\u00e9dia, SKU/PDV e margem sobem no per\u00edodo. A positiva\u00e7\u00e3o fica <strong style="color:#8592A6">acima de 92% em todos os meses</strong>, com leve recuo \u2014 \u00e9 o ponto de aten\u00e7\u00e3o, mas parte de um patamar alto.'
     }
   };
   var vs=DB.biAtual.vendedores;
@@ -1813,15 +1802,23 @@ function iniciarApresentacao(){
   // SLIDE 3.5 — ANO vs ANO (lê de COMPARATIVOS.anoVsAno)
   // ════════════════════════════════════════════════
   addSlide('Ano vs Ano', (function(){
-    var C=COMPARATIVOS.anoVsAno, COR={sobe:'#00E5C3',cai:'#FF4560',atencao:'#FFB800'};
-    function head(){return '<div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 0.9fr;gap:6px;padding:0 0 5px;font-size:clamp(8px,1vw,10px);letter-spacing:1px;text-transform:uppercase;color:#6A7A8E"><div></div><div style="text-align:right">2025</div><div style="text-align:right">2026</div><div style="text-align:right">\u0394</div></div>';}
-    function row(l){return '<div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 0.9fr;gap:6px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:clamp(10px,1.25vw,13px)"><div style="color:#B0BBC8">'+l[0]+'</div><div style="text-align:right;color:#8592A6">'+l[1]+'</div><div style="text-align:right;color:white;font-weight:600">'+l[2]+'</div><div style="text-align:right;color:'+(COR[l[4]]||'#8592A6')+';font-weight:700">'+l[3]+'</div></div>';}
-    function panel(m){return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:clamp(12px,1.8vw,20px)"><div style="font-size:clamp(14px,2vw,20px);font-weight:700;color:white;margin-bottom:clamp(8px,1.2vw,14px)">'+m.nome+'</div>'+head()+m.linhas.map(row).join('')+'</div>';}
+    var C=COMPARATIVOS.anoVsAno;
+    function card(m){
+      return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:clamp(16px,2.4vw,30px);text-align:center">'
+        +'<div style="font-size:clamp(13px,1.7vw,18px);font-weight:700;color:#8592A6;text-transform:uppercase;letter-spacing:2px;margin-bottom:clamp(12px,1.8vw,20px)">'+m.nome+'</div>'
+        +'<div style="display:flex;align-items:center;justify-content:center;gap:clamp(10px,1.8vw,22px);margin-bottom:clamp(12px,1.6vw,18px)">'
+          +'<div><div style="font-size:clamp(9px,1vw,11px);color:#6A7A8E;text-transform:uppercase;letter-spacing:1px">2025</div><div style="font-size:clamp(16px,2.2vw,26px);color:#8592A6;font-weight:600">'+m.v2025+'</div></div>'
+          +'<div style="font-size:clamp(16px,2.2vw,26px);color:#6A7A8E">\u2192</div>'
+          +'<div><div style="font-size:clamp(9px,1vw,11px);color:#6A7A8E;text-transform:uppercase;letter-spacing:1px">2026</div><div style="font-size:clamp(16px,2.2vw,26px);color:white;font-weight:700">'+m.v2026+'</div></div>'
+        +'</div>'
+        +'<div style="font-size:clamp(26px,4.2vw,46px);font-weight:800;color:#00E5C3;line-height:1">'+m.delta+'</div>'
+      +'</div>';
+    }
     return '<div style="padding:clamp(18px,3.5vw,48px)">'
-      +'<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(4px,0.8vw,8px);text-transform:uppercase">Regional \u2014 Evolu\u00e7\u00e3o Ano vs Ano</div>'
-      +'<div style="font-size:clamp(11px,1.4vw,15px);color:#6A7A8E;margin-bottom:clamp(14px,2vw,22px)">'+C.subtitulo+'</div>'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.6vw,18px)">'+C.meses.map(panel).join('')+'</div>'
-      +'<div style="margin-top:clamp(14px,2vw,22px);background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.25);border-left:4px solid #00E5C3;border-radius:12px;padding:clamp(12px,1.8vw,20px);font-size:clamp(12px,1.5vw,17px);color:#D6DEE8;line-height:1.6">'+C.leitura+'</div>'
+      +'<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(4px,0.8vw,8px);text-transform:uppercase">Regional \u2014 Faturamento Ano vs Ano</div>'
+      +'<div style="font-size:clamp(11px,1.4vw,15px);color:#6A7A8E;margin-bottom:clamp(16px,2.4vw,26px)">'+C.subtitulo+'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.8vw,20px)">'+C.meses.map(card).join('')+'</div>'
+      +'<div style="margin-top:clamp(16px,2.4vw,26px);background:rgba(133,146,166,0.08);border:1px solid rgba(133,146,166,0.25);border-left:4px solid #8592A6;border-radius:12px;padding:clamp(12px,1.8vw,20px);font-size:clamp(11px,1.35vw,15px);color:#B0BBC8;line-height:1.6">'+C.reconciliacao+'</div>'
     +'</div>';
   })());
 
