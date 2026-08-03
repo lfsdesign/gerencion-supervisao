@@ -2032,7 +2032,11 @@ function iniciarApresentacao(){
   // ════════════════════════════════════════════════
   // SLIDES 7-15 — UM POR VENDEDOR
   // ════════════════════════════════════════════════
+  // Interruptor: diagnóstico individual por vendedor OFF na apresentação (código preservado).
+  // Para reativar os slides por vendedor depois, troque para true:
+  var MOSTRAR_DIAGNOSTICO_INDIVIDUAL = false;
   vs.forEach(function(v,idx){
+    if(!MOSTRAR_DIAGNOSTICO_INDIVIDUAL) return;
     var d=dadosVend(v);
     var st=statusVend(d);
 
