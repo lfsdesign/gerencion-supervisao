@@ -1957,20 +1957,29 @@ function iniciarApresentacao(){
       });
       return '<div style="padding:clamp(16px,3vw,42px)">'
         +'<div style="font-size:clamp(9px,1.1vw,11px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(8px,1.2vw,14px);text-transform:uppercase">Navegador de Risco — Por Vendedor</div>'
-        +'<div style="font-size:clamp(20px,3.2vw,34px);font-weight:700;color:white;margin-bottom:clamp(6px,1vw,12px);line-height:1.1">'+v.nome+'</div>'
+        +'<div style="font-size:clamp(20px,3.2vw,34px);font-weight:700;color:white;margin-bottom:clamp(6px,1vw,12px);line-height:1.1">'+v.nome.replace(/^\d+\s*-\s*/,'')+'</div>'
         +body
       +'</div>';
     }
-    // FOCO: apresentação mostra somente ALTO RISCO (Risco/Atenção continuam na classificação, só não viram slide)
+    // FOCO: apresentação mostra somente ALTO RISCO.
+    // Regional  = Top 50 da Regional (DB.lupaTop50).
+    // Vendedor  = Top 50 PRÓPRIO de cada vendedor (DB.lupaTop50VendAtual), não recorte do regional.
+    // causa/ação são compartilhadas por código de cliente: classifica na Lupa e aparece em todo lugar.
+    function codCli(c){var m=(c.cliente||'').match(/(\d{3,})/);return m?m[1]:(c.cliente||'');}
+    var CLASS={};
+    lt.forEach(function(c){if(c.causa||c.acao)CLASS[codCli(c)]={causa:c.causa,acao:c.acao};});
+    Object.keys(DB.lupaTop50VendAtual||{}).forEach(function(cod){(DB.lupaTop50VendAtual[cod]||[]).forEach(function(c){if(c.causa||c.acao)CLASS[codCli(c)]={causa:c.causa,acao:c.acao};});});
+    function enrich(c){if((!c.causa&&!c.acao)&&CLASS[codCli(c)]){var k=CLASS[codCli(c)],o={};for(var p in c)o[p]=c[p];o.causa=k.causa;o.acao=k.acao;return o;}return c;}
+    // 1) Regional
     var alto=lt.filter(isAlto);
-    if(alto.length){
-      tierSlides(alto,'#FF4560','ALTO RISCO','Regional');
-      var vendAlto=vs.filter(function(v){return lt.some(function(c){return c.vendedor&&c.vendedor.toUpperCase()===v.nome.toUpperCase()&&isAlto(c);});});
-      vendAlto.forEach(function(v){
-        var mA=lt.filter(function(c){return c.vendedor&&c.vendedor.toUpperCase()===v.nome.toUpperCase()&&isAlto(c);});
-        addSlide(v.nome.split(' ')[0]+' · risco',vendSlide(v,[{label:'ALTO RISCO',cor:'#FF4560',lista:mA}]));
-      });
-    }
+    if(alto.length) tierSlides(alto.map(enrich),'#FF4560','ALTO RISCO','Regional');
+    // 2) Por vendedor — Top 50 próprio de cada um
+    var VT=DB.lupaTop50VendAtual||{};
+    vs.forEach(function(v){
+      var cod=(v.nome.match(/^(\d+)/)||[])[1]||v.nome;
+      var mA=(VT[cod]||[]).filter(isAlto).map(enrich);
+      if(mA.length) addSlide(v.nome.replace(/^\d+\s*-\s*/,'').split(' ')[0]+' · risco', vendSlide(v,[{label:'ALTO RISCO',cor:'#FF4560',lista:mA}]));
+    });
   })();
 
   // SLIDE 5 — CHURN + POSITIVAÇÃO
