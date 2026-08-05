@@ -1912,12 +1912,15 @@ function iniciarApresentacao(){
       var cau=c.causa?causaLbl(c.causa):null;
       var bcor=c.causa?bktCor(lupaCausaBucket(c.causa)):'#6A7A8E';
       var acao=c.acao&&c.acao.trim()?c.acao.trim():null;
+      var r26=parseInt(c.rank2026,10),r25=parseInt(c.rank2025,10),rankBadge='';
+      if(!isNaN(r26)&&!isNaN(r25)){var d=r26-r25;var rc=d>0?'#FF4560':(d<0?'#00E5C3':'#6A7A8E');var seta=d>0?('\u25BC'+d):(d<0?('\u25B2'+Math.abs(d)):'\u2013');rankBadge='<span style="background:'+rc+'14;color:'+rc+';border:1px solid '+rc+'40;padding:2px 9px;border-radius:20px;font-weight:600;white-space:nowrap">'+r25+'\u00ba \u2192 '+r26+'\u00ba  '+seta+'</span>';}
       return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,1.4vw,15px) clamp(12px,1.6vw,18px);border-left:3px solid '+cor+';margin-bottom:clamp(6px,0.9vw,10px)">'
         +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px">'
           +'<div style="font-size:clamp(12px,1.5vw,16px);font-weight:600;color:white">'+nomeC.substring(0,42)+(c.vendedor?' <span style="font-size:clamp(9px,1vw,11px);color:#6A7A8E;font-weight:400">· '+c.vendedor+'</span>':'')+'</div>'
           +'<div style="font-size:clamp(13px,1.7vw,18px);font-weight:700;color:'+cor+';flex-shrink:0">'+nv(c.cresc).toFixed(1)+'%</div>'
         +'</div>'
         +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:clamp(10px,1.2vw,13px)">'
+          +rankBadge
           +(cau?'<span style="background:'+bcor+'18;color:'+bcor+';border:1px solid '+bcor+'40;padding:2px 9px;border-radius:20px;font-weight:600">'+cau+'</span>':'<span style="background:rgba(255,69,96,0.12);color:#FF6B7D;border:1px solid rgba(255,69,96,0.3);padding:2px 9px;border-radius:20px">causa não classificada</span>')
         +'</div>'
         +'<div style="font-size:clamp(10px,1.25vw,13px);color:'+(acao?'#B0BBC8':'#6A7A8E')+';margin-top:7px;line-height:1.6">'+(acao?'<span style="color:#00E5C3">▸ </span>'+acao:'<em>Ação de recuperação não registrada</em>')+'</div>'
@@ -2438,6 +2441,61 @@ function dadosVendGlobal(v, lt_arr) {
 // TOP 50 — 4 MÓDULOS: RegAtual, RegAnt, VendAtual, VendAnt
 // ============================================================
 
+function parsearTop50Header(txt){
+  // Parser guiado por CABECALHO: le pelo nome das colunas, nao pela posicao.
+  // Trata: Regional (com Vendedor), Vendedor (sem Vendedor), anos invertidos (Ano Anterior),
+  // % pronto do BI (usa) ou ausente (calcula), chave por codigo, mantem os dois rankings.
+  var linhas = txt.split('\n').filter(function(l){return l.trim()!=='';});
+  if(!linhas.length) return [];
+  var hIdx=-1;
+  for(var i=0;i<linhas.length;i++){
+    var low=linhas[i].toLowerCase();
+    if(low.indexOf('ranking')>=0 || (low.indexOf('cod')>=0 && low.indexOf('cliente')>=0)){ hIdx=i; break; }
+  }
+  if(hIdx<0) hIdx=0;
+  var head=linhas[hIdx].split('\t').map(function(c){return c.trim().toLowerCase();});
+  function col(){
+    var pats=Array.prototype.slice.call(arguments);
+    for(var i=0;i<head.length;i++){ for(var j=0;j<pats.length;j++){ if(head[i].indexOf(pats[j])>=0) return i; } }
+    return -1;
+  }
+  var iR26=col('ranking 2026','rank 2026'), iR25=col('ranking 2025','rank 2025');
+  var iCli=col('cod cliente','cliente');
+  var iVend=col('vendedor');
+  var iF26=col('fat 2026','faturamento 2026'), iF25=col('fat 2025','faturamento 2025');
+  var iPct=col('% cres','%cres','cres 25x26','crescimento');
+  var iMed=col('m\u00e9dio m\u00eas','medio mes','m\u00e9dio mes');
+  var iSku=col('sku/cli','sku/ cli','sku m\u00e9dio','sku medio');
+  if(iSku<0) iSku=col('sku total','sku');
+  var iSem=col('sem\u00e1foro','semaforo');
+  var lista=[];
+  for(var r=hIdx+1;r<linhas.length;r++){
+    var c=linhas[r].split('\t').map(function(x){return x.trim();});
+    if(/^total/i.test(c[0]||'')) continue;
+    var okRank=(iR26>=0 && !isNaN(parseInt(c[iR26]))) || (iR25>=0 && !isNaN(parseInt(c[iR25])));
+    if(!okRank) continue;
+    var fat26=iF26>=0?nLupa(c[iF26]):0, fat25=iF25>=0?nLupa(c[iF25]):0;
+    if(!fat26 && !fat25) continue;
+    var cresc;
+    if(iPct>=0 && c[iPct]!==undefined && String(c[iPct]).trim()!=='') cresc=nLupa(c[iPct]);
+    else cresc=fat25>0?((fat26-fat25)/fat25)*100:0;
+    var vendComp=iVend>=0?(c[iVend]||''):'';
+    var vendNome=vendComp.replace(/^\d+\s*-\s*/,'').trim();
+    lista.push({
+      rank2026:iR26>=0?c[iR26]:'', rank2025:iR25>=0?c[iR25]:'',
+      cliente:iCli>=0?(c[iCli]||''):'',
+      vendedor:vendNome, vendedorCompleto:vendComp,
+      fat2026:fat26, fat2025:fat25, cresc:cresc,
+      temHistorico:fat25>0,
+      medioMes:iMed>=0?nLupa(c[iMed]):0,
+      skuMedia:iSku>=0?nLupa(c[iSku]):0,
+      semaforo:iSem>=0?(c[iSem]||'').trim():'',
+      causa:'', acao:''
+    });
+  }
+  return lista;
+}
+
 function parsearLinhaTop50(cols, temVendedor) {
   // Formato com vendedor: Rank2026|Rank2025|Vendedor|CodCliente|Fat2026|Fat2025|%Cres|MedioMes|Sku|Semaforo
   // Formato sem vendedor: Rank2026|Rank2025|CodCliente|Fat2026|Fat2025|%Cres|MedioMes|Sku|Semaforo
@@ -2468,17 +2526,8 @@ function parsearLinhaTop50(cols, temVendedor) {
 }
 
 function parsearTabelaTop50(txt, temVendedor) {
-  var linhas = txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
-  var lista = [];
-  linhas.forEach(function(linha) {
-    var cols = linha.split('\t').map(function(c){return c.trim();});
-    if(cols.length < 6) return;
-    if(/^ranking/i.test(cols[0]) || /^total/i.test(cols[0])) return;
-    if(isNaN(parseInt(cols[0]))) return; // pula linhas sem ranking numérico
-    var item = parsearLinhaTop50(cols, temVendedor);
-    if(item.fat2026 > 0 || item.cliente) lista.push(item);
-  });
-  return lista;
+  // Tudo passa pelo parser guiado por cabecalho (detecta o layout sozinho).
+  return parsearTop50Header(txt);
 }
 
 // ── REGIONAL ANO ANTERIOR ────────────────────────────────
@@ -2747,20 +2796,8 @@ function renderLupaFat(){
 function processarLupaTop50(){
   var txt=document.getElementById('lupaTop50Colar').value.trim();
   if(!txt){toast('Cole a tabela do Top 50 primeiro.');return;}
-  var linhas=txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l!=='';});
-  var lista=[];
-  linhas.forEach(function(linha){
-    var cols=linha.split(/\t/).map(function(c){return c.trim();});
-    if(cols.length<8)return;if(/^ranking/i.test(cols[0]))return;
-    var rank2026=cols[0],rank2025=cols[1],clienteCompleto=cols[2],vendCompleto=cols[3];
-    var fat2026=nLupa(cols[4]),fat2025=nLupa(cols[5]),medioMes=nLupa(cols[6]);
-    var skuMedia=cols[8]?nLupa(cols[8]):0;var semaforo=cols[9]||'';
-    if(!fat2026)return;
-    var vendNome=vendCompleto;var vendMatch=vendCompleto.match(/^\d+\s*-\s*(.+)$/);if(vendMatch)vendNome=vendMatch[1].trim();
-    var crescVal=fat2025>0?((fat2026-fat2025)/fat2025)*100:0;var temVendaAnterior=fat2025>0;
-    lista.push({rank2026:rank2026,rank2025:rank2025,vendedor:vendNome,vendedorCompleto:vendCompleto,cliente:clienteCompleto,fat2026:fat2026,fat2025:fat2025,cresc:crescVal,temHistorico:temVendaAnterior,medioMes:medioMes,skuMedia:skuMedia,semaforo:semaforo.trim(),acao:'',causa:''});
-  });
-  if(!lista.length){toast('Não consegui identificar nenhum cliente.');return;}
+  var lista=parsearTop50Header(txt);
+  if(!lista.length){toast('Não consegui identificar nenhum cliente. Confira se colou a tabela COM o cabeçalho (a linha dos títulos).');return;}
   var antigos={};(DB.lupaTop50||[]).forEach(function(c){antigos[c.cliente+'|'+c.vendedor]={acao:c.acao||'',causa:c.causa||''};});
   lista.forEach(function(c){var k=c.cliente+'|'+c.vendedor;if(antigos[k]){c.acao=antigos[k].acao;c.causa=antigos[k].causa;}});
   DB.lupaTop50=lista;salvar();
