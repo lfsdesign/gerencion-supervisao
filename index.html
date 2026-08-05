@@ -1912,32 +1912,38 @@ function iniciarApresentacao(){
       var cau=c.causa?causaLbl(c.causa):null;
       var bcor=c.causa?bktCor(lupaCausaBucket(c.causa)):'#6A7A8E';
       var acao=c.acao&&c.acao.trim()?c.acao.trim():null;
+      var coral='#FF6B7D';
       var r26=parseInt(c.rank2026,10),r25=parseInt(c.rank2025,10),rankBadge='';
-      if(!isNaN(r26)&&!isNaN(r25)){var d=r26-r25;var rc=d>0?'#FF4560':(d<0?'#00E5C3':'#6A7A8E');var seta=d>0?('\u25BC'+d):(d<0?('\u25B2'+Math.abs(d)):'\u2013');rankBadge='<span style="background:'+rc+'14;color:'+rc+';border:1px solid '+rc+'40;padding:2px 9px;border-radius:20px;font-weight:600;white-space:nowrap">'+r25+'\u00ba \u2192 '+r26+'\u00ba  '+seta+'</span>';}
-      return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,1.4vw,15px) clamp(12px,1.6vw,18px);border-left:3px solid '+cor+';margin-bottom:clamp(6px,0.9vw,10px)">'
-        +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px">'
-          +'<div style="font-size:clamp(12px,1.5vw,16px);font-weight:600;color:white">'+nomeC.substring(0,42)+(c.vendedor?' <span style="font-size:clamp(9px,1vw,11px);color:#6A7A8E;font-weight:400">· '+c.vendedor+'</span>':'')+'</div>'
-          +'<div style="font-size:clamp(13px,1.7vw,18px);font-weight:700;color:'+cor+';flex-shrink:0">'+nv(c.cresc).toFixed(1)+'%</div>'
+      if(!isNaN(r26)&&!isNaN(r25)){var d=r26-r25;var rc=d>0?coral:(d<0?'#00E5C3':'#6A7A8E');var seta=d>0?('\u25BC '+d):(d<0?('\u25B2 '+Math.abs(d)):'\u2013');rankBadge='<span style="display:inline-flex;align-items:center;gap:6px;font-size:clamp(10px,1.15vw,13px);font-weight:500"><span style="color:#6A7A8E">#'+r25+' \u2192 #'+r26+'</span><span style="color:'+rc+';font-weight:700">'+seta+'</span></span>';}
+      return '<div style="background:linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.025));border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:clamp(13px,1.7vw,20px) clamp(15px,1.9vw,24px);margin-bottom:clamp(9px,1.2vw,14px)">'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px">'
+          +'<div style="min-width:0">'
+            +'<div style="font-size:clamp(14px,1.75vw,19px);font-weight:600;color:#fff;line-height:1.25;letter-spacing:-0.01em">'+nomeC.substring(0,46)+'</div>'
+            +'<div style="margin-top:5px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+              +(c.vendedor?'<span style="font-size:clamp(10px,1.15vw,13px);color:#6A7A8E">'+c.vendedor+'</span>':'')
+              +rankBadge
+            +'</div>'
+          +'</div>'
+          +'<div style="font-size:clamp(19px,2.5vw,30px);font-weight:800;color:'+coral+';line-height:1;letter-spacing:-0.02em;flex-shrink:0">'+nv(c.cresc).toFixed(1)+'%</div>'
         +'</div>'
-        +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:clamp(10px,1.2vw,13px)">'
-          +rankBadge
-          +(cau?'<span style="background:'+bcor+'18;color:'+bcor+';border:1px solid '+bcor+'40;padding:2px 9px;border-radius:20px;font-weight:600">'+cau+'</span>':'<span style="background:rgba(255,69,96,0.12);color:#FF6B7D;border:1px solid rgba(255,69,96,0.3);padding:2px 9px;border-radius:20px">causa não classificada</span>')
+        +'<div style="margin-top:clamp(10px,1.3vw,15px);display:flex;gap:10px;align-items:flex-start">'
+          +(cau?'<span style="flex-shrink:0;background:'+bcor+'1f;color:'+bcor+';padding:3px 11px;border-radius:8px;font-size:clamp(10px,1.15vw,13px);font-weight:600;white-space:nowrap">'+cau+'</span>':'<span style="flex-shrink:0;background:rgba(255,107,125,0.1);color:'+coral+';padding:3px 11px;border-radius:8px;font-size:clamp(10px,1.15vw,13px);white-space:nowrap">a classificar</span>')
+          +'<span style="font-size:clamp(11px,1.3vw,14px);color:'+(acao?'#C3CCD8':'#5A6A7E')+';line-height:1.55">'+(acao?acao:'<em style="color:#5A6A7E">ação a registrar</em>')+'</span>'
         +'</div>'
-        +'<div style="font-size:clamp(10px,1.25vw,13px);color:'+(acao?'#B0BBC8':'#6A7A8E')+';margin-top:7px;line-height:1.6">'+(acao?'<span style="color:#00E5C3">▸ </span>'+acao:'<em>Ação de recuperação não registrada</em>')+'</div>'
       +'</div>';
     }
     function tierSlides(clientes,cor,tierLabel,escopo){
       if(!clientes.length)return;
       var arr=clientes.slice().sort(function(a,b){return nv(a.cresc)-nv(b.cresc);});
-      var per=6, nP=Math.ceil(arr.length/per);
+      var per=5, nP=Math.ceil(arr.length/per);
       for(var pg=0;pg<nP;pg++){
         var chunk=arr.slice(pg*per,(pg+1)*per);
         var suf=nP>1?' <span style="color:#6A7A8E;font-weight:400">('+(pg+1)+'/'+nP+')</span>':'';
         var html='<div style="padding:clamp(18px,3.5vw,48px)">'
-          +'<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:'+cor+';margin-bottom:clamp(6px,1vw,12px);text-transform:uppercase">Navegador de Risco — '+escopo+'</div>'
-          +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:clamp(12px,1.8vw,20px);flex-wrap:wrap">'
-            +'<span style="font-size:clamp(16px,2.4vw,26px);font-weight:700;color:'+cor+'">'+tierLabel+'</span>'
-            +'<span style="font-size:clamp(11px,1.3vw,14px);color:#6A7A8E">'+arr.length+' cliente'+(arr.length>1?'s':'')+' · causa e ação por cliente'+suf+'</span>'
+          +'<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#6A7A8E;margin-bottom:clamp(6px,1vw,10px);text-transform:uppercase">Clientes em risco — '+escopo+'</div>'
+          +'<div style="display:flex;align-items:baseline;gap:14px;margin-bottom:clamp(14px,2vw,24px);flex-wrap:wrap">'
+            +'<span style="font-size:clamp(20px,2.8vw,32px);font-weight:800;color:#FF6B7D;letter-spacing:-0.01em">'+tierLabel+'</span>'
+            +'<span style="font-size:clamp(11px,1.3vw,15px);color:#8592A6">'+arr.length+' cliente'+(arr.length>1?'s':'')+suf+'</span>'
           +'</div>'
           +chunk.map(function(c){return navCard(c,cor);}).join('')
         +'</div>';
