@@ -1906,27 +1906,37 @@ function iniciarApresentacao(){
     function isRisco(c){return c.semaforo&&c.semaforo.indexOf('Risco')>=0&&!isAlto(c)&&!isAten(c);}
     function causaLbl(v){for(var i=0;i<LUPA_CAUSAS.length;i++){if(LUPA_CAUSAS[i].v===v)return LUPA_CAUSAS[i].lbl;}return v;}
     function bktCor(b){return b==='empresa'?'#FFB800':b==='mercado'?'#8592A6':b==='equipe'?'#00E5C3':'#6A7A8E';}
-    function nomeCliente(c){var s=c.cliente||'';var p=s.split('-');return (p.length>1?p.slice(1).join('-'):s).trim();}
+    function nomeCliente(c){var s=(c.cliente||'').trim();var m=s.match(/^(\d+)\s*-\s*(.+)$/);return m?{cod:m[1],nome:m[2].trim()}:{cod:'',nome:s};}
     function navCard(c,cor){
-      var nomeC=nomeCliente(c)||'—';
+      var cli=nomeCliente(c);
       var cau=c.causa?causaLbl(c.causa):null;
       var bcor=c.causa?bktCor(lupaCausaBucket(c.causa)):'#6A7A8E';
       var acao=c.acao&&c.acao.trim()?c.acao.trim():null;
       var coral='#FF6B7D';
+      function fbrl(v){return 'R$ '+Math.round(v||0).toLocaleString('pt-BR');}
+      var vend=(c.vendedorCompleto||c.vendedor||'').replace(/\s*-\s*/,' \u00b7 ');
       var r26=parseInt(c.rank2026,10),r25=parseInt(c.rank2025,10),rankBadge='';
-      if(!isNaN(r26)&&!isNaN(r25)){var d=r26-r25;var rc=d>0?coral:(d<0?'#00E5C3':'#6A7A8E');var seta=d>0?('\u25BC '+d):(d<0?('\u25B2 '+Math.abs(d)):'\u2013');rankBadge='<span style="display:inline-flex;align-items:center;gap:6px;font-size:clamp(10px,1.15vw,13px);font-weight:500"><span style="color:#6A7A8E">#'+r25+' \u2192 #'+r26+'</span><span style="color:'+rc+';font-weight:700">'+seta+'</span></span>';}
-      return '<div style="background:linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.025));border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:clamp(13px,1.7vw,20px) clamp(15px,1.9vw,24px);margin-bottom:clamp(9px,1.2vw,14px)">'
+      if(!isNaN(r26)&&!isNaN(r25)){var d=r26-r25;var rc=d>0?coral:(d<0?'#00E5C3':'#6A7A8E');var seta=d>0?('\u25BC '+d):(d<0?('\u25B2 '+Math.abs(d)):'\u2013');rankBadge='<span style="display:inline-flex;align-items:center;gap:6px;font-size:clamp(10px,1.15vw,13px);font-weight:500"><span style="color:#6A7A8E">#'+r25+' \u2192 #'+r26+' na regional</span><span style="color:'+rc+';font-weight:700">'+seta+'</span></span>';}
+      var nomeFull=(cli.cod?'<span style="color:#8592A6;font-weight:500">'+cli.cod+'</span> \u00b7 ':'')+cli.nome;
+      return '<div style="background:linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.025));border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:clamp(14px,1.8vw,22px) clamp(16px,2vw,26px);margin-bottom:clamp(9px,1.2vw,14px)">'
         +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px">'
           +'<div style="min-width:0">'
-            +'<div style="font-size:clamp(14px,1.75vw,19px);font-weight:600;color:#fff;line-height:1.25;letter-spacing:-0.01em">'+nomeC.substring(0,46)+'</div>'
+            +'<div style="font-size:clamp(14px,1.75vw,19px);font-weight:600;color:#fff;line-height:1.25;letter-spacing:-0.01em">'+nomeFull+'</div>'
             +'<div style="margin-top:5px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
-              +(c.vendedor?'<span style="font-size:clamp(10px,1.15vw,13px);color:#6A7A8E">'+c.vendedor+'</span>':'')
+              +(vend?'<span style="font-size:clamp(10px,1.15vw,13px);color:#8592A6">'+vend+'</span>':'')
               +rankBadge
             +'</div>'
           +'</div>'
-          +'<div style="font-size:clamp(19px,2.5vw,30px);font-weight:800;color:'+coral+';line-height:1;letter-spacing:-0.02em;flex-shrink:0">'+nv(c.cresc).toFixed(1)+'%</div>'
+          +'<div style="text-align:right;flex-shrink:0">'
+            +'<div style="font-size:clamp(8px,0.95vw,10px);letter-spacing:1.5px;text-transform:uppercase;color:#6A7A8E;margin-bottom:1px">% 25 \u2192 26</div>'
+            +'<div style="font-size:clamp(19px,2.5vw,30px);font-weight:800;color:'+coral+';line-height:1;letter-spacing:-0.02em">'+nv(c.cresc).toFixed(1)+'%</div>'
+          +'</div>'
         +'</div>'
-        +'<div style="margin-top:clamp(10px,1.3vw,15px);display:flex;gap:10px;align-items:flex-start">'
+        +'<div style="display:flex;gap:clamp(24px,4vw,54px);margin-top:clamp(11px,1.5vw,16px);padding-top:clamp(11px,1.5vw,16px);border-top:1px solid rgba(255,255,255,0.06)">'
+          +'<div><div style="font-size:clamp(8px,0.95vw,10px);letter-spacing:1.5px;text-transform:uppercase;color:#6A7A8E;margin-bottom:2px">Fat 2026</div><div style="font-size:clamp(13px,1.5vw,17px);font-weight:700;color:#fff">'+fbrl(c.fat2026)+'</div></div>'
+          +'<div><div style="font-size:clamp(8px,0.95vw,10px);letter-spacing:1.5px;text-transform:uppercase;color:#6A7A8E;margin-bottom:2px">Fat 2025</div><div style="font-size:clamp(13px,1.5vw,17px);font-weight:600;color:#8592A6">'+fbrl(c.fat2025)+'</div></div>'
+        +'</div>'
+        +'<div style="margin-top:clamp(11px,1.4vw,16px);display:flex;gap:10px;align-items:flex-start">'
           +(cau?'<span style="flex-shrink:0;background:'+bcor+'1f;color:'+bcor+';padding:3px 11px;border-radius:8px;font-size:clamp(10px,1.15vw,13px);font-weight:600;white-space:nowrap">'+cau+'</span>':'<span style="flex-shrink:0;background:rgba(255,107,125,0.1);color:'+coral+';padding:3px 11px;border-radius:8px;font-size:clamp(10px,1.15vw,13px);white-space:nowrap">a classificar</span>')
           +'<span style="font-size:clamp(11px,1.3vw,14px);color:'+(acao?'#C3CCD8':'#5A6A7E')+';line-height:1.55">'+(acao?acao:'<em style="color:#5A6A7E">ação a registrar</em>')+'</span>'
         +'</div>'
@@ -1935,7 +1945,7 @@ function iniciarApresentacao(){
     function tierSlides(clientes,cor,tierLabel,escopo){
       if(!clientes.length)return;
       var arr=clientes.slice().sort(function(a,b){return nv(a.cresc)-nv(b.cresc);});
-      var per=5, nP=Math.ceil(arr.length/per);
+      var per=4, nP=Math.ceil(arr.length/per);
       for(var pg=0;pg<nP;pg++){
         var chunk=arr.slice(pg*per,(pg+1)*per);
         var suf=nP>1?' <span style="color:#6A7A8E;font-weight:400">('+(pg+1)+'/'+nP+')</span>':'';
