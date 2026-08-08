@@ -677,13 +677,25 @@ var DB={
 };
 function salvar(){if(!USER)return;clearTimeout(_saveT);_saveT=setTimeout(function(){sb.from('supervisao_estado').upsert({user_id:USER.id,estado:DB},{onConflict:'user_id'}).then(function(r){if(r&&r.error)toast('Falha ao salvar na nuvem.');});},600);}
 function aplicarDefaults(){if(!DB.lupaTop50)DB.lupaTop50=[];if(!DB.lupaFatVendedores)DB.lupaFatVendedores=[];if(!DB.lupaFatRegional)DB.lupaFatRegional={};if(!DB.lupaSss)DB.lupaSss=[];if(!DB.lupaIndic)DB.lupaIndic=[];if(!DB.planosVendedor)DB.planosVendedor={};if(!DB.lupaTop50VendAtual)DB.lupaTop50VendAtual={};if(!DB.lupaTop50RegAnt)DB.lupaTop50RegAnt=[];if(!DB.lupaTop50VendAnt)DB.lupaTop50VendAnt={};if(!DB.premiacao)DB.premiacao={};
-  if(!DB.posChurnAnterior||!DB.posChurnAnterior.length){DB.posChurnAnterior=[
-    {cod:'017',nome:'Edimar Barbosa',churnRate:'8,64'},{cod:'081',nome:'Adson Bruno',churnRate:'14,63'},
-    {cod:'118',nome:'Eduardo Rezende',churnRate:'8,76'},{cod:'122',nome:'Matheus Paiotti',churnRate:'10,68'},
-    {cod:'167',nome:'Eduardo Britto',churnRate:'12,66'},{cod:'249',nome:'Vinicius Barao',churnRate:'10,34'},
-    {cod:'295',nome:'Cristian Vianna',churnRate:'15,15'},{cod:'429',nome:'Victor Hugo',churnRate:'25,00'},
-    {cod:'459',nome:'Carlos Bordignon',churnRate:'8,43'}
-  ];salvar();}
+  // Correção pontual (roda 1x): Comparativo Mensal de churn precisa ser JUNHO (anterior) vs JULHO (atual) —
+  // os dois meses fechados. Agosto está em curso e não entra nessa comparação (churn parcial engana).
+  if(!DB._churnFixJunJul){
+    DB.posChurnAnterior=[
+      {cod:'017',nome:'Edimar Barbosa',churnRate:'17,39'},{cod:'081',nome:'Adson Bruno',churnRate:'17,50'},
+      {cod:'118',nome:'Eduardo Rezende',churnRate:'9,35'},{cod:'122',nome:'Matheus Paiotti',churnRate:'9,62'},
+      {cod:'167',nome:'Eduardo Britto',churnRate:'0,00'},{cod:'249',nome:'Vinicius Barao',churnRate:'6,67'},
+      {cod:'295',nome:'Cristian Vianna',churnRate:'8,77'},{cod:'429',nome:'Victor Hugo',churnRate:'15,79'},
+      {cod:'459',nome:'Carlos Bordignon',churnRate:'13,48'}
+    ];
+    DB.posChurn=[
+      {cod:'017',nome:'Edimar Barbosa',churnRate:'8,64'},{cod:'081',nome:'Adson Bruno',churnRate:'14,63'},
+      {cod:'118',nome:'Eduardo Rezende',churnRate:'8,76'},{cod:'122',nome:'Matheus Paiotti',churnRate:'10,68'},
+      {cod:'167',nome:'Eduardo Britto',churnRate:'12,66'},{cod:'249',nome:'Vinicius Barao',churnRate:'10,34'},
+      {cod:'295',nome:'Cristian Vianna',churnRate:'15,15'},{cod:'429',nome:'Victor Hugo',churnRate:'25,00'},
+      {cod:'459',nome:'Carlos Bordignon',churnRate:'8,43'}
+    ];
+    DB._churnFixJunJul=true;salvar();
+  }
 }function carregarNuvem(){return sb.from('supervisao_estado').select('estado').eq('user_id',USER.id).maybeSingle().then(function(r){if(r.data&&r.data.estado&&Object.keys(r.data.estado).length){DB=r.data.estado;aplicarDefaults();return;}try{var s=localStorage.getItem('GRC_V2');if(s){var old=JSON.parse(s);if(old&&Object.keys(old).length){DB=old;aplicarDefaults();return sb.from('supervisao_estado').upsert({user_id:USER.id,estado:DB},{onConflict:'user_id'});}}}catch(e){}aplicarDefaults();});}function entrar(){var em=(document.getElementById('logEmail').value||'').trim(),pw=document.getElementById('logPass').value||'';var msg=document.getElementById('logMsg');msg.style.color='#B0BBC8';msg.textContent='Entrando...';sb.auth.signInWithPassword({email:em,password:pw}).then(function(r){if(r.error){msg.style.color='#FF4560';msg.textContent='E-mail ou senha incorretos.';return;}location.reload();});}function sair(){sb.auth.signOut().then(function(){location.reload();});}
 function n(v){return parseFloat((v||'0').toString().replace(',','.'))||0;}
 function brl(v){return'R$ '+Math.abs(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});}
@@ -1026,10 +1038,13 @@ function renderPremiacao(){
   var pctTeto=Math.max(0,Math.min(100,Math.round(total/7000*100)));
   el.innerHTML='<div style="background:linear-gradient(135deg,rgba(0,229,195,0.12),rgba(0,229,195,0.03));border:1px solid rgba(0,229,195,0.3);border-radius:16px;padding:22px 24px;margin-bottom:18px"><div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#00E5C3;margin-bottom:4px">Prêmio previsto do mês</div><div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:40px;font-weight:800;color:#fff;line-height:1">R$ '+total.toLocaleString('pt-BR')+'</div><div style="font-size:14px;color:#8592A6">de R$ 7.000 possíveis</div></div><div style="height:8px;background:rgba(255,255,255,0.08);border-radius:6px;margin-top:14px;overflow:hidden"><div style="height:100%;width:'+pctTeto+'%;background:#00E5C3;border-radius:6px"></div></div></div>'+cards+'<div style="font-size:12px;color:#6A7A8E;margin-top:14px;line-height:1.7">Cole em cada KPI o percentual da coluna de atingimento do seu painel oficial. Faixas por KPI: <strong style="color:#FFB800">90–99% = R$ 600</strong> · <strong style="color:#00E5C3">100–109% = R$ 1.000</strong> · <strong style="color:#00E5C3">110%+ = R$ 1.400</strong>. O churn já vem invertido no painel — cole como está.</div>';
 }
+function salvarParecerComp(cod,valor){DB.pareceresComp=DB.pareceresComp||{};DB.pareceresComp[cod]=(valor||'').trim();salvar();}
+function toggleParecerComp(cod){var b=document.getElementById('pcBox_'+cod);if(b)b.style.display=(b.style.display==='none'?'block':'none');}
 function renderComp(){
   var el=document.getElementById('compBox'),va=DB.biAtual.vendedores,vb=DB.biAnterior.vendedores;
   if(!va||va.length===0){el.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
   if(!vb||vb.length===0){el.innerHTML='<div class="bn bn-ye"><span>i</span><div>Lance o BI pelo menos duas vezes para ver o comparativo.</div></div>';return;}
+  DB.pareceresComp=DB.pareceresComp||{};
   var COR_OK='#00E5C3',COR_BAD='#FF6B7D',COR_MID='#8592A6';
   function pct(a,b){return b?((n(a)/n(b))*100):null;}
   function chip(v,unidade,corBase){if(v==null)return '<span style="color:'+COR_MID+'">—</span>';return '<span style="font-weight:600;color:'+(corBase||'#fff')+'">'+v.toFixed(1)+(unidade||'')+'</span>';}
@@ -1051,7 +1066,12 @@ function renderComp(){
     var margAnt=n(ant.marg), margAtual=n(v.marg);
     var skuAnt=n(ant.sku), skuAtual=n(v.sku);
     var churnAnt=churnDe(DB.posChurnAnterior,v.cod), churnAtual=churnDe(DB.posChurn,v.cod);
-    return '<tr><td style="font-weight:600;white-space:nowrap">'+v.nome+'</td>'
+    var parecer=DB.pareceresComp[v.cod]||'';
+    var pareceB=parecer
+      ? '<div style="margin-top:6px;font-size:12px;color:#C3CCD8;line-height:1.5;background:rgba(255,255,255,0.03);border-left:2px solid #00E5C3;padding:6px 10px;border-radius:0 6px 6px 0;cursor:pointer" onclick="toggleParecerComp(\''+v.cod+'\')"><span style="color:#00E5C3;font-weight:600">Parecer:</span> '+parecer+'</div>'
+      : '<div style="margin-top:4px"><span style="font-size:11px;color:'+COR_MID+';cursor:pointer;text-decoration:underline" onclick="toggleParecerComp(\''+v.cod+'\')">+ parecer</span></div>';
+    var pareceEditor='<div id="pcBox_'+v.cod+'" style="display:none;margin-top:6px"><textarea class="inp" rows="2" placeholder="Ex: churn de julho puxado pelas férias de 20 dias" onchange="salvarParecerComp(\''+v.cod+'\',this.value)">'+parecer+'</textarea></div>';
+    return '<tr><td style="font-weight:600;white-space:nowrap;vertical-align:top">'+v.nome+pareceB+pareceEditor+'</td>'
       +kpiCell('fat',fatAnt,fatAtual,true)
       +kpiCell('pos',posAnt,posAtual,true)
       +kpiCell('marg',margAnt,margAtual,true)
