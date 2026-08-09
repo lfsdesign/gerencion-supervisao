@@ -184,14 +184,20 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     <div id="dashboard" class="pg on">
       <div class="ph"><div class="pt">Panorama</div><div class="ps" id="dashData"></div></div>
       <div id="sazBanner"></div>
+      <div id="ritmoBar" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:rgba(255,255,255,0.025);border:1px solid var(--b);border-radius:10px;padding:10px 16px;margin-bottom:14px">
+        <span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3)">Ritmo do mês</span>
+        <span style="font-size:13px;color:var(--t2)">Dia <input id="inpDiaAtual" placeholder="—" style="width:44px;background:transparent;border:none;border-bottom:1px solid var(--b);color:var(--t1);font-size:14px;font-weight:600;text-align:center" onchange="salvarDiasUteis()"> de <input id="inpDiasTotal" placeholder="—" style="width:48px;background:transparent;border:none;border-bottom:1px solid var(--b);color:var(--t1);font-size:14px;font-weight:600;text-align:center" onchange="salvarDiasUteis()"> dias úteis</span>
+        <div id="ritmoBarra" style="flex:1;min-width:120px;height:7px;background:rgba(255,255,255,0.06);border-radius:5px;overflow:hidden"><div id="ritmoFill" style="height:100%;width:0;background:var(--cy);border-radius:5px;transition:width .3s"></div></div>
+        <span id="ritmoPct" style="font-size:13px;font-weight:700;color:var(--cy)">—</span>
+      </div>
       <div class="stats s4">
         <div class="stat" id="stProj"><div class="st-l">Projeção Regional</div><div class="st-v" id="dProj">—</div><div class="st-s">Meta: 100% · Premiação ≥90%</div></div>
         <div class="stat" id="stPos"><div class="st-l">Saldo Positivação</div><div class="st-v" id="dPos">—</div><div class="st-s" id="dPosSub">—</div></div>
         <div class="stat" id="stDev"><div class="st-l">% Devolução</div><div class="st-v" id="dDev">—</div><div class="st-s">Limite: 0,65%</div></div>
-        <div class="stat" id="stSaude"><div class="st-l">Saúde da Regional</div><div class="st-v" id="dSaude">—</div><div class="st-s" id="dSaudeLbl">—</div></div>
+        <div class="stat" id="stFatRS"><div class="st-l">Faturamento Realizado</div><div class="st-v" id="dFatRS">—</div><div class="st-s" id="dFatRSsub">% da meta faturado até agora</div></div>
       </div>
       <div class="stats s4" style="margin-bottom:14px">
-        <div class="stat" id="stPremio"><div class="st-l">Sua Premiação Atual</div><div class="st-v" id="stPremioVal" style="font-size:18px">—</div><div class="st-s" id="stPremioSub">Baseada na projeção da equipe</div></div>
+        <div class="stat" id="stChurnReg"><div class="st-l">Churn Regional</div><div class="st-v" id="dChurnReg" style="font-size:22px">—</div><div class="st-s" id="dChurnRegSub">—</div></div>
         <div class="stat" id="stVendMedia"><div class="st-l">Venda Média Regional</div><div class="st-v" id="dVendMedia" style="font-size:22px">—</div><div class="st-s">R$ por cliente</div></div>
         <div class="stat" id="stSku"><div class="st-l">SKU/Cliente Regional</div><div class="st-v" id="dSku" style="font-size:22px">—</div><div class="st-s">Indicador preditivo</div></div>
         <div class="stat" id="stMargem"><div class="st-l">Margem Regional</div><div class="st-v" id="dMargem">—</div><div class="st-s">Meta: 17,5% · Mín: 15,5%</div></div>
@@ -200,7 +206,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
         <div class="card"><div class="ct">Diagnóstico Rápido</div><div id="diagBox"><div class="empty">Lance os dados do BI.</div></div></div>
         <div class="card"><div class="ct">Alertas Preditivos</div><div id="alertBox"><div class="empty">Nenhum alerta.</div></div></div>
       </div>
-      <div class="card"><div class="ct">Ranking da Equipe — Score Geral</div><div id="rankBox"><div class="empty">Lance os dados do BI.</div></div></div>
+      <div class="card"><div class="ct">Ranking — Prioridade de Cobrança <span style="font-weight:400;color:var(--t3);font-size:12px">· quem está mais longe da meta</span></div><div id="rankBox"><div class="empty">Lance os dados do BI.</div></div></div>
     </div>
     <!-- NOVO MÓDULO LANÇAR BI: COLAR E PARSEAR -->
     <div id="alimentar" class="pg"><div class="ph"><div class="pt">Alimentar Dados</div><div class="ps">Todas as colagens do BI numa tela só — de cima para baixo, uma vez por mês</div></div><div id="anivAlerta"></div>
@@ -694,7 +700,10 @@ function aplicarDefaults(){if(!DB.lupaTop50)DB.lupaTop50=[];if(!DB.lupaFatVended
       {cod:'295',nome:'Cristian Vianna',churnRate:'15,15'},{cod:'429',nome:'Victor Hugo',churnRate:'25,00'},
       {cod:'459',nome:'Carlos Bordignon',churnRate:'8,43'}
     ];
-    DB._churnFixJunJul=true;salvar();
+    DB._churnFixJunJul=true;
+    if(DB.churnRegFechado==null)DB.churnRegFechado='11,90';
+    if(DB.churnRegParcial==null)DB.churnRegParcial='44,17';
+    salvar();
   }
 }function carregarNuvem(){return sb.from('supervisao_estado').select('estado').eq('user_id',USER.id).maybeSingle().then(function(r){if(r.data&&r.data.estado&&Object.keys(r.data.estado).length){DB=r.data.estado;aplicarDefaults();return;}try{var s=localStorage.getItem('GRC_V2');if(s){var old=JSON.parse(s);if(old&&Object.keys(old).length){DB=old;aplicarDefaults();return sb.from('supervisao_estado').upsert({user_id:USER.id,estado:DB},{onConflict:'user_id'});}}}catch(e){}aplicarDefaults();});}function entrar(){var em=(document.getElementById('logEmail').value||'').trim(),pw=document.getElementById('logPass').value||'';var msg=document.getElementById('logMsg');msg.style.color='#B0BBC8';msg.textContent='Entrando...';sb.auth.signInWithPassword({email:em,password:pw}).then(function(r){if(r.error){msg.style.color='#FF4560';msg.textContent='E-mail ou senha incorretos.';return;}location.reload();});}function sair(){sb.auth.signOut().then(function(){location.reload();});}
 function n(v){return parseFloat((v||'0').toString().replace(',','.'))||0;}
@@ -928,7 +937,11 @@ function salvarBICompleto(){
   if(DB.posChurn&&DB.posChurn.length>0)DB.posChurnAnterior=JSON.parse(JSON.stringify(DB.posChurn));
   if(_biRegTemp)DB.biAtual.regional=_biRegTemp;
   if(_biVendTemp.length>0)DB.biAtual.vendedores=_biVendTemp;
-  if(_biChurnTemp.length>0)DB.posChurn=_biChurnTemp.map(function(c){return{cod:c.cod,nome:c.nome,positivados:String(c.positivados),naoPositivados:String(c.naoPositivados),churnRate:String(c.churnRate)};});
+  if(_biChurnTemp.length>0){
+    DB.posChurn=_biChurnTemp.map(function(c){return{cod:c.cod,nome:c.nome,positivados:String(c.positivados),naoPositivados:String(c.naoPositivados),churnRate:String(c.churnRate),carteira:String(c.carteira||''),churnQtd:String(c.churnQtd||'')};});
+    var totCart=0,totCh=0;_biChurnTemp.forEach(function(c){totCart+=n(c.carteira);totCh+=n(c.churnQtd);});
+    if(totCart>0)DB.churnRegFechado=((totCh/totCart)*100).toFixed(2).replace('.',',');
+  }
   _biRegTemp=null;_biVendTemp=[];_biChurnTemp=[];
   ['biRegColar','biVendColar','biChurnColar'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   ['biRegPreview','biVendPreview','biChurnPreview'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='';});
@@ -937,6 +950,33 @@ function salvarBICompleto(){
   ir('dashboard',document.querySelector('.nb'));
 }
 function renderTudo(){renderDash();renderEquipe();renderComp();renderPremiacao();renderCampoLista();renderAlimentar();renderAnivAlerta();renderPlanos();renderClientes();renderAniv();if(DB.biAtual&&DB.biAtual.vendedores&&DB.biAtual.vendedores.length>0)renderPlanosVendedor();}
+function salvarDiasUteis(){var da=document.getElementById('inpDiaAtual'),dt=document.getElementById('inpDiasTotal');DB.diaAtual=da?da.value:'';DB.diasTotal=dt?dt.value:'';salvar();renderRitmoBar();}
+function renderRitmoBar(){
+  var da=document.getElementById('inpDiaAtual'),dt=document.getElementById('inpDiasTotal');
+  if(da&&da.value===''&&DB.diaAtual)da.value=DB.diaAtual;
+  if(dt&&dt.value===''&&DB.diasTotal)dt.value=DB.diasTotal;
+  var dia=n(DB.diaAtual),tot=n(DB.diasTotal);
+  var fill=document.getElementById('ritmoFill'),pctEl=document.getElementById('ritmoPct');
+  if(dia>0&&tot>0){var pc=Math.max(0,Math.min(100,Math.round(dia/tot*100)));if(fill)fill.style.width=pc+'%';if(pctEl){pctEl.textContent=pc+'% do mês';pctEl.style.color='var(--cy)';}}
+  else{if(fill)fill.style.width='0';if(pctEl){pctEl.textContent='—';pctEl.style.color='var(--t3)';}}
+}
+function renderFatRSCard(r){
+  var el=document.getElementById('dFatRS'),sub=document.getElementById('dFatRSsub'),card=document.getElementById('stFatRS');
+  if(!el)return;
+  if(r&&r.fat){var f=n(r.fat);el.textContent=fP(r.fat);sub.textContent='% da meta faturado até agora';card.className='stat';}
+  else{el.textContent='—';sub.innerHTML='<span style="color:var(--t3)">lance o BI regional</span>';card.className='stat';}
+}
+function renderChurnRegCard(){
+  var el=document.getElementById('dChurnReg'),sub=document.getElementById('dChurnRegSub'),card=document.getElementById('stChurnReg');
+  if(!el)return;
+  var fechado=(DB.churnRegFechado!=null&&DB.churnRegFechado!=='')?n(DB.churnRegFechado):null;
+  if(fechado==null){el.textContent='—';el.style.fontSize='15px';sub.innerHTML='<span style="color:var(--t3)">capturado no próximo lançamento do BI</span>';card.className='stat';return;}
+  el.textContent=fechado.toFixed(2).replace('.',',')+'%';el.style.fontSize='22px';
+  el.style.color=fechado<=11.63?'var(--cy)':fechado<=13?'var(--ye)':'var(--rd)';
+  card.className='stat'+(fechado<=11.63?'':fechado<=13?' wn':' dg');
+  var parc=(DB.churnRegParcial!=null&&DB.churnRegParcial!=='')?n(DB.churnRegParcial):null;
+  sub.innerHTML=parc!=null?('mês fechado · <span style="color:var(--t3)">parcial atual '+parc.toFixed(2).replace('.',',')+'% (ainda muda)</span>'):'último mês fechado';
+}
 function renderDash(){
   var r=DB.biAtual.regional,vs=DB.biAtual.vendedores;
   var mes=new Date().getMonth(),baixa=(mes>=4&&mes<=7);
@@ -953,28 +993,16 @@ function renderDash(){
     document.getElementById('stDev').className='stat'+(d>DEV_LIM?' dg':'');
     document.getElementById('dDev').textContent=fP(r.devPct);
   }
-  if(vs&&vs.length>0){
-    var scores=vs.map(function(v,i){return calcScore(v,DB.posChurn[i]||{});});
-    var scoreMedio=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
-    document.getElementById('stSaude').className='stat'+(scoreMedio>=70?'':scoreMedio>=50?' wn':' dg');
-    document.getElementById('dSaude').textContent=scoreMedio;
-    document.getElementById('dSaudeLbl').textContent=scoreLbl(scoreMedio)+' (0-100)';
-    var projReg=r&&r.proj?n(r.proj):0;
-    var premioEl=document.getElementById('stPremio'),premioVal=document.getElementById('stPremioVal'),premioSub=document.getElementById('stPremioSub');
-    if(premioEl&&premioVal&&premioSub){
-      if(projReg>=110){premioEl.className='stat';premioVal.textContent='🏆 MAX';premioVal.style.color='#FFB800';premioSub.textContent='Projeção ≥110% — Premiação máxima!';}
-      else if(projReg>=100){premioEl.className='stat';premioVal.textContent='✅ BASE';premioVal.style.color='#00E5C3';premioSub.textContent='Projeção ≥100% — Premiação base';}
-      else if(projReg>=90){premioEl.className='stat wn';premioVal.textContent='⚠ PARCIAL';premioVal.style.color='';premioSub.textContent='Projeção 90-99% — Premiação parcial';}
-      else{premioEl.className='stat dg';premioVal.textContent='❌ ZERO';premioVal.style.color='';premioSub.textContent='Projeção <90% — Sem premiação neste KPI';}
-    }
-  }
+  renderRitmoBar();
+  renderFatRSCard(r);
+  renderChurnRegCard();
   var diag=document.getElementById('diagBox'),alrt=document.getElementById('alertBox'),rank=document.getElementById('rankBox');
   if(!vs||vs.length===0){diag.innerHTML='<div class="empty">Lance os dados do BI.</div>';alrt.innerHTML='<div class="empty">Nenhum alerta.</div>';rank.innerHTML='<div class="empty">Lance os dados do BI.</div>';return;}
-  var scores2=vs.map(function(v,i){return{v:v,pc:DB.posChurn[i]||{},sc:calcScore(v,DB.posChurn[i]||{})};});
-  var crit=scores2.filter(function(x){return x.sc<50;});
-  var atenc=scores2.filter(function(x){return x.sc>=50&&x.sc<70;});
-  var ok=scores2.length-crit.length-atenc.length;
-  diag.innerHTML='<div class="dr"><div class="dot" style="background:var(--cy)"></div><span><strong>'+ok+'</strong> vendedor(es) SAUDÁVEL</span></div><div class="dr"><div class="dot" style="background:var(--ye)"></div><span><strong>'+atenc.length+'</strong> em ATENÇÃO</span></div><div class="dr"><div class="dot" style="background:var(--rd)"></div><span><strong>'+crit.length+'</strong> CRÍTICO</span></div>'+(r.saldoPos?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Saldo positivação: <strong style="color:'+(n(r.saldoPos)<0?'var(--rd)':'var(--cy)')+'">'+r.saldoPos+'</strong></span></div>':'')+(r.devR?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Devolução: <strong style="color:var(--rd)">'+r.devR+'</strong> ('+fP(r.devPct)+')</span></div>':'');
+  var scores2=vs.map(function(v,i){return{v:v,pc:DB.posChurn[i]||{}};});
+  var crit=vs.filter(function(v){return n(v.proj)<90;});
+  var atenc=vs.filter(function(v){return n(v.proj)>=90&&n(v.proj)<100;});
+  var ok=vs.length-crit.length-atenc.length;
+  diag.innerHTML='<div class="dr"><div class="dot" style="background:var(--cy)"></div><span><strong>'+ok+'</strong> vendedor(es) na meta (proj ≥100%)</span></div><div class="dr"><div class="dot" style="background:var(--ye)"></div><span><strong>'+atenc.length+'</strong> em atenção (90-99%)</span></div><div class="dr"><div class="dot" style="background:var(--rd)"></div><span><strong>'+crit.length+'</strong> abaixo de 90%</span></div>'+(r.saldoPos?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Saldo positivação: <strong style="color:'+(n(r.saldoPos)<0?'var(--rd)':'var(--cy)')+'">'+r.saldoPos+'</strong></span></div>':'')+(r.devR?'<div class="dr"><div class="dot" style="background:var(--t3)"></div><span>Devolução: <strong style="color:var(--rd)">'+r.devR+'</strong> ('+fP(r.devPct)+')</span></div>':'');
   var vmEl=document.getElementById('dVendMedia'),skuEl=document.getElementById('dSku'),margEl=document.getElementById('dMargem');
   if(vmEl)vmEl.textContent=r&&r.vendaMedia?'R$'+r.vendaMedia:'—';
   if(skuEl)skuEl.textContent=r&&r.sku?r.sku:'—';
@@ -991,8 +1019,8 @@ function renderDash(){
     if(n(v.marg)<15.5)alertas.push({t:'dg',m:v.nome+' — Margem '+fP(v.marg)+' abaixo do mínimo (15,5%).'});
   });
   alrt.innerHTML=alertas.length===0?'<div class="empty">Nenhum alerta. Regional saudável!</div>':alertas.slice(0,7).map(function(a){return'<div class="dr"><span class="badge '+(a.t==='dg'?'bdg':'bwn')+'" style="margin-right:6px;flex-shrink:0">'+(a.t==='dg'?'URGENTE':'ATENÇÃO')+'</span><span style="font-size:12px">'+a.m+'</span></div>';}).join('');
-  var sorted=scores2.slice().sort(function(a,b){return b.sc-a.sc;});
-  rank.innerHTML='<div class="tw"><table><thead><tr><th>#</th><th>Vendedor</th><th>Score</th><th>Status</th><th>%PROJ</th><th>%Marg</th><th>Posit</th><th>%DEV</th><th>Churn</th></tr></thead><tbody>'+sorted.map(function(x,i){var v=x.v,pc=x.pc,sc=x.sc;return'<tr><td style="color:var(--t2)">'+(i+1)+'</td><td style="font-weight:600">'+v.nome+'</td><td><strong style="color:'+scoreCor(sc)+';font-size:15px">'+sc+'</strong></td><td>'+scoreBadge(sc)+'</td><td style="color:'+(n(v.proj)>=85?'var(--cy)':n(v.proj)>=70?'var(--ye)':'var(--rd)')+'">'+fP(v.proj)+'</td><td style="color:'+(n(v.marg)>=n(v.objMarg||17.5)?'var(--cy)':'var(--ye)')+'">'+fP(v.marg)+'</td><td>'+fmt(v.realPos)+'/'+fmt(v.objPos)+'</td><td style="color:'+(Math.abs(n(v.devPct))>DEV_LIM?'var(--rd)':'var(--t2)')+'">'+fP(v.devPct)+'</td><td style="color:'+(n(pc.churnRate)>15?'var(--rd)':n(pc.churnRate)>9?'var(--ye)':'var(--t2)')+'">'+fmt(pc.churnRate)+'%</td></tr>';}).join('')+'</tbody></table></div>';
+  var ordenado=vs.slice().sort(function(a,b){return n(a.proj)-n(b.proj);});
+  rank.innerHTML='<div style="font-size:12px;color:var(--t3);margin-bottom:10px">Ordenado do <strong style="color:var(--t2)">mais longe da meta</strong> (topo = sua prioridade de cobrança) ao que já bateu.</div><div class="tw"><table><thead><tr><th>#</th><th>Vendedor</th><th>%Proj</th><th>Falta p/ meta</th><th>Margem</th><th>Positivação</th></tr></thead><tbody>'+ordenado.map(function(v,i){var p=n(v.proj);var cor=p>=100?'var(--cy)':p>=90?'var(--ye)':'var(--rd)';var falta=p>=100?'✓ bateu':(100-p).toFixed(1)+'pp';var mg=n(v.marg),objMarg=n(v.objMarg)||17.5;return'<tr><td style="color:var(--t2)">'+(i+1)+'</td><td style="font-weight:600">'+v.nome+'</td><td style="font-weight:700;color:'+cor+'">'+fP(v.proj)+'</td><td style="color:'+cor+'">'+falta+'</td><td style="color:'+(mg>=objMarg?'var(--cy)':'var(--ye)')+'">'+fP(v.marg)+'</td><td>'+fmt(v.realPos)+'/'+fmt(v.objPos)+'</td></tr>';}).join('')+'</tbody></table></div>';
 }
 
 
