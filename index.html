@@ -1085,7 +1085,12 @@ function renderComp(){
   function churnDe(lista,cod){var c=(lista||[]).find(function(x){return x.cod===cod;});return c?n(c.churnRate):null;}
   function kpiCell(nome,pctAnt,pctAtual,maiorMelhor,unidade){
     unidade=unidade===undefined?'%':unidade;
-    return '<td style="white-space:nowrap"><div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:10px;color:'+COR_MID+'">'+(pctAnt==null?'—':pctAnt.toFixed(1)+unidade)+' → '+chip(pctAtual,unidade)+'</div><div style="font-size:11px">'+delta(pctAtual,pctAnt,maiorMelhor)+'</div></div></td>';
+    var antTxt=(pctAnt==null?'—':pctAnt.toFixed(1)+unidade);
+    var atualTxt=(pctAtual==null?'—':pctAtual.toFixed(1)+unidade);
+    var atualCor=(pctAtual==null)?COR_MID:'#fff';
+    return '<td style="white-space:nowrap;text-align:center"><div class="cmp-cell">'
+      +'<div class="cmp-fluxo"><span class="cmp-ant">'+antTxt+'</span><span class="cmp-seta">→</span><span class="cmp-atual" style="color:'+atualCor+'">'+atualTxt+'</span></div>'
+      +'<div class="cmp-delta">'+delta(pctAtual,pctAnt,maiorMelhor)+'</div></div></td>';
   }
   var rows=va.map(function(v,i){
     var ant=vb[i]||{};
@@ -1099,16 +1104,34 @@ function renderComp(){
       ? '<div style="margin-top:6px;font-size:12px;color:#C3CCD8;line-height:1.5;background:rgba(255,255,255,0.03);border-left:2px solid #00E5C3;padding:6px 10px;border-radius:0 6px 6px 0;cursor:pointer" onclick="toggleParecerComp(\''+v.cod+'\')"><span style="color:#00E5C3;font-weight:600">Parecer:</span> '+parecer+'</div>'
       : '<div style="margin-top:4px"><span style="font-size:11px;color:'+COR_MID+';cursor:pointer;text-decoration:underline" onclick="toggleParecerComp(\''+v.cod+'\')">+ parecer</span></div>';
     var pareceEditor='<div id="pcBox_'+v.cod+'" style="display:none;margin-top:6px"><textarea class="inp" rows="2" placeholder="Ex: churn de julho puxado pelas férias de 20 dias" onchange="salvarParecerComp(\''+v.cod+'\',this.value)">'+parecer+'</textarea></div>';
-    return '<tr><td style="font-weight:600;white-space:nowrap;vertical-align:top">'+v.nome+pareceB+pareceEditor+'</td>'
+    return '<tr><td style="white-space:nowrap;vertical-align:top"><div class="cmp-vend">'+v.nome+'</div>'+pareceB+pareceEditor+'</td>'
       +kpiCell('fat',fatAnt,fatAtual,true)
       +kpiCell('pos',posAnt,posAtual,true)
       +kpiCell('marg',margAnt,margAtual,true)
-      +'<td style="white-space:nowrap"><div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:10px;color:'+COR_MID+'">'+(skuAnt==null?'—':skuAnt.toFixed(1))+' → '+chip(skuAtual,'')+'</div><div style="font-size:11px">'+delta(skuAtual,skuAnt,true)+'</div></div></td>'
+      +'<td style="white-space:nowrap;text-align:center"><div class="cmp-cell"><div class="cmp-fluxo"><span class="cmp-ant">'+(skuAnt==null?'—':skuAnt.toFixed(1))+'</span><span class="cmp-seta">→</span><span class="cmp-atual" style="color:'+(skuAtual==null?COR_MID:'#fff')+'">'+(skuAtual==null?'—':skuAtual.toFixed(1))+'</span></div><div class="cmp-delta">'+delta(skuAtual,skuAnt,true)+'</div></div></td>'
       +kpiCell('churn',churnAnt,churnAtual,false)
     +'</tr>';
   }).join('');
   var avisoChurn=(!DB.posChurn||!DB.posChurn.length)?'<div class="bn bn-ye" style="margin-bottom:12px"><span>i</span><div>Lance o Churn do mês atual (Alimentar Dados) para completar essa coluna.</div></div>':'';
-  el.innerHTML=avisoChurn+'<div style="font-size:12px;color:'+COR_MID+';margin-bottom:10px">Cada KPI mostra <em>mês anterior → atual</em> e a variação. Verde = melhorou, coral = piorou. Baseado nos 5 indicadores da sua premiação.</div><div class="tw"><table><thead><tr><th>Vendedor</th><th>% Meta Fat.</th><th>% Positivação</th><th>Margem</th><th>SKU/Cliente</th><th>Churn</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  var estilo='<style>'
+    +'.cmp-tw{overflow-x:auto;border:1px solid rgba(255,255,255,0.08);border-radius:16px;}'
+    +'.cmp-tw table{width:100%;border-collapse:collapse;min-width:760px;}'
+    +'.cmp-tw thead th{padding:16px 14px;text-align:center;font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#00E5C3;background:rgba(0,229,195,0.06);white-space:nowrap;border-bottom:2px solid rgba(0,229,195,0.25);}'
+    +'.cmp-tw thead th:first-child{text-align:left;}'
+    +'.cmp-tw tbody td{padding:16px 14px;border-bottom:1px solid rgba(255,255,255,0.06);vertical-align:middle;}'
+    +'.cmp-tw tbody tr:last-child td{border-bottom:none;}'
+    +'.cmp-tw tbody tr:nth-child(even) td{background:rgba(255,255,255,0.015);}'
+    +'.cmp-tw tbody tr:hover td{background:rgba(0,229,195,0.04);}'
+    +'.cmp-vend{font-size:17px;font-weight:700;color:#fff;}'
+    +'.cmp-cell{display:flex;flex-direction:column;gap:5px;align-items:center;}'
+    +'.cmp-fluxo{display:flex;align-items:baseline;gap:7px;font-size:15px;}'
+    +'.cmp-ant{color:#6A7A8E;font-weight:500;}'
+    +'.cmp-seta{color:#4A5768;font-size:13px;}'
+    +'.cmp-atual{font-weight:800;font-size:19px;}'
+    +'.cmp-delta{font-size:14px;font-weight:700;}'
+    +'</style>';
+  var legenda='<div style="font-size:14px;color:#B0BBC8;margin-bottom:16px;line-height:1.6">Cada indicador mostra <strong style="color:#8592A6">mês anterior</strong> → <strong style="color:#fff">atual</strong> e a variação. <span style="color:'+COR_OK+';font-weight:700">Verde</span> = melhorou · <span style="color:'+COR_BAD+';font-weight:700">coral</span> = piorou.</div>';
+  el.innerHTML=avisoChurn+estilo+legenda+'<div class="cmp-tw"><table><thead><tr><th>Vendedor</th><th>% Meta Fat.</th><th>Positivação</th><th>Margem</th><th>SKU/Cliente</th><th>Churn</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 function salvarCampo(){var vend=document.getElementById('caVend').value.trim();if(!vend){toast('Informe o vendedor.');return;}DB.campos.push({vendedor:vend,data:document.getElementById('caData').value,cidade:document.getElementById('caCidade').value,cliente:document.getElementById('caCliente').value,obs:document.getElementById('caObs').value});salvar();['caVend','caData','caCidade','caCliente','caObs'].forEach(function(id){document.getElementById(id).value='';});renderCampoLista();toast('Registro salvo!');}
 function renderCampoLista(){var el=document.getElementById('listaCampo');if(!DB.campos.length){el.innerHTML='<div class="empty">Nenhum registro ainda.</div>';return;}el.innerHTML=DB.campos.slice().reverse().map(function(c,ri){var i=DB.campos.length-1-ri,df=c.data?new Date(c.data+'T12:00').toLocaleDateString('pt-BR'):'—';return'<div class="ic"><div class="ih"><div><div class="in">'+(c.cliente||'Visita')+'</div><div style="font-size:11px;color:var(--t2);margin-top:2px">'+c.vendedor+' · '+c.cidade+' · '+df+'</div></div><button class="btn bd bsm" onclick="remover(\'campos\','+i+')">×</button></div>'+(c.obs?'<div style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.7;border-top:1px solid var(--b);padding-top:10px">'+c.obs+'</div>':'')+'</div>';}).join('');}
@@ -1871,14 +1894,24 @@ function iniciarApresentacao(){
   // ════════════════════════════════════════════════
   // SLIDE 2 — REGIONAL MÊS ATUAL
   // ════════════════════════════════════════════════
-  var premStr = proj_r>=110?'🏆 PREMIAÇÃO MÁXIMA':proj_r>=100?'✅ PREMIAÇÃO BASE':proj_r>=90?'⚠ PREMIAÇÃO PARCIAL':'❌ SEM PREMIAÇÃO';
-  var premCor = proj_r>=110?'#FFB800':proj_r>=100?'#00E5C3':proj_r>=90?'#FFB800':'#FF4560';
+  // Deteccao automatica: no ultimo dia do mes vira "fechamento"
+  var _hoje=new Date();
+  var _ultimoDia=new Date(_hoje.getFullYear(),_hoje.getMonth()+1,0).getDate();
+  var _ehFechamento=(_hoje.getDate()===_ultimoDia);
+  var premStr, premCor;
+  if(_ehFechamento){
+    premStr = proj_r>=110?'🏆 FECHOU ACIMA DA META':proj_r>=100?'✅ META ATINGIDA':proj_r>=90?'✅ FECHOU EM LINHA':'⚠ FECHOU ABAIXO DA META';
+  } else {
+    premStr = proj_r>=110?'🏆 ACIMA DA META':proj_r>=100?'✅ META ATINGIDA':proj_r>=90?'📈 PROJEÇÃO EM LINHA':'⚠ ABAIXO DA META';
+  }
+  premCor = proj_r>=110?'#FFB800':proj_r>=100?'#00E5C3':proj_r>=90?'#00E5C3':'#FFB800';
+  var _legendaProj = _ehFechamento?'fechamento do mês':'projeção do mês';
 
   addSlide('Regional — Mês', '<div style="padding:clamp(18px,3.5vw,48px)">'+
     '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,22px);text-transform:uppercase">Regional — Mês Atual</div>'+
     '<div style="display:flex;gap:clamp(8px,1.5vw,16px);align-items:center;margin-bottom:clamp(14px,2vw,20px);background:'+premCor+'15;border:1px solid '+premCor+'40;border-radius:12px;padding:clamp(10px,1.5vw,16px)">'+
-      '<div style="font-size:clamp(18px,3vw,28px);font-weight:700;color:'+premCor+'">'+premStr+'</div>'+
-      '<div style="margin-left:auto;text-align:right"><div style="font-size:clamp(22px,4vw,40px);font-weight:700;color:'+premCor+'">'+fP(r.proj)+'</div><div style="font-size:clamp(9px,1vw,11px);color:#6A7A8E">projeção do mês</div></div>'+
+      '<div style="display:inline-flex;align-items:center;font-size:clamp(13px,1.9vw,20px);font-weight:700;color:'+premCor+';background:'+premCor+'22;border:1px solid '+premCor+'55;border-radius:999px;padding:clamp(6px,0.9vw,10px) clamp(12px,1.6vw,20px);letter-spacing:.5px">'+premStr+'</div>'+
+      '<div style="margin-left:auto;text-align:right"><div style="font-size:clamp(34px,6vw,64px);font-weight:800;color:'+premCor+';line-height:1">'+fP(r.proj)+'</div><div style="font-size:clamp(9px,1vw,12px);color:#6A7A8E;margin-top:clamp(2px,0.4vw,5px);letter-spacing:1px;text-transform:uppercase">'+_legendaProj+'</div></div>'+
     '</div>'+
     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(12px,2vw,18px)">'+
       sBox('Margem',fP(r.marg),'obj '+fP(r.objMarg||15.75),cor3(marg_r,nv(r.objMarg||15.75),15.5))+
