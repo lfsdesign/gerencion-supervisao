@@ -705,6 +705,18 @@ function aplicarDefaults(){if(!DB.lupaTop50)DB.lupaTop50=[];if(!DB.lupaFatVended
     if(DB.churnRegParcial==null)DB.churnRegParcial='44,17';
     salvar();
   }
+  // Correção pontual (roda 1x): garante a POSITIVAÇÃO REAL da regional no banco.
+  // Fonte oficial (BI Gestor · linha da regional): Meta 862 · Real 663 · Saldo -199.
+  // Só preenche se estiver vazio — um Lançar BI futuro com as colunas de positivação sobrescreve normalmente.
+  if(!DB._positFix0826){
+    if(DB.biAtual&&DB.biAtual.regional){
+      if(!DB.biAtual.regional.objPos||n(DB.biAtual.regional.objPos)===0)DB.biAtual.regional.objPos='862';
+      if(!DB.biAtual.regional.realPos||n(DB.biAtual.regional.realPos)===0)DB.biAtual.regional.realPos='663';
+      if(!DB.biAtual.regional.saldoPos||n(DB.biAtual.regional.saldoPos)===0)DB.biAtual.regional.saldoPos='-199';
+    }
+    DB._positFix0826=true;
+    salvar();
+  }
 }function carregarNuvem(){return sb.from('supervisao_estado').select('estado').eq('user_id',USER.id).maybeSingle().then(function(r){if(r.data&&r.data.estado&&Object.keys(r.data.estado).length){DB=r.data.estado;aplicarDefaults();return;}try{var s=localStorage.getItem('GRC_V2');if(s){var old=JSON.parse(s);if(old&&Object.keys(old).length){DB=old;aplicarDefaults();return sb.from('supervisao_estado').upsert({user_id:USER.id,estado:DB},{onConflict:'user_id'});}}}catch(e){}aplicarDefaults();});}function entrar(){var em=(document.getElementById('logEmail').value||'').trim(),pw=document.getElementById('logPass').value||'';var msg=document.getElementById('logMsg');msg.style.color='#B0BBC8';msg.textContent='Entrando...';sb.auth.signInWithPassword({email:em,password:pw}).then(function(r){if(r.error){msg.style.color='#FF4560';msg.textContent='E-mail ou senha incorretos.';return;}location.reload();});}function sair(){sb.auth.signOut().then(function(){location.reload();});}
 function n(v){return parseFloat((v||'0').toString().replace(',','.'))||0;}
 function brl(v){return'R$ '+Math.abs(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});}
@@ -1298,6 +1310,7 @@ function gerarRelatorio(){
   var totalPos  = DB.posChurn.reduce(function(s,p){return s+nv(p.positivados);},0);
   var totalNPos = DB.posChurn.reduce(function(s,p){return s+nv(p.naoPositivados);},0);
   var txPosR    = (totalPos+totalNPos)>0?(totalPos/(totalPos+totalNPos)*100):0;
+  var txPositReal = obj_pos>0?(pos_r/obj_pos*100):0; // positivação real vs meta (663/862)
 
   // Situação geral
   var situacao = proj_r>=90&&churn_med<=15&&dev_r<=0.65?'ATENÇÃO':(proj_r>=100&&churn_med<=9?'SAUDÁVEL':'CRÍTICA');
@@ -1439,14 +1452,15 @@ function gerarRelatorio(){
   html+='<div class="rb"><div class="rs">Panorama da Regional — Mês Atual + Acumulado no Ano</div>';
 
   // Cards visuais
-  html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">';
+  html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">';
   function card(lbl,val,sub,c){return'<div style="background:var(--s2);border-radius:10px;padding:12px;text-align:center;border-top:2px solid '+c+'"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">'+lbl+'</div><div style="font-size:20px;font-weight:700;color:'+c+'">'+val+'</div><div style="font-size:10px;color:var(--t3);margin-top:2px">'+sub+'</div></div>';}
   html+=card('Projeção Mês',pct(r.proj),'meta 100%',cor3(proj_r,90,70));
   html+=card('Fat. Acumulado',brl(fat26r),pct(crescR)+' vs 2025',cor3(crescR,10,0));
   html+=card('Meta YTD',pctMetaR.toFixed(0)+'%','de '+brl(metaR),cor3(pctMetaR,95,80));
   html+=card('Churn Médio',churn_med.toFixed(1)+'%','limite 9%',cor3(9-churn_med,0,-6));
   html+=card('Margem',pct(r.marg),'obj '+pct(r.objMarg||15.75),cor3(marg_r,nv(r.objMarg||15.75),15.5));
-  html+=card('Positivação',Math.round(txPosR)+'%',Math.round(totalPos)+'/'+Math.round(totalPos+totalNPos)+' clientes',cor3(txPosR,75,60));
+  html+=card('Positivação',Math.round(txPositReal)+'%',Math.round(pos_r)+' / '+Math.round(obj_pos)+' da meta',cor3(txPositReal,90,75));
+  html+=card('Base Ativa',Math.round(txPosR)+'%',Math.round(totalPos)+' / '+Math.round(totalPos+totalNPos)+' carteira',cor3(txPosR,75,60));
   html+=card('Devolução',Math.abs(nv(r.devPct)).toFixed(2)+'%','limite 0,65%',cor3(0.65-dev_r,0,-0.3));
   html+=card('SKU/Cliente',nv(r.sku).toFixed(1),'prod. por cliente','var(--cy)');
   html+='</div>';
@@ -1725,6 +1739,7 @@ function iniciarApresentacao(){
   var totalPos  = DB.posChurn.reduce(function(s,p){return s+nv(p.positivados);},0);
   var totalNPos = DB.posChurn.reduce(function(s,p){return s+nv(p.naoPositivados);},0);
   var txPosR    = (totalPos+totalNPos)>0?(totalPos/(totalPos+totalNPos)*100):0;
+  var txPositReal = obj_pos>0?(pos_r/obj_pos*100):0; // positivação real vs meta (663/862)
   var situacao  = proj_r>=90&&churn_med<=15?'ATENÇÃO':(proj_r>=100&&churn_med<=9?'SAUDÁVEL':'CRÍTICA');
   var sitCor    = situacao==='SAUDÁVEL'?'#00E5C3':situacao==='ATENÇÃO'?'#FFB800':'#FF4560';
 
@@ -1913,9 +1928,10 @@ function iniciarApresentacao(){
       '<div style="display:inline-flex;align-items:center;font-size:clamp(13px,1.9vw,20px);font-weight:700;color:'+premCor+';background:'+premCor+'22;border:1px solid '+premCor+'55;border-radius:999px;padding:clamp(6px,0.9vw,10px) clamp(12px,1.6vw,20px);letter-spacing:.5px">'+premStr+'</div>'+
       '<div style="margin-left:auto;text-align:right"><div style="font-size:clamp(34px,6vw,64px);font-weight:800;color:'+premCor+';line-height:1">'+fP(r.proj)+'</div><div style="font-size:clamp(9px,1vw,12px);color:#6A7A8E;margin-top:clamp(2px,0.4vw,5px);letter-spacing:1px;text-transform:uppercase">'+_legendaProj+'</div></div>'+
     '</div>'+
-    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(12px,2vw,18px)">'+
+    '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(12px,2vw,18px)">'+
       sBox('Margem',fP(r.marg),'obj '+fP(r.objMarg||15.75),cor3(marg_r,nv(r.objMarg||15.75),15.5))+
-      sBox('Positivação',Math.round(txPosR)+'%',Math.round(totalPos)+'/'+Math.round(totalPos+totalNPos),cor3(txPosR,75,60))+
+      sBox('Positivação',Math.round(txPositReal)+'%',Math.round(pos_r)+' / '+Math.round(obj_pos)+' da meta',cor3(txPositReal,90,75))+
+      sBox('Base Ativa',Math.round(txPosR)+'%',Math.round(totalPos)+' / '+Math.round(totalPos+totalNPos)+' carteira',cor3(txPosR,75,60))+
       sBox('Churn Médio',churn_med.toFixed(1)+'%','limite 9%',cor3(9-churn_med,0,-6))+
       sBox('Devolução',dev_r.toFixed(2)+'%','limite 0,65%',cor3(0.65-dev_r,0,-0.3))+
     '</div>'+
@@ -2144,11 +2160,11 @@ function iniciarApresentacao(){
   // SLIDE 5 — CHURN + POSITIVAÇÃO
   // ════════════════════════════════════════════════
   addSlide('Churn e Posit.', '<div style="padding:clamp(18px,3.5vw,48px)">'+
-    '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">Retenção de Clientes — Churn e Positivação</div>'+
+    '<div style="font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;color:#00E5C3;margin-bottom:clamp(12px,2vw,20px);text-transform:uppercase">Retenção de Clientes — Churn e Base Ativa</div>'+
     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1.5vw,14px);margin-bottom:clamp(14px,2vw,20px)">'+
       sBox('Churn Médio',churn_med.toFixed(1)+'%','limite 9%',cor3(9-churn_med,0,-6))+
-      sBox('Taxa Positivação',Math.round(txPosR)+'%',Math.round(totalPos)+' de '+Math.round(totalPos+totalNPos),cor3(txPosR,75,60))+
-      sBox('Sem Comprar',String(Math.round(totalNPos)),'clientes inativos no mês','#FF4560')+
+      sBox('Base Ativa',Math.round(txPosR)+'%',Math.round(totalPos)+' de '+Math.round(totalPos+totalNPos)+' na carteira',cor3(txPosR,75,60))+
+      sBox('Sem Comprar',String(Math.round(totalNPos)),'clientes que deram churn','#FF4560')+
     '</div>'+
     '<div style="display:flex;flex-direction:column;gap:clamp(5px,0.8vw,8px)">'+
     DB.posChurn.map(function(pc){
@@ -2159,7 +2175,7 @@ function iniciarApresentacao(){
       var cor=cor3(9-churn,0,-6);
       return'<div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,14px);background:rgba(255,255,255,0.04);border-radius:8px;padding:clamp(8px,1.2vw,12px) clamp(10px,1.5vw,16px)">'+
         '<div style="flex:1;font-size:clamp(12px,1.5vw,15px);font-weight:600;color:white">'+pc.nome+'</div>'+
-        '<div style="font-size:clamp(11px,1.3vw,13px);color:#B0BBC8">Posit: <strong style="color:'+cor3(tx,75,60)+'">'+Math.round(posit)+'/'+Math.round(tot)+' ('+tx.toFixed(0)+'%)</strong></div>'+
+        '<div style="font-size:clamp(11px,1.3vw,13px);color:#B0BBC8">Ativos: <strong style="color:'+cor3(tx,75,60)+'">'+Math.round(posit)+'/'+Math.round(tot)+' ('+tx.toFixed(0)+'%)</strong></div>'+
         '<div style="font-size:clamp(11px,1.3vw,13px);color:#B0BBC8">Churn: <strong style="color:'+cor+'">'+churn.toFixed(1)+'%</strong></div>'+
       '</div>';
     }).join('')+
@@ -2251,14 +2267,14 @@ function iniciarApresentacao(){
               mBox('Projeção',d.proj.toFixed(1)+'%',cor3(d.proj,90,70))+
               mBox('Margem',d.marg.toFixed(1)+'%',cor3(d.marg,d.objMarg,15.5))+
               mBox('Devolução',d.dev.toFixed(2)+'%',cor3(0.65-d.dev,0,-0.3))+
-              mBox('Positivação',d.txPos.toFixed(0)+'%',cor3(d.txPos,75,60))+
+              mBox('Base Ativa',d.txPos.toFixed(0)+'%',cor3(d.txPos,75,60))+
             '</div>'+
           '</div>'+
           '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:clamp(10px,1.5vw,14px)">'+
-            '<div style="font-size:clamp(8px,0.9vw,10px);color:#6A7A8E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Churn e Positivação</div>'+
+            '<div style="font-size:clamp(8px,0.9vw,10px);color:#6A7A8E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Churn e Base Ativa</div>'+
             linha('Churn',d.churn.toFixed(1)+'%',cor3(9-d.churn,0,-6))+
-            linha('Positivados',Math.round(d.posit)+'/'+Math.round(d.posit+d.nposit),'#00E5C3')+
-            linha('Sem comprar',Math.round(d.nposit)+' clientes',d.nposit>15?'#FF4560':'#FFB800')+
+            linha('Ativos',Math.round(d.posit)+'/'+Math.round(d.posit+d.nposit),'#00E5C3')+
+            linha('Deram churn',Math.round(d.nposit)+' clientes',d.nposit>15?'#FF4560':'#FFB800')+
           '</div>'+
         '</div>'+
         // Coluna direita: YTD + SSS + Indic
