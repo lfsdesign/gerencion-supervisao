@@ -3143,10 +3143,15 @@ function renderLupaIndic(){
 }
 </script>
 <script>
+// Remove qualquer Service Worker antigo e limpa os caches — evita versão travada.
+// (Era o SW que servia a cópia velha do app mesmo após reinstalar/limpar cache.)
 if('serviceWorker' in navigator){
-  window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js').catch(function(){});
-  });
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){ r.unregister(); });
+  }).catch(function(){});
+}
+if(window.caches && caches.keys){
+  caches.keys().then(function(keys){ keys.forEach(function(k){ caches.delete(k); }); }).catch(function(){});
 }
 </script>
 </body>
